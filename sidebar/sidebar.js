@@ -1,10 +1,16 @@
 // Load sidebar HTML dynamically
 document.addEventListener('DOMContentLoaded', () => {
     fetch('sidebar/sidebar.html')
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load sidebar');
+            return response.text();
+        })
         .then(data => {
             document.getElementById('sidebar-container').innerHTML = data;
             initializeSidebar();
+        })
+        .catch(error => {
+            console.error('Error loading sidebar:', error);
         });
 });
 
@@ -12,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeSidebar() {
     const menuToggle = document.querySelector('.menu-toggle');
     const sidebar = document.querySelector('.sidebar');
+
+    if (!menuToggle || !sidebar) {
+        console.error('Menu toggle or sidebar not found');
+        return;
+    }
 
     // Toggle sidebar
     menuToggle.addEventListener('click', () => {

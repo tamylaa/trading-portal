@@ -22,7 +22,7 @@ header {
     position: fixed;
     width: 100%;
     top: 0;
-    z-index: 10;
+    z-index: 1000;
 }
 
 .logo {
@@ -31,46 +31,17 @@ header {
 }
 
 .menu-toggle {
-    display: none;
     font-size: 1.5rem;
     background: none;
     border: none;
     cursor: pointer;
+    z-index: 1100;
+    display: none;
 }
 
-/* Sidebar */
-.sidebar {
-    position: fixed;
-    top: 60px;
-    left: -250px;
-    width: 250px;
-    height: 100%;
-    background: #f8f9fa;
-    padding: 2rem 1rem;
-    transition: left 0.3s ease;
-}
-
-.sidebar.active {
-    left: 0;
-}
-
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar ul li {
-    margin: 1.5rem 0;
-}
-
-.sidebar ul li a {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.sidebar ul li a:hover {
-    color: #007bff;
+/* Main Content */
+main {
+    transition: margin-left 0.3s ease;
 }
 
 /* Hero Section */
@@ -83,7 +54,6 @@ header {
     text-align: center;
     background: #f4f4f4;
     padding: 2rem;
-    margin-top: 60px;
 }
 
 .hero h1 {
@@ -177,7 +147,7 @@ footer {
     to { opacity: 1; }
 }
 
-/* Responsive Design */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
@@ -189,10 +159,5 @@ footer {
 
     .hero p {
         font-size: 1rem;
-    }
-
-    .sidebar {
-        top: 60px;
-        width: 200px;
     }
 }

@@ -1,4 +1,3 @@
-<!-- Base Version to uploaded into New Repository  -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,52 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Trade Solutions</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="sidebar/sidebar.css">
 </head>
 <body>
     <!-- Header -->
     <header>
-        <div class="logo">Tamylaa Global Trade Solutions</div>
-        <button class="menu-toggle">☰</button>
+        <div class="logo">Global Trade Solutions</div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
     </header>
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
+    <!-- Sidebar Placeholder -->
+    <div id="sidebar-container"></div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <h1>Mastering Global Trade</h1>
-        <p>Expert solutions for a connected world.</p>
-        <a href="#contact" class="cta">Start Trading</a>
-    </section>
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <h1>Mastering Global Trade</h1>
+            <p>Expert solutions for a connected world.</p>
+            <a href="#contact" class="cta">Start Trading</a>
+        </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <h2>Our Expertise</h2>
-        <p>We provide cutting-edge global trading services, leveraging decades of experience in international markets, logistics, and financial strategies to empower your business.</p>
-    </section>
+        <!-- About Section -->
+        <section id="about" class="about">
+            <h2>Our Expertise</h2>
+            <p>We provide cutting-edge global trading services, leveraging decades of experience in international markets, logistics, and financial strategies to empower your business.</p>
+        </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <h2>Get in Touch</h2>
-        <form>
-            <input type="text" placeholder="Name" required>
-            <input type="email" placeholder="Email" required>
-            <textarea placeholder="Your Message" required></textarea>
-            <button type="submit">Send</button>
-        </form>
-    </section>
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <h2>Get in Touch</h2>
+            <form>
+                <input type="text" placeholder="Name" required>
+                <input type="email" placeholder="Email" required>
+                <textarea placeholder="Your Message" required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer>
         <p>© 2025 Global Trade Solutions. All rights reserved.</p>
     </footer>
 
+    <script src="sidebar/sidebar.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
