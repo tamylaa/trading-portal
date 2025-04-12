@@ -169,5 +169,31 @@ button:hover {
     
     .trust-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
+    } 
+}
+
+/* Fallback Styles */
+.sidebar-fallback, .footer-fallback {
+    display: none;
+}
+
+.show-fallback .sidebar-fallback, .show-fallback .footer-fallback {
+    display: block;
+}
+
+/* Diagnostic Message */
+#diagnostic-message {
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    max-width: 90%;
+}
+
+/* Ensure footer stays at bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
 }

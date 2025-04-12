@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Trade Solutions</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tamyla Trading Ventures LLP</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="sidebar/sidebar.css">
     <link rel="stylesheet" href="footer/footer.css">
@@ -12,6 +13,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 </head>
 <body>
+
+    <!-- Diagnostic Message -->
+    <div id="diagnostic-message" style="display: none; position: fixed; top: 10px; right: 10px; background: #ffcccc; padding: 10px; border-radius: 5px; z-index: 2000;"></div>
+    
     <!-- Header -->
     <header>
         <div class="top-banner">
@@ -127,8 +132,14 @@
     </main>
 
     <!-- Footer Placeholder -->
-    <div id="footer-container"></div>
+    <div id="footer-container">
+        <!-- Fallback content -->
+        <footer class="footer-fallback">
+            <p>© 2025 Global Trade Solutions. All rights reserved.</p>
+        </footer>
+    </div>
 
+    <script src="/diagnostics/diagnostics.js"></script>
     <script src="sidebar/sidebar.js"></script>
     <script src="footer/footer.js"></script>
     <script src="script.js"></script>
