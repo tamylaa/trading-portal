@@ -31,12 +31,7 @@ header {
 }
 
 .menu-toggle {
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 1100;
-    display: none;
+    display: none; /* Hide on desktop */
 }
 
 /* Main Content */
@@ -143,6 +138,11 @@ button:hover {
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
+        font-size: 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        z-index: 1100;
     }
 
     .hero h1 {
