@@ -152,4 +152,22 @@ button:hover {
     .hero p {
         font-size: 1rem;
     }
+
+    .header-main {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    .search-bar {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .service-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .trust-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
