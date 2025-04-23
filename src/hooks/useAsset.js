@@ -3,13 +3,15 @@ import { assetLoader } from '../utils/assetLoader';
 import { useAppDispatch } from '../contexts/AppContext';
 
 export function useAsset(src, options = {}) {
+    const {
+        maxRetries = 3,
+        retryDelay = 1000,
+        ...restOptions
+    } = options;
     const [asset, setAsset] = useState(null);
     const [error, setError] = useState(null);
     const [retryCount, setRetryCount] = useState(0);
     const dispatch = useAppDispatch();
-
-    const MAX_RETRIES = 3;
-    const RETRY_DELAY = 1000; // ms
 
     useEffect(() => {
         let mounted = true;
@@ -19,8 +21,8 @@ export function useAsset(src, options = {}) {
             try {
                 dispatch({ type: 'SET_LOADING', payload: true });
                 const loaded = await assetLoader.loadImage(src, {
-                    ...options,
-                    priority: retryCount > 0 ? 'high' : options.priority
+                    ...restOptions,
+                    priority: retryCount > 0 ? 'high' : restOptions.priority
                 });
                 
                 if (mounted) {
@@ -33,10 +35,10 @@ export function useAsset(src, options = {}) {
                     setError(err);
                     dispatch({ type: 'SET_ERROR', payload: err.message });
                     
-                    if (retryCount < MAX_RETRIES) {
+                    if (retryCount < maxRetries) {
                         timeoutId = setTimeout(() => {
                             setRetryCount(prev => prev + 1);
-                        }, RETRY_DELAY * Math.pow(2, retryCount));
+                        }, retryDelay * Math.pow(2, retryCount));
                     }
                 }
             } finally {
