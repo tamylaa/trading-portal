@@ -1,4 +1,4 @@
-﻿interface DiagnosticLog {
+interface DiagnosticLog {
     message: string;
     timestamp: number;
     critical: boolean;
