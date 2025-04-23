@@ -20,15 +20,12 @@ jobs:
         
     - name: Install Dependencies
       run: |
-        cd trading-portal-frontend
         npm install
         
     - name: Build
       run: |
-        cd trading-portal-frontend
         npm run build
         
     - name: Test
       run: |
-        cd trading-portal-frontend
         npm test
