@@ -20,6 +20,7 @@
     "@craco/craco": "^7.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/craco__craco": "^6.4.3",
     "@types/jest": "^27.5.2",
     "@types/node": "^22.14.1",
