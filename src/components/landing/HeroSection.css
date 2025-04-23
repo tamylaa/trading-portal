@@ -1,0 +1,116 @@
+.hero-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem 2.5rem 2rem;
+  /* background: linear-gradient(90deg, #f4f8fb 60%, #eaf1f8 100%), url('/assets/images/hero-bg.jpg') center/cover no-repeat; */
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 24px rgba(36,40,60,0.07);
+  margin-bottom: 2.5rem;
+  min-height: 450px;
+  position: relative;
+}
+
+.hero-content {
+  flex: 1 1 360px;
+  min-width: 300px;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 2.7rem;
+  font-weight: 800;
+  color: #1a3b5d;
+  margin-bottom: 1.1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: #3d5875;
+  margin-bottom: 2rem;
+}
+
+.hero-cta {
+  background: #2563eb;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.82rem 2.2rem;
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 0 2px 12px rgba(36,40,60,0.10);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+
+.hero-cta:hover,
+.hero-cta:focus {
+  background: #1746a2;
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(36,40,60,0.16);
+}
+
+.hero-microcopy {
+  font-size: 0.97rem;
+  color: #3d5875;
+  margin: 0.5rem 0 1.1rem 0;
+}
+
+.hero-social-proof {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  font-size: 1.03rem;
+  color: #2563eb;
+  margin-bottom: 0.7rem;
+}
+.hero-badges img {
+  height: 32px;
+  margin-right: 0.5rem;
+}
+
+.hero-image {
+  flex: 1 1 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+}
+.hero-image img {
+  max-width: 350px;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 900px) {
+  .hero-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .hero-image {
+    margin-top: 2rem;
+    justify-content: center;
+  }
+}
+
+/* Removed overlay that causes dullness */
+/* .hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.80);
+  z-index: 1;
+  border-radius: 1.5rem;
+} */
+
+.hero-content,
+.hero-image {
+  z-index: unset !important;
+}

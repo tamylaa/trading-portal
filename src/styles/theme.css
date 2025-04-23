@@ -1,0 +1,13 @@
+/* Centralized design tokens */
+:root {
+  --color-bg: #181d2a;
+  --color-surface: #232946;
+  --color-primary: #4f8cff;
+  --color-text-primary: #f5f6fa;
+  --color-text-secondary: #6c7a96;
+  --spacing-unit: 1rem;
+  --border-radius: 0;
+  --header-height: 64px;
+  --sidebar-width-mini: 72px;
+  --sidebar-width-full: 240px;
+}

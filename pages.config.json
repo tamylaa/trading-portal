@@ -1,0 +1,14 @@
+{
+  "name": "trading-portal",
+  "build": {
+    "command": "npm run build",
+    "output": "build",
+    "environment": {
+      "NODE_VERSION": "16"
+    }
+  },
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}

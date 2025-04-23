@@ -1,0 +1,57 @@
+.home-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+    flex: 1 1 auto;
+}
+
+/* Featured Services Section */
+.featured-services {
+    padding: 4rem 2rem;
+    background-color: #f8f9fa;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Latest Updates Section */
+.latest-updates {
+    padding: 4rem 2rem;
+    background-color: white;
+}
+
+.updates-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Call to Action Section */
+.cta-section {
+    padding: 3rem 2rem;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+}
+
+.cta-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .featured-services,
+    .latest-updates {
+        padding: 2rem 1rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
