@@ -66,7 +66,8 @@ const ContactSection: React.FC = () => {
           </div>
           <div className="contact-info-block">
             <span className="contact-info-label">Live Chat:</span>
-            <a href="#" className="contact-info-link">Chat with us</a>
+            {/* Changed from anchor to button for accessibility */}
+            <button type="button" className="contact-info-link" aria-label="Chat with us">Chat with us</button>
           </div>
         </div>
       </div>

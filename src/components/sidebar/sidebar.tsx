@@ -36,7 +36,7 @@ const Sidebar: React.FC = () => {
                 className={`sidebar${isMobile ? (isOpen ? ' open' : '') : (isOpen ? '' : ' sidebar-collapsed')}`}
                 role="navigation"
                 aria-label="Main sidebar"
-                aria-expanded={isOpen}
+                /* Removed aria-expanded as it is not supported by role navigation */
             >
                 {/* SidebarHeader removed for unified header/sidebar experience */}
                 <div className="sidebar-content">

@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSidebar } from '../../contexts/SidebarContext';
 import './header.css';
 
 const Header: React.FC = () => {
     const { isOpen, toggleSidebar } = useSidebar();
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
         <header className="site-header">

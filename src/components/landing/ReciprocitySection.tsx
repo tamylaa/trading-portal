@@ -10,7 +10,8 @@ const ReciprocitySection: React.FC = () => (
       </p>
       <div className="reciprocity-actions">
         <a href="/assets/resources/trading-guide.pdf" className="reciprocity-btn" download>Download Guide</a>
-        <a href="#" className="reciprocity-btn alt">Start Free Trial</a>
+        {/* Changed from anchor to button for accessibility */}
+        <button type="button" className="reciprocity-btn alt" aria-label="Start Free Trial">Start Free Trial</button>
       </div>
     </div>
     <div className="reciprocity-image">
