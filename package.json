@@ -2,7 +2,7 @@
   "name": "trading-portal",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://tamylaa.github.io/trading-portal",
+  "homepage": "https://tamyla.com",
   "scripts": {
     "start": "craco start",
     "build": "craco build",
