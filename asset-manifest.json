@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "https://tamylaa.github.io/trading-portal/static/css/main.b8919ff0.css",
+    "main.js": "https://tamylaa.github.io/trading-portal/static/js/main.aed1341d.js",
+    "index.html": "https://tamylaa.github.io/trading-portal/index.html",
+    "main.b8919ff0.css.map": "https://tamylaa.github.io/trading-portal/static/css/main.b8919ff0.css.map",
+    "main.aed1341d.js.map": "https://tamylaa.github.io/trading-portal/static/js/main.aed1341d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b8919ff0.css",
+    "static/js/main.aed1341d.js"
+  ]
+}
