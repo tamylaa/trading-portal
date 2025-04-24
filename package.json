@@ -5,11 +5,10 @@
   "homepage": "https://tamyla.com",
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "set PUBLIC_URL=/&& craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "build-check": "powershell -ExecutionPolicy Bypass -File build-check.ps1"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -25,7 +24,6 @@
     "@types/node": "^22.14.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.1.2",
-    "gh-pages": "^6.0.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5"
   },
