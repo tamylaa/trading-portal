@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { stories } from '../stories/stories';
 import ReactMarkdown from 'react-markdown';
-import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { PDFDownloadLink, Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
 import { Helmet } from 'react-helmet';
 
 const StoryDetailPage: React.FC = () => {
