@@ -126,20 +126,25 @@ function Validate-BuildIndexHtml {
 
 function Create-HeadersFile {
     $headersPath = Join-Path $PSScriptRoot "public/_headers"
-    if (-Not (Test-Path $headersPath)) {
-        Write-Log "Creating public/_headers for Cloudflare Pages..." "INFO"
-        $headersContent = @"
+    $expectedHeaders = @"
 /*
-  Content-Security-Policy: default-src 'self' cdnjs.cloudflare.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'
-  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self' cdnjs.cloudflare.com https://tamyla.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://tamyla.com; connect-src 'self' https://tamyla.com
   X-Frame-Options: SAMEORIGIN
-  X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
 "@
-        Set-Content -Path $headersPath -Value $headersContent
+    if (-Not (Test-Path $headersPath)) {
+        Write-Log "Creating public/_headers for Cloudflare Pages..." "INFO"
+        Set-Content -Path $headersPath -Value $expectedHeaders
         Write-Log "public/_headers created" "SUCCESS"
     } else {
-        Write-Log "public/_headers already exists" "SUCCESS"
+        $currentHeaders = Get-Content $headersPath -Raw
+        if ($currentHeaders -ne $expectedHeaders) {
+            Write-Log "public/_headers content is outdated. Updating..." "INFO"
+            Set-Content -Path $headersPath -Value $expectedHeaders -Force
+            Write-Log "public/_headers updated" "SUCCESS"
+        } else {
+            Write-Log "public/_headers is up to date" "SUCCESS"
+        }
     }
 }
 
