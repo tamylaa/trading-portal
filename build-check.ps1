@@ -1,78 +1,147 @@
+# build-check.ps1
+<#
+.SYNOPSIS
+    Validates and builds a React project for deployment on Cloudflare Pages.
+.DESCRIPTION
+    This script runs a series of modular steps to validate and build a React project, ensuring it’s ready for deployment.
+    Steps include clearing caches, validating configurations, installing dependencies, building the project, and more.
+    Each step is configurable via the $BuildSteps registry and can be toggled or extended as needed.
+.USAGE
+    .\build-check.ps1 [-SkipServe] [-OnlyStep <StepName>] [-Verbose] [-Quiet]
+.PARAMETER SkipServe
+    Skips the Serve-Build step (local serving).
+.PARAMETER OnlyStep
+    Runs only the specified step (e.g., -OnlyStep "Validate Headers").
+.PARAMETER Verbose
+    Enables verbose logging for detailed output.
+.PARAMETER Quiet
+    Suppresses non-error logs for minimal output.
+.EXTENDING
+    To add a new step:
+    1. Define a new function (e.g., function New-Step { ... }).
+    2. Add it to the $BuildSteps array: @{ Name = "New Step"; Enabled = $true; Action = { New-Step } }
+#>
+
+# Command-line parameters
+param(
+    [switch]$SkipServe,
+    [string]$OnlyStep,
+    [switch]$Verbose,
+    [switch]$Quiet
+)
+
 # Colors for output
 $COLOR_ERROR = "Red"
 $COLOR_SUCCESS = "Green"
 $COLOR_INFO = "Cyan"
+$COLOR_VERBOSE = "Yellow"
 
+# Logging function
 function Write-Log {
     param (
         [string]$Message,
         [string]$Type = "INFO"
     )
+    if ($Quiet -and $Type -ne "ERROR") { return }
     $color = switch ($Type) {
         "ERROR" { $COLOR_ERROR }
         "SUCCESS" { $COLOR_SUCCESS }
+        "VERBOSE" { $COLOR_VERBOSE }
         default { $COLOR_INFO }
     }
+    if ($Type -eq "VERBOSE" -and -not $Verbose) { return }
     Write-Host "[$Type] $Message" -ForegroundColor $color
 }
 
-function Invoke-CommandWithErrorHandling {
-    param (
-        [string]$Command,
-        [string]$ErrorMessage
+# Configurable step registry
+$BuildSteps = @(
+    @{ Name = "Clear Caches"; Enabled = $true; Action = { Clear-Caches } }
+    @{ Name = "Remove Pages Config"; Enabled = $true; Action = { Remove-PagesConfig } }
+    @{ Name = "Validate Homepage"; Enabled = $true; Action = { Validate-Homepage } }
+    @{ Name = "Validate Public Index HTML"; Enabled = $true; Action = { Validate-PublicIndexHtml } }
+    @{ Name = "Validate Craco Config"; Enabled = $true; Action = { Validate-CracoConfig } }
+    @{ Name = "Validate Redirects"; Enabled = $true; Action = { Validate-Redirects } }
+    @{ Name = "Validate Headers"; Enabled = $true; Action = { Validate-Headers } }
+    @{ Name = "Install Dependencies"; Enabled = $true; Action = { Install-Dependencies } }
+    @{ Name = "Build Project"; Enabled = $true; Action = { Build-Project } }
+    @{ Name = "Validate Build Index HTML"; Enabled = $true; Action = { Validate-BuildIndexHtml } }
+    @{ Name = "Serve Build"; Enabled = (-not $SkipServe); Action = { Serve-Build } }
+)
+
+# Track step results for summary
+$StepResults = @()
+
+# Reusable step runner
+function Run-Step {
+    param(
+        [string]$Name,
+        [scriptblock]$Action,
+        [bool]$Enabled = $true
     )
-    try {
-        Invoke-Expression $Command -ErrorAction Stop
-        if ($LASTEXITCODE -ne 0) {
-            throw $ErrorMessage
+    $result = @{ Name = $Name; Status = "SKIPPED"; Error = $null }
+    if ($Enabled -and (-not $OnlyStep -or $Name -eq $OnlyStep)) {
+        Write-Log "Running step: $Name" "INFO"
+        try {
+            & $Action
+            Write-Log "$Name completed successfully" "SUCCESS"
+            $result.Status = "PASSED"
+        } catch {
+            Write-Log "$Name failed: $_" "ERROR"
+            $result.Status = "FAILED"
+            $result.Error = $_
+            $global:BuildFailed = $true
         }
-    } catch {
-        Write-Log $ErrorMessage "ERROR"
-        throw
+    } else {
+        Write-Log "$Name skipped" "INFO"
     }
+    $script:StepResults += $result
 }
 
-function Test-FileExists {
-    param (
-        [string]$FilePath,
-        [string]$ErrorMessage
-    )
-    if (-Not (Test-Path $FilePath)) {
-        Write-Log $ErrorMessage "ERROR"
-        throw $ErrorMessage
-    }
-    Write-Log "$FilePath exists" "SUCCESS"
+# Modular step functions
+function Clear-Caches {
+    Write-Log "Clearing build and node_modules caches..." "VERBOSE"
+    Remove-Item -Path (Join-Path $PSScriptRoot "build") -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $PSScriptRoot "node_modules") -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Log "Clearing npm cache..." "VERBOSE"
+    Invoke-Expression "npm cache clean --force" -ErrorAction Stop
+    Write-Log "Clearing CRA/CRACO caches..." "VERBOSE"
+    Remove-Item -Path "$env:TEMP\react-scripts-*" -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $PSScriptRoot ".craco-cache") -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+function Remove-PagesConfig {
+    Write-Log "Removing pages.config.json (not needed for Cloudflare Pages)..." "VERBOSE"
+    Remove-Item -Path (Join-Path $PSScriptRoot "pages.config.json") -Force -ErrorAction SilentlyContinue
 }
 
 function Validate-Homepage {
     $packageJsonPath = Join-Path $PSScriptRoot "package.json"
+    if (-not (Test-Path $packageJsonPath)) { throw "package.json not found" }
     $packageJson = Get-Content $packageJsonPath -Raw | ConvertFrom-Json
     $expectedHomepage = "https://tamyla.com"
     if ($packageJson.homepage -ne $expectedHomepage) {
-        Write-Log "package.json homepage is incorrect. Expected: $expectedHomepage, Found: $($packageJson.homepage)" "ERROR"
-        throw "Incorrect homepage in package.json"
+        throw "package.json homepage is incorrect. Expected: $expectedHomepage, Found: $($packageJson.homepage)"
     }
-    Write-Log "package.json homepage is correct" "SUCCESS"
 }
 
 function Validate-PublicIndexHtml {
     $publicIndexPath = Join-Path $PSScriptRoot "public/index.html"
+    if (-not (Test-Path $publicIndexPath)) { throw "public/index.html not found" }
     $content = Get-Content $publicIndexPath -Raw
     $checks = @(
-        @{ Pattern = 'href="%PUBLIC_URL%/assets/favicon.ico"'; Message = "Favicon should use %PUBLIC_URL%" },
+        @{ Pattern = 'href="%PUBLIC_URL%/assets/favicon.ico"'; Message = "Favicon should use %PUBLIC_URL%" }
         @{ Pattern = 'content="%PUBLIC_URL%/assets/logos/og-image.png"'; Message = "OG image should use %PUBLIC_URL%" }
     )
     foreach ($check in $checks) {
         if ($content -notmatch [regex]::Escape($check.Pattern)) {
-            Write-Log $check.Message "ERROR"
             throw $check.Message
         }
     }
-    Write-Log "public/index.html asset paths are correct" "SUCCESS"
 }
 
 function Validate-CracoConfig {
     $cracoConfigPath = Join-Path $PSScriptRoot "craco.config.js"
+    if (-not (Test-Path $cracoConfigPath)) { throw "craco.config.js not found" }
     $content = Get-Content $cracoConfigPath -Raw
     if ($content -notmatch "publicPath\s*=\s*'/';") {
         Write-Log "craco.config.js does not set publicPath to '/'. Updating..." "INFO"
@@ -96,35 +165,17 @@ module.exports = {
 };
 "@
         Set-Content -Path $cracoConfigPath -Value $newConfig
-        Write-Log "craco.config.js updated with publicPath = '/'" "SUCCESS"
-    } else {
-        Write-Log "craco.config.js publicPath is correct" "SUCCESS"
     }
 }
 
-function Validate-BuildIndexHtml {
-    $buildIndexPath = Join-Path $PSScriptRoot "build/index.html"
-    $content = Get-Content $buildIndexPath -Raw
-    if ($content -match "https://tamylaa.github.io/trading-portal") {
-        Write-Log "build/index.html contains incorrect asset paths (https://tamylaa.github.io/trading-portal)" "ERROR"
-        throw "Incorrect asset paths in build/index.html"
+function Validate-Redirects {
+    $redirectsPath = Join-Path $PSScriptRoot "public/_redirects"
+    if (-not (Test-Path $redirectsPath)) {
+        throw "public/_redirects is missing. Required for SPA routing on Cloudflare Pages."
     }
-    $checks = @(
-        @{ Pattern = '/static/js/main\.[a-f0-9]+\.js'; Message = "JavaScript bundle path should be relative" },
-        @{ Pattern = '/static/css/main\.[a-f0-9]+\.css'; Message = "CSS bundle path should be relative" },
-        @{ Pattern = '/assets/favicon.ico'; Message = "Favicon path should be relative" }
-    )
-    foreach ($check in $checks) {
-        if ($content -notmatch "(src|href)\s*=\s*`"($($check.Pattern))`"") {
-            Write-Log $check.Message "ERROR"
-            Write-Log "Actual content: $($content -match '(src|href)\s*=\s*`"/static/[^`"]*`"')" "INFO"
-            throw $check.Message
-        }
-    }
-    Write-Log "build/index.html asset paths are correct" "SUCCESS"
 }
 
-function Create-HeadersFile {
+function Validate-Headers {
     $headersPath = Join-Path $PSScriptRoot "public/_headers"
     $expectedHeaders = @"
 /*
@@ -132,127 +183,99 @@ function Create-HeadersFile {
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
 "@
-    if (-Not (Test-Path $headersPath)) {
+    if (-not (Test-Path $headersPath)) {
         Write-Log "Creating public/_headers for Cloudflare Pages..." "INFO"
         Set-Content -Path $headersPath -Value $expectedHeaders
-        Write-Log "public/_headers created" "SUCCESS"
     } else {
         $currentHeaders = Get-Content $headersPath -Raw
         if ($currentHeaders -ne $expectedHeaders) {
             Write-Log "public/_headers content is outdated. Updating..." "INFO"
             Set-Content -Path $headersPath -Value $expectedHeaders -Force
-            Write-Log "public/_headers updated" "SUCCESS"
-        } else {
-            Write-Log "public/_headers is up to date" "SUCCESS"
         }
     }
 }
 
-try {
-    # Step 1: Clear caches
-    Write-Log "Clearing build and node_modules caches..." "INFO"
-    Remove-Item -Path (Join-Path $PSScriptRoot "build") -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path (Join-Path $PSScriptRoot "node_modules") -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Log "Clearing npm cache..." "INFO"
-    Invoke-CommandWithErrorHandling -Command "npm cache clean --force" -ErrorMessage "Failed to clear npm cache"
-    Write-Log "Clearing CRA/CRACO caches..." "INFO"
-    Remove-Item -Path "$env:TEMP\react-scripts-*" -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path (Join-Path $PSScriptRoot ".craco-cache") -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Log "Caches cleared successfully" "SUCCESS"
+function Install-Dependencies {
+    Invoke-Expression "npm install" -ErrorAction Stop
+    if ($LASTEXITCODE -ne 0) { throw "Failed to install dependencies" }
+}
 
-    # Step 2: Remove pages.config.json
-    Write-Log "Removing pages.config.json (not needed for Cloudflare Pages)..." "INFO"
-    Remove-Item -Path (Join-Path $PSScriptRoot "pages.config.json") -Force -ErrorAction SilentlyContinue
-    Write-Log "pages.config.json removed" "SUCCESS"
-
-    # Step 3: Install dependencies
-    Write-Log "Installing dependencies..." "INFO"
-    Invoke-CommandWithErrorHandling -Command "npm install" -ErrorMessage "Failed to install dependencies"
-    Write-Log "Dependencies installed successfully" "SUCCESS"
-
-    # Step 4: Validate package.json homepage
-    Write-Log "Validating package.json homepage..." "INFO"
-    Validate-Homepage
-
-    # Step 5: Validate public/index.html
-    Write-Log "Validating public/index.html..." "INFO"
-    Validate-PublicIndexHtml
-
-    # Step 6: Validate craco.config.js
-    Write-Log "Validating craco.config.js..." "INFO"
-    Validate-CracoConfig
-
-    # Step 7: Validate public/_redirects
-    Write-Log "Validating public/_redirects..." "INFO"
-    Test-FileExists -FilePath (Join-Path $PSScriptRoot "public/_redirects") -ErrorMessage "public/_redirects is missing. Required for SPA routing on Cloudflare Pages."
-
-    # Step 8: Create public/_headers
-    Write-Log "Checking public/_headers..." "INFO"
-    Create-HeadersFile
-
-    # Step 9: Build the project with PUBLIC_URL set
-    Write-Log "Building the project with PUBLIC_URL=/..." "INFO"
+function Build-Project {
     $env:PUBLIC_URL = "/"
-    Invoke-CommandWithErrorHandling -Command "npm run build" -ErrorMessage "Failed to build the project"
-    Write-Log "Project built successfully" "SUCCESS"
+    Invoke-Expression "npm run build" -ErrorAction Stop
+    if ($LASTEXITCODE -ne 0) { throw "Failed to build the project" }
+}
 
-    # Step 10: Validate build/index.html
-    Write-Log "Validating build/index.html..." "INFO"
-    Validate-BuildIndexHtml
+function Validate-BuildIndexHtml {
+    $buildIndexPath = Join-Path $PSScriptRoot "build/index.html"
+    if (-not (Test-Path $buildIndexPath)) { throw "build/index.html not found" }
+    $content = Get-Content $buildIndexPath -Raw
+    if ($content -match "https://tamylaa.github.io/trading-portal") {
+        throw "build/index.html contains incorrect asset paths (https://tamylaa.github.io/trading-portal)"
+    }
+    $checks = @(
+        @{ Pattern = '/static/js/main\.[a-f0-9]+\.js'; Message = "JavaScript bundle path should be relative" }
+        @{ Pattern = '/static/css/main\.[a-f0-9]+\.css'; Message = "CSS bundle path should be relative" }
+        @{ Pattern = '/assets/favicon.ico'; Message = "Favicon path should be relative" }
+    )
+    foreach ($check in $checks) {
+        if ($content -notmatch "(src|href)\s*=\s*`"($($check.Pattern))`"") {
+            throw $check.Message
+        }
+    }
+}
 
-    # Step 11: Serve the build locally
-    Write-Log "Installing serve globally (if not already installed)..." "INFO"
-    Invoke-CommandWithErrorHandling -Command "npm install -g serve" -ErrorMessage "Failed to install serve globally"
-
-    Write-Log "Serving the build locally on port 3000..." "INFO"
-    # Dynamically find the path to serve.cmd
+function Serve-Build {
+    Write-Log "Installing serve globally (if not already installed)..." "VERBOSE"
+    Invoke-Expression "npm install -g serve" -ErrorAction Stop
     $npmPrefix = & npm config get prefix
     $servePath = Join-Path $npmPrefix "serve.cmd"
-    if (-Not (Test-Path $servePath)) {
-        Write-Log "serve.cmd not found at $servePath. Attempting to find it..." "INFO"
-        $servePath = (Get-ChildItem -Path "C:\Users\Admin" -Filter "serve.cmd" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
-        if (-Not $servePath) {
-            Write-Log "serve.cmd not found on the system. Falling back to local serve installation..." "INFO"
-            # Install serve locally as a fallback
-            Invoke-CommandWithErrorHandling -Command "npm install serve" -ErrorMessage "Failed to install serve locally"
-            $servePath = Join-Path $PSScriptRoot "node_modules\.bin\serve.cmd"
-            if (-Not (Test-Path $servePath)) {
-                Write-Log "serve.cmd not found at $servePath even after local installation" "ERROR"
-                throw "Unable to locate serve.cmd. Please install serve manually and ensure it's accessible."
-            }
-        }
+    if (-not (Test-Path $servePath)) {
+        Write-Log "serve.cmd not found at $servePath. Falling back to local installation..." "INFO"
+        Invoke-Expression "npm install serve" -ErrorAction Stop
+        $servePath = Join-Path $PSScriptRoot "node_modules\.bin\serve.cmd"
+        if (-not (Test-Path $servePath)) { throw "Unable to locate serve.cmd" }
     }
-    Write-Log "Using serve.cmd at $servePath" "INFO"
-    $serveProcess = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "`"$servePath`" build -l 3000" -NoNewWindow -PassThru
-
+    Write-Log "Serving the build locally on port 3000..." "INFO"
+    $script:serveProcess = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "`"$servePath`" build -l 3000" -NoNewWindow -PassThru
     Start-Sleep -Seconds 3
-
-    # Step 12: Open the browser to test
     Write-Log "Opening http://localhost:3000 in your default browser..." "INFO"
     Start-Process "http://localhost:3000"
+}
 
-    # Step 13: Final instructions
-    Write-Log "Build validation passed! 🎉" "SUCCESS"
-    Write-Log "The app is now running at http://localhost:3000. Please verify that it renders correctly." "INFO"
-    Write-Log "If the app renders correctly, the build is ready for Cloudflare Pages deployment." "INFO"
-    Write-Log "To deploy, run the following commands:" "INFO"
-    Write-Log "  git add ." "INFO"
-    Write-Log "  git commit -m 'Prepare build for Cloudflare Pages'" "INFO"
-    Write-Log "  git push origin main" "INFO"
-    Write-Log "After pushing, purge Cloudflare's cache in the dashboard (Caching > Configuration > Purge Everything)." "INFO"
-    Write-Log "Press Ctrl+C to stop the local server and exit." "INFO"
+# Main script logic
+$global:BuildFailed = $false
 
-    while ($true) {
-        Start-Sleep -Seconds 1
-    }
-} catch {
+foreach ($step in $BuildSteps) {
+    Run-Step -Name $step.Name -Action $step.Action -Enabled:$step.Enabled
+}
+
+# Display summary table
+Write-Log "Build Check Summary:" "INFO"
+Write-Host "-----------------------------"
+Write-Host "Step Name`t`tStatus`tError"
+Write-Host "-----------------------------"
+foreach ($result in $StepResults) {
+    $errorMsg = if ($result.Error) { $result.Error } else { "N/A" }
+    Write-Host "$($result.Name.PadRight(20))`t$($result.Status.PadRight(10))`t$errorMsg"
+}
+Write-Host "-----------------------------"
+
+# Final instructions and exit
+if ($global:BuildFailed) {
     Write-Log "Build validation failed. See errors above." "ERROR"
-    if ($serveProcess) {
-        Stop-Process -Id $serveProcess.Id -Force -ErrorAction SilentlyContinue
-    }
+    if ($serveProcess) { Stop-Process -Id $serveProcess.Id -Force -ErrorAction SilentlyContinue }
     exit 1
-} finally {
-    if ($serveProcess) {
-        Stop-Process -Id $serveProcess.Id -Force -ErrorAction SilentlyContinue
+} else {
+    Write-Log "All build checks passed! 🎉" "SUCCESS"
+    if (-not $OnlyStep -and -not $SkipServe) {
+        Write-Log "The app is running at http://localhost:3000. Verify it renders correctly." "INFO"
+        Write-Log "To deploy, run: git add .; git commit -m 'Prepare build'; git push origin main" "INFO"
+        Write-Log "After pushing, purge Cloudflare's cache in the dashboard." "INFO"
+        Write-Log "Press Ctrl+C to stop the local server and exit." "INFO"
+        while ($true) { Start-Sleep -Seconds 1 }
     }
 }
+
+# Cleanup
+if ($serveProcess) { Stop-Process -Id $serveProcess.Id -Force -ErrorAction SilentlyContinue }

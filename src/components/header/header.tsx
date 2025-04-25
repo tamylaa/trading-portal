@@ -30,6 +30,24 @@ const Header: React.FC = () => {
                 <div className="header-center">
                     <span className="header-tagline">Gateway to Global Trading</span>
                 </div>
+                <nav className="header-nav">
+                    <Link
+                        to="/stories/github-cloudflare"
+                        className="header-story-link"
+                        aria-label="Featured Story"
+                    >
+                        <span role="img" aria-label="book" style={{marginRight: '0.5em'}}>📖</span>
+                        <span>Story</span>
+                    </Link>
+                    <Link
+                        to="/stories"
+                        className="header-story-link header-story-link-alt"
+                        aria-label="All Stories & Build Journeys"
+                    >
+                        <span role="img" aria-label="sparkles" style={{marginRight: '0.5em'}}>✨</span>
+                        <span>All Stories</span>
+                    </Link>
+                </nav>
             </div>
         </header>
     );

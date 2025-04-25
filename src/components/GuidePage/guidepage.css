@@ -1,0 +1,162 @@
+/* src/components/GuidePage.css */
+.guide-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+  }
+  
+  .guide-page h1 {
+    font-size: 2.5rem;
+    color: #2563eb;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .guide-page h2 {
+    font-size: 1.8rem;
+    color: #1a4b9b;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+  
+  .clickable-section {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .clickable-section:hover {
+    color: #2563eb;
+  }
+  
+  .guide-page p {
+    margin-bottom: 15px;
+  }
+  
+  .guide-page ul, .guide-page ol {
+    margin-bottom: 15px;
+    padding-left: 20px;
+  }
+  
+  .guide-page li {
+    margin-bottom: 10px;
+  }
+  
+  .guide-page code {
+    background-color: #f0f0f0;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  .guide-page .lesson-learned {
+    background-color: #e6f3ff;
+    padding: 10px;
+    border-left: 4px solid #2563eb;
+    margin-bottom: 15px;
+  }
+  
+  .download-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+  }
+  
+  .download-section a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .download-section a:hover {
+    text-decoration: underline;
+  }
+  
+  .story-list-page.guide-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 16px;
+  }
+  
+  .story-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+  }
+  
+  .story-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    padding: 24px 20px 20px 20px;
+    max-width: 340px;
+    min-width: 260px;
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.2s;
+  }
+  
+  .story-card:hover {
+    box-shadow: 0 4px 24px rgba(37,99,235,0.12);
+    border-color: #2563eb;
+  }
+  
+  .story-card h2 {
+    font-size: 1.4rem;
+    color: #2563eb;
+    margin-bottom: 10px;
+  }
+  
+  .story-card p {
+    color: #444;
+    margin-bottom: 16px;
+    flex-grow: 1;
+  }
+  
+  .story-meta {
+    font-size: 0.92rem;
+    color: #888;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .story-tag {
+    background: #e6f3ff;
+    color: #2563eb;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.85em;
+    margin-left: 6px;
+  }
+  
+  .story-read-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-top: 10px;
+    align-self: flex-start;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  
+  .story-read-btn:hover {
+    background: #1a4b9b;
+  }
