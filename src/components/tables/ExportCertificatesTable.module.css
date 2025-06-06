@@ -1,0 +1,234 @@
+.tableContainer {
+  width: 100%;
+  max-width: 100%;
+  margin: 2rem 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: visible; /* Changed from hidden to visible */
+  border: 1px solid #eaeef2;
+}
+
+.tableWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollContainer {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding: 0;
+  display: block; /* Ensure it's a block element */
+  position: relative; /* For absolute positioning context */
+}
+
+.table {
+  width: 100%;
+  min-width: 100%;
+  border-collapse: collapse; /* Changed from separate to collapse */
+  border-spacing: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  table-layout: auto; /* Changed back to auto to handle content better */
+  margin: 0;
+  word-break: break-word;
+}
+
+/* Table cells */
+.cell {
+  padding: 0.75rem 0.5rem;
+  border: 1px solid #e2e8f0;
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  min-width: 100px;
+}
+
+/* Header cells */
+.headerCell {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #4a5568;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Make sure table cells don't collapse */
+td, th {
+  min-width: 100px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .table thead {
+    display: table;
+    width: 100%;
+  }
+  
+  .table tbody {
+    display: table;
+    width: 100%;
+  }
+}
+
+/* Certificate name cell */
+.certificateName {
+  min-width: 200px;
+  white-space: normal;
+}
+
+/* Ensure table takes full width of container */
+.scrollContainer {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+.headerCell {
+  background-color: #f8fafc;
+  color: #4a5568;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.row {
+  transition: background-color 0.2s ease;
+}
+
+.row:hover {
+  background-color: #f8fafc;
+}
+
+.cell {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: top;
+  color: #4a5568;
+}
+
+.certificateName {
+  font-weight: 600;
+  color: #2d3748;
+  white-space: nowrap;
+}
+
+.inspectionCell {
+  text-align: center;
+  color: #2f855a;
+  font-weight: 500;
+}
+
+.footer {
+  padding: 1.25rem;
+  border-top: 1px solid #edf2f7;
+  background-color: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #718096;
+  flex: 1;
+  min-width: 200px;
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #4a6cf7;
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.downloadBtn:hover {
+  background-color: #3a5bd9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.downloadIcon {
+  font-size: 1.1em;
+}
+
+.note {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 1rem;
+  line-height: 1.4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tableContainer {
+    margin: 2rem -1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    width: calc(100% + 2rem);
+    max-width: calc(100% + 2rem);
+  }
+  
+  td, th {
+    padding: 0.5rem 0.375rem;
+    font-size: 0.75rem;
+  }
+  
+  .downloadBtn {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .tableContainer {
+    box-shadow: none;
+    margin: 0;
+    break-inside: avoid;
+  }
+  
+  .downloadBtn {
+    display: none;
+  }
+  
+  tr {
+    page-break-inside: avoid;
+  }
+}

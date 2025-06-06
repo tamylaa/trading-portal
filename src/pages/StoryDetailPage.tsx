@@ -4,6 +4,7 @@ import { stories } from '../stories/stories';
 import ReactMarkdown from 'react-markdown';
 import { PDFDownloadLink, Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
 import { Helmet } from 'react-helmet';
+import { processMarkdownWithComponents } from '../stories/utils/markdownUtils';
 
 const StoryDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,7 +77,10 @@ const StoryDetailPage: React.FC = () => {
           </div>
         </header>
         <section className="story-content">
-          <ReactMarkdown>{story.content}</ReactMarkdown>
+          {story.metadata?.containsComponents 
+            ? processMarkdownWithComponents(story.content)
+            : <ReactMarkdown>{story.content}</ReactMarkdown>
+          }
         </section>
         <div className="download-section">
           <PDFDownloadLink document={<StoryPDF />} fileName={`${story.id}.pdf`}>

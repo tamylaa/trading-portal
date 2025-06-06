@@ -32,6 +32,14 @@ const Header: React.FC = () => {
                 </div>
                 <nav className="header-nav">
                     <Link
+                        to="/login"
+                        className="header-story-link login-link"
+                        aria-label="Login"
+                    >
+                        <span role="img" aria-label="lock" style={{marginRight: '0.5em'}}>🔒</span>
+                        <span>Login</span>
+                    </Link>
+                    <Link
                         to="/stories/github-cloudflare"
                         className="header-story-link"
                         aria-label="Featured Story"
