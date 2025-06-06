@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '../api/auth';
 
 const AuthContext = createContext();
@@ -18,9 +18,9 @@ export const AuthProvider = ({ children }) => {
       fetchUser();
     }
     setLoading(false);
-  }, []);
+  }, [fetchUser]);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       if (token) {
         const userData = await authApi.getUser(token);
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       setError(error.message || 'Failed to fetch user');
       logout();
     }
-  };
+  }, [token, logout]);
 
   const login = async (contact, country) => {
     try {
@@ -69,12 +69,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('authToken');
-  };
+  }, []);
 
   return (
     <AuthContext.Provider
