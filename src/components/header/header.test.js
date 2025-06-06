@@ -1,10 +1,25 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Header from './header';
 import { SidebarProvider } from '../../contexts/SidebarContext';
 
+// Mock any components or hooks that might cause side effects
+jest.mock('../../hooks/useAuth', () => ({
+  __esModule: true,
+  default: () => ({
+    isAuthenticated: false,
+    loading: false,
+    logout: jest.fn(),
+  }),
+}));
+
 describe('Header Component', () => {
-  test('renders header component', () => {
+  beforeEach(() => {
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+  });
+
+  test('renders header component', async () => {
     render(
       <MemoryRouter>
         <SidebarProvider>
@@ -12,6 +27,12 @@ describe('Header Component', () => {
         </SidebarProvider>
       </MemoryRouter>
     );
-    expect(screen.getByRole('banner')).toBeInTheDocument();
+
+    // Wait for any async operations to complete
+    await waitFor(() => {
+      expect(screen.getByRole('banner')).toBeInTheDocument();
+    });
   });
+
+  // Add more test cases as needed
 });
