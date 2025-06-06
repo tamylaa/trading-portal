@@ -10,15 +10,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem('authToken');
-    if (savedToken) {
-      setToken(savedToken);
-      setIsAuthenticated(true);
-      fetchUser();
-    }
-    setLoading(false);
-  }, [fetchUser]);
+  const logout = useCallback(() => {
+    setToken(null);
+    setUser(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('authToken');
+  }, []);
 
   const fetchUser = useCallback(async () => {
     try {
@@ -32,6 +29,16 @@ export const AuthProvider = ({ children }) => {
       logout();
     }
   }, [token, logout]);
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem('authToken');
+    if (savedToken) {
+      setToken(savedToken);
+      setIsAuthenticated(true);
+      fetchUser();
+    }
+    setLoading(false);
+  }, [fetchUser]);
 
   const login = async (contact, country) => {
     try {
@@ -68,13 +75,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('authToken');
-  }, []);
 
   return (
     <AuthContext.Provider
