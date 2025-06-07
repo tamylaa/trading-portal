@@ -4,7 +4,8 @@ import Header from './header';
 import { SidebarProvider } from '../../contexts/SidebarContext';
 
 // Mock any components or hooks that might cause side effects
-jest.mock('../../hooks/useAuth', () => ({
+jest.mock('../../contexts/AuthContext', () => ({
+  __esModule: true,
   __esModule: true,
   default: () => ({
     isAuthenticated: false,
