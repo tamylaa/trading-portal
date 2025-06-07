@@ -6,6 +6,7 @@ import { SidebarProvider } from './contexts/SidebarContext';
 import { Home, About, Contact, StoryListPage, StoryDetailPage } from './pages';
 import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/auth/Login';
+import BrevoChatWidget from './components/chat/BrevoChatWidget'; // Add this import
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
                 <Route path="login" element={<Login />} />
               </Route>
             </Routes>
+            <BrevoChatWidget /> {/* Add this line */}
           </BrowserRouter>
         </SidebarProvider>
       </AppProvider>

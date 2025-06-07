@@ -5,6 +5,7 @@ import Header from '../components/header/header';
 import Sidebar from '../components/sidebar/sidebar';
 import Footer from '../components/footer/footer';
 import { useSidebar } from '../contexts/SidebarContext';
+import ChatButton from '../components/chat/ChatButton';
 import './MainLayout.css';
 
 const MainLayout: React.FC = () => {
@@ -21,6 +22,7 @@ const MainLayout: React.FC = () => {
                 <Outlet />
             </main>
             <Footer />
+            <ChatButton websiteId={process.env.REACT_APP_BREVO_WEBSITE_ID}/>
         </div>
     );
 };
