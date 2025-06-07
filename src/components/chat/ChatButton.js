@@ -2,7 +2,30 @@ import { useEffect, useState } from 'react';
 import { useBrevoChat } from '../../hooks/useBrevoChat';
 import { useAuth } from '../../contexts/AuthContext';
 
+// Load Brevo script if not already loaded
+const loadBrevoScript = () => {
+  if (typeof window !== 'undefined' && !window.BrevoConversations) {
+    const script = document.createElement('script');
+    script.src = 'https://brevo.com/conversations.js';
+    script.async = true;
+    script.onload = () => {
+      window.BrevoConversations('init', {
+        websiteId: process.env.REACT_APP_BREVO_WEBSITE_ID,
+        theme: {
+          primaryColor: '#000000',
+          secondaryColor: '#ffffff'
+        }
+      });
+    };
+    document.body.appendChild(script);
+  }
+};
+
 const ChatButton = ({ websiteId }) => {
+  // Load Brevo script when component mounts
+  useEffect(() => {
+    loadBrevoScript();
+  }, []);
   const { user } = useAuth();
   const { isLoaded, isChatOpen, showChat, identifyUser } = useBrevoChat(websiteId);
   const [isVisible, setIsVisible] = useState(false);
