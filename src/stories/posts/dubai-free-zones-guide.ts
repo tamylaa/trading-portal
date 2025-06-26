@@ -1,4 +1,3 @@
-import React from 'react';
 import { ensureStory } from '@/stories/ensureStory';
 import { defaultTemplate } from '@/stories/templates/default';
 // Import markdown content for the FAQ section
