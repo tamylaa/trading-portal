@@ -1,5 +1,47 @@
-/*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://brevo.com https://conversations-widget.brevo.com https://tamyla.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://brevo.com https://conversations-widget.brevo.com https://tamyla.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://*.brevo.com https://*.brevo.tech https://tamyla.com; frame-src 'self' https://*.brevo.com; child-src 'self' https://*.brevo.com;
+# Security Headers
+/
+  # Content Security Policy
+  Content-Security-Policy: 
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://brevo.com https://conversations-widget.brevo.com https://tamyla.com;
+    script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://brevo.com https://conversations-widget.brevo.com https://tamyla.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+    img-src 'self' data: https:;
+    font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+    connect-src 'self' 
+      http://127.0.0.1:8787 
+      http://localhost:3000 
+      https://*.brevo.com 
+      https://*.brevo.tech 
+      https://tamyla.com 
+      https://tamyla-auth-staging.workers.dev 
+      https://tamyla-auth.workers.dev;
+    frame-src 'self' https://*.brevo.com;
+    child-src 'self' https://*.brevo.com;
+  
+  # CORS Headers
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
+  Access-Control-Allow-Credentials: true
+  
+  # Security Headers
   X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-*/
+  
+  # Feature Policy (optional, can be adjusted based on needs)
+  Feature-Policy: 
+    accelerometer 'none';
+    camera 'none';
+    geolocation 'none';
+    gyroscope 'none';
+    magnetometer 'none';
+    microphone 'none';
+    payment 'none';
+    usb 'none';
+  
+  # HTTP Strict Transport Security (HSTS) - Be careful with this in development
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
