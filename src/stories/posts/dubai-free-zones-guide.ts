@@ -3,9 +3,7 @@ import { defaultTemplate } from '@/stories/templates/default';
 // Import markdown content for the FAQ section
 import faqMarkdown from '@/stories/content/blog/dubai-free-zones-2025/faq-section';
 
-const content = `# The Ultimate Guide to Choosing the Cheapest and Best Free Zone for a Tech-Driven Shipping and Logistics Company in Dubai (2025)
-
-*Are you a solo entrepreneur launching a tech-driven shipping and logistics company in Dubai, seeking the cheapest and best free zone with co-working spaces that double as company registration points, all while prioritizing public transport connectivity and a co-working budget under AED 750/month?*
+const content = `*Are you a solo entrepreneur launching a tech-driven shipping and logistics company in Dubai, seeking the cheapest and best free zone with co-working spaces that double as company registration points, all while prioritizing public transport connectivity and a co-working budget under AED 750/month?*
 
 Dubai's thriving free zones offer unparalleled opportunities for startups, but navigating the options can be daunting. This comprehensive guide dives deep into 16 free zones, evaluates their affordability, logistics suitability, and transport access, and highlights the Sharjah Research, Technology, and Innovation Park (SRTIP) as the top choice for 2025.
 

@@ -6,9 +6,7 @@ export const spicesExportGuide = ensureStory({
   id: 'exporting-spices-cereals-chennai',
   title: 'Exporting Spices and Cereals from Chennai: A Complete Guide to Mandatory Certifications',
   summary: 'Comprehensive guide on all mandatory certifications, application processes, and compliance requirements for exporting spices and cereals from Chennai, India.',
-  content: `# Exporting Spices and Cereals from Chennai
-
-A comprehensive guide to mandatory certifications and export requirements for Chennai-based spice and cereal exporters.
+  content: `A comprehensive guide to mandatory certifications and export requirements for Chennai-based spice and cereal exporters.
 
 ## Table of Contents
 - [Introduction](#introduction)

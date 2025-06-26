@@ -12,9 +12,7 @@ export const brevoChatIntegration = ensureStory({
   id: 'brevo-chat-integration',
   title: 'Integrating Brevo Chat in React: Solving CSP and Deployment Challenges',
   summary: 'Comprehensive guide on resolving Content Security Policy (CSP) and deployment issues when integrating Brevo chat widget in a production React application.',
-  content: `# Integrating Brevo Chat in React
-
-A technical guide to implementing Brevo's chat widget with proper CSP configuration and deployment best practices for React applications.
+  content: `A technical guide to implementing Brevo's chat widget with proper CSP configuration and deployment best practices for React applications.
 
 ## Table of Contents
 - [Introduction](#introduction)

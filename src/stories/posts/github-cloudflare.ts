@@ -4,9 +4,7 @@ export const githubCloudflareGuide = ensureStory({
   id: 'github-cloudflare',
   title: "How to Launch Your First Page Using GitHub + Cloudflare Pages: A Build in Public Journey",
   summary: "A checklist-driven, step-by-step tutorial to help you launch your first page with confidence.",
-  content: `# How to Launch Your First Page Using GitHub + Cloudflare Pages: A Build in Public Journey
-
-Launching a website can feel daunting, especially when you're navigating tools like GitHub and Cloudflare Pages for the first time. This guide will walk you through the exact steps to deploy a secure, fast, and SEO-optimized website using GitHub and Cloudflare Pages.
+  content: `Launching a website can feel daunting, especially when you're navigating tools like GitHub and Cloudflare Pages for the first time. This guide will walk you through the exact steps to deploy a secure, fast, and SEO-optimized website using GitHub and Cloudflare Pages.
 
 ## Prerequisites
 - A GitHub account
