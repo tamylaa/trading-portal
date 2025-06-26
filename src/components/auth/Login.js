@@ -17,15 +17,26 @@ const Login = () => {
     setLoading(true);
     
     try {
-      const response = await login(contact, country);
+      // Determine which contact method was used (email or phone)
+      const contactValue = contact.email || contact.phone;
+      if (!contactValue) {
+        throw new Error('Please enter an email or phone number');
+      }
+      
+      const response = await login({ contact: contactValue, country });
       if (response?.otpId) {
         setOtpId(response.otpId);
-        setOtp(response.otp); // Set the OTP for testing
+        // In development, log the OTP if it's returned for testing
+        if (process.env.NODE_ENV === 'development' && response.otp) {
+          console.log('OTP for testing:', response.otp);
+          setOtp(response.otp);
+        }
       } else {
-        throw new Error('Invalid OTP response');
+        throw new Error('Failed to get OTP ID from server');
       }
     } catch (err) {
-      setError(err.message);
+      console.error('Error in handleContactSubmit:', err);
+      setError(err.message || 'Failed to send OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -37,12 +48,18 @@ const Login = () => {
     setLoading(true);
     
     try {
-      if (!otpId || !otp) {
-        throw new Error('OTP ID and OTP are required');
+      if (!otpId) {
+        throw new Error('Session expired. Please request a new OTP.');
       }
+      if (!otp || otp.length < 6) {
+        throw new Error('Please enter a valid 6-digit OTP');
+      }
+      
       await verifyOTP(otpId, otp);
+      // On successful verification, the AuthContext will handle the redirect
     } catch (err) {
-      setError(err.message);
+      console.error('Error in handleOtpSubmit:', err);
+      setError(err.message || 'Failed to verify OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -63,32 +80,49 @@ const Login = () => {
             <div className="form-group">
               <label>Email or Phone</label>
               <div className="contact-options">
-                <div className="email-option">
+                <div className="email-option" style={{ marginBottom: '10px' }}>
                   <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="your.email@example.com"
                     value={contact.email}
-                    onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                    onChange={(e) => setContact({ email: e.target.value, phone: '' })}
+                    className={contact.phone ? '' : 'active'}
+                    disabled={loading}
                   />
                 </div>
-                <div className="phone-option">
-                  <select
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                  >
-                    <option value="IN">+91 (India)</option>
-                    <option value="US">+1 (USA)</option>
-                  </select>
-                  <input
-                    type="tel"
-                    placeholder="Phone"
-                    value={contact.phone}
-                    onChange={(e) => setContact({ ...contact, phone: e.target.value })}
-                  />
+                <div className="divider">
+                  <span>OR</span>
+                </div>
+                <div className="phone-option" style={{ marginTop: '10px' }}>
+                  <div className="phone-input-group">
+                    <select
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      disabled={loading}
+                      className="country-select"
+                    >
+                      <option value="IN">+91 (India)</option>
+                      <option value="US">+1 (USA)</option>
+                      <option value="UK">+44 (UK)</option>
+                      <option value="AE">+971 (UAE)</option>
+                    </select>
+                    <input
+                      type="tel"
+                      placeholder="Phone number"
+                      value={contact.phone}
+                      onChange={(e) => setContact({ phone: e.target.value, email: '' })}
+                      disabled={loading}
+                      className={contact.email ? '' : 'active'}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-            <button type="submit" disabled={loading}>
+            <button 
+              type="submit" 
+              disabled={loading || (!contact.email && !contact.phone)}
+              className={`submit-button ${loading ? 'loading' : ''}`}
+            >
               {loading ? 'Sending OTP...' : 'Send OTP'}
             </button>
           </form> : 

@@ -5,6 +5,36 @@ const API_BASE_URL = process.env.NODE_ENV === 'development'
   : 'https://tamyla-auth-staging.workers.dev';  // Use the actual Cloudflare Worker URL
 
 export const authApi = {
+  requestOTP: async ({ contact, country = 'IN' }) => {
+    try {
+      // Determine if the contact is an email or phone number
+      const isEmail = contact.includes('@');
+      const payload = isEmail 
+        ? { email: contact }
+        : { phone: contact, countryCode: country };
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/auth/request-otp`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          withCredentials: true
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('OTP Request Error:', error.response?.data || error.message);
+      const errorMessage = error.response?.data?.message || 
+                         error.response?.statusText || 
+                         error.message || 
+                         'Failed to send OTP';
+      throw new Error(errorMessage);
+    }
+  },
+  
   login: async (email, useOtp = false) => {
     try {
       const response = await axios.post(
@@ -27,15 +57,27 @@ export const authApi = {
     }
   },
 
-  verifyOTP: async (email, otp) => {
+  verifyOTP: async (otpId, otp) => {
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/auth/verify-otp`,
-        { email, otp }
+        { otpId, otp },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          withCredentials: true
+        }
       );
       return response.data;
     } catch (error) {
-      throw new Error('Failed to verify OTP');
+      console.error('OTP Verification Error:', error.response?.data || error.message);
+      const errorMessage = error.response?.data?.message || 
+                         error.response?.statusText || 
+                         error.message || 
+                         'Failed to verify OTP';
+      throw new Error(errorMessage);
     }
   },
 

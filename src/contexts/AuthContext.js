@@ -40,17 +40,28 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, [fetchUser]);
 
-  const login = async (contact, country) => {
+  const login = async ({ contact, country = 'IN' }) => {
     try {
       setLoading(true);
       setError(null);
+      
+      // Validate contact is not empty
+      if (!contact) {
+        throw new Error('Email or phone number is required');
+      }
+      
       const response = await authApi.requestOTP({ contact, country });
       console.log('OTP Response:', response);
+      
+      if (!response.otpId) {
+        throw new Error('Invalid response from server: Missing OTP ID');
+      }
+      
       return response;
     } catch (error) {
       console.error('Login failed:', error);
-      const errorMessage = error.message || 
-                         error.response?.data?.message || 
+      const errorMessage = error.response?.data?.message || 
+                         error.message || 
                          'Failed to request OTP';
       setError(errorMessage);
       throw new Error(errorMessage);
@@ -62,15 +73,34 @@ export const AuthProvider = ({ children }) => {
   const verifyOTP = async (otpId, otp) => {
     try {
       setError(null);
-      const response = await authApi.verifyOTP({ otpId, otp });
-      setToken(response.token);
+      setLoading(true);
+      
+      if (!otpId || !otp) {
+        throw new Error('OTP ID and OTP are required');
+      }
+      
+      const response = await authApi.verifyOTP(otpId, otp);
+      
+      if (!response.token) {
+        throw new Error('Invalid response from server: Missing authentication token');
+      }
+      
+      // Store the token and update auth state
       localStorage.setItem('authToken', response.token);
+      setToken(response.token);
       setIsAuthenticated(true);
+      
+      // Fetch user data
       await fetchUser();
+      
       return response;
     } catch (error) {
       console.error('OTP verification failed:', error);
-      throw error;
+      const errorMessage = error.response?.data?.message || 
+                         error.message || 
+                         'Failed to verify OTP';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext", "es2015"],
+    "target": "es2017",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["dom", "dom.iterable", "esnext", "es2017"],
     "baseUrl": "src",
     "paths": {
       "@/*": ["./*"],
-      "@services/*": ["services/*"], 
+      "@services/*": ["services/*"],
       "@components/*": ["components/*"],
       "@styles/*": ["styles/*"],
       "@utils/*": ["utils/*"]
@@ -18,15 +20,23 @@
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "types": ["node", "jest", "react"],
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/types"
+  ],
   "exclude": ["node_modules", "build", "dist"]
 }

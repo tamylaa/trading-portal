@@ -6,16 +6,21 @@ import { useAuth } from '../../contexts/AuthContext';
 const loadBrevoScript = () => {
   if (typeof window !== 'undefined' && !window.BrevoConversations) {
     const script = document.createElement('script');
-    script.src = 'https://brevo.com/conversations.js';
+    script.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
     script.async = true;
     script.onload = () => {
-      window.BrevoConversations('init', {
-        websiteId: process.env.REACT_APP_BREVO_WEBSITE_ID,
-        theme: {
-          primaryColor: '#000000',
-          secondaryColor: '#ffffff'
-        }
-      });
+      if (window.BrevoConversations) {
+        window.BrevoConversations('init', {
+          websiteId: process.env.REACT_APP_BREVO_WEBSITE_ID,
+          theme: {
+            primaryColor: '#000000',
+            secondaryColor: '#ffffff'
+          }
+        });
+      }
+    };
+    script.onerror = (error) => {
+      console.error('Failed to load Brevo chat widget:', error);
     };
     document.body.appendChild(script);
   }

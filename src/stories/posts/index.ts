@@ -2,11 +2,13 @@
 import { spicesExportGuide } from '@/stories/posts/spices-export-guide';
 import { githubCloudflareGuide } from '@/stories/posts/github-cloudflare';
 import { brevoChatIntegration } from '@/stories/posts/brevo-chat-integration';
+import { dubaiFreeZonesGuide } from '@/stories/posts/dubai-free-zones-guide';
 
 export const posts = [  
   spicesExportGuide,
   githubCloudflareGuide,
-  brevoChatIntegration
+  brevoChatIntegration,
+  dubaiFreeZonesGuide
   // Add new posts here
 ];
 

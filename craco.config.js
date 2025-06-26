@@ -12,6 +12,14 @@ module.exports = {
     configure: (webpackConfig) => {
       // Explicitly set publicPath to root
       webpackConfig.output.publicPath = '/';
+      
+      // Add rule for markdown files
+      webpackConfig.module.rules.push({
+        test: /\.md(\?raw)?$/,
+        use: 'raw-loader',
+        type: 'javascript/auto',
+      });
+      
       return webpackConfig;
     }
   }
