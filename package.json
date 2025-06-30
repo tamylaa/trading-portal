@@ -15,6 +15,7 @@
     "@types/axios": "^0.9.36",
     "axios": "^1.9.0",
     "crisp-chat": "^1.0.0",
+    "engagekit": "file:../engagekit",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",

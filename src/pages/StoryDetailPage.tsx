@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { stories } from '../stories/stories';
+import { stories, Story } from '../stories/stories';
 import ReactMarkdown from 'react-markdown';
 import { PDFDownloadLink, Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
 import { Helmet } from 'react-helmet';
@@ -8,7 +8,40 @@ import { processMarkdownWithComponents } from '../stories/utils/markdownUtils';
 
 const StoryDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const story = stories.find(s => s.id === id);
+  const story = stories.find((s: Story) => s.id === id);
+
+  // Initialize EngageKit when component mounts
+  useEffect(() => {
+    // Check if EngageKit is available
+    if (typeof window !== 'undefined' && window.EngageKit) {
+      console.log('Initializing EngageKit in StoryDetailPage');
+      window.EngageKit.init({
+        accountId: 'trading-portal-demo',
+        modules: {
+          highlighter: {
+            enabled: true,
+            highlightColor: '#ffeb3b',
+            minSelectionLength: 3,
+            showToolbar: true,
+            toolbarPosition: 'above',
+          },
+          readingProgress: {
+            enabled: true,
+            height: '4px',
+            color: '#4CAF50',
+            zIndex: 9999,
+          },
+        },
+      });
+    } else {
+      console.warn('EngageKit not found. Make sure the EngageKit script is loaded.');
+    }
+
+    // Cleanup function
+    return () => {
+      // Cleanup if needed when component unmounts
+    };
+  }, [id]); // Re-run effect if story ID changes
 
   if (!story) {
     return <div className="story-not-found">Story not found. <Link to="/stories">Back to stories</Link></div>;
@@ -22,16 +55,22 @@ const StoryDetailPage: React.FC = () => {
     text: { marginBottom: 5 },
   });
 
-  const StoryPDF = () => (
-    <Document>
-      <Page style={pdfStyles.page}>
-        <Text style={pdfStyles.title}>{story.title}</Text>
-        <Text style={pdfStyles.text}>{story.summary}</Text>
-        <Text style={pdfStyles.text}>{story.content}</Text>
-        {story.grokUrl && <Text style={pdfStyles.text}>See more: {story.grokUrl}</Text>}
-      </Page>
-    </Document>
-  );
+  const StoryPDF = () => {
+    if (!story) return null;
+    
+    return (
+      <Document>
+        <Page style={pdfStyles.page}>
+          <Text style={pdfStyles.title}>{story.title}</Text>
+          <Text style={pdfStyles.text}>{story.summary}</Text>
+          <Text style={pdfStyles.text}>{story.content}</Text>
+          {'grokUrl' in story && story.grokUrl && (
+            <Text style={pdfStyles.text}>See more: {story.grokUrl}</Text>
+          )}
+        </Page>
+      </Document>
+    );
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
