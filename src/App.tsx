@@ -11,10 +11,10 @@ import EngageKitInitializer from './components/engagekit/EngageKitInitializer';
 
 const App = () => {
   return (
-    <AuthProvider>
-      <AppProvider>
-        <SidebarProvider>
-          <BrowserRouter basename={process.env.PUBLIC_URL}>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <AuthProvider>
+        <AppProvider>
+          <SidebarProvider>
             <Routes>
               <Route path="/" element={<MainLayout />}>
                 <Route index element={<Home />} />
@@ -27,10 +27,10 @@ const App = () => {
             </Routes>
             <BrevoChatWidget />
             <EngageKitInitializer />
-          </BrowserRouter>
-        </SidebarProvider>
-      </AppProvider>
-    </AuthProvider>
+          </SidebarProvider>
+        </AppProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 };
 

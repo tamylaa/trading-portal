@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
@@ -15,6 +15,34 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const verifyMagicLink = useCallback(async (token) => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const { success, token: authToken, user } = await authApi.verifyMagicLink(token);
+      
+      if (success && authToken) {
+        localStorage.setItem('authToken', authToken);
+        setCurrentUser(user);
+        
+        // Redirect to dashboard or intended URL
+        const from = location.state?.from?.pathname || '/dashboard';
+        navigate(from, { replace: true });
+        
+        return { success: true, user };
+      } else {
+        throw new Error('Invalid or expired magic link');
+      }
+    } catch (err) {
+      console.error('Magic link verification failed:', err);
+      setError(err.message || 'Failed to verify magic link');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate, location.state]);
+
   // Check for existing session on initial load
   useEffect(() => {
     checkAuthStatus();
@@ -28,7 +56,7 @@ export function AuthProvider({ children }) {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [location]);
+  }, [location, verifyMagicLink]);
 
   const checkAuthStatus = async () => {
     try {
@@ -65,34 +93,6 @@ export function AuthProvider({ children }) {
       console.error('Magic link request failed:', err);
       setError(err.message || 'Failed to send magic link');
       throw err;
-    }
-  };
-
-  const verifyMagicLink = async (token) => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      const { success, token: authToken, user } = await authApi.verifyMagicLink(token);
-      
-      if (success && authToken) {
-        localStorage.setItem('authToken', authToken);
-        setCurrentUser(user);
-        
-        // Redirect to dashboard or intended URL
-        const from = location.state?.from?.pathname || '/dashboard';
-        navigate(from, { replace: true });
-        
-        return { success: true, user };
-      } else {
-        throw new Error('Invalid or expired magic link');
-      }
-    } catch (err) {
-      console.error('Magic link verification failed:', err);
-      setError(err.message || 'Failed to verify magic link');
-      throw err;
-    } finally {
-      setLoading(false);
     }
   };
 
