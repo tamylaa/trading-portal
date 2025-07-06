@@ -1,65 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
 
 const Login = () => {
-  const [contact, setContact] = useState({ email: '', phone: '' });
-  const [country, setCountry] = useState('IN');
-  const [otpId, setOtpId] = useState('');
-  const [otp, setOtp] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, verifyOTP } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const { requestMagicLink, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  const handleContactSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    
-    try {
-      // Determine which contact method was used (email or phone)
-      const contactValue = contact.email || contact.phone;
-      if (!contactValue) {
-        throw new Error('Please enter an email or phone number');
-      }
-      
-      const response = await login({ contact: contactValue, country });
-      if (response?.otpId) {
-        setOtpId(response.otpId);
-        // In development, log the OTP if it's returned for testing
-        if (process.env.NODE_ENV === 'development' && response.otp) {
-          console.log('OTP for testing:', response.otp);
-          setOtp(response.otp);
-        }
-      } else {
-        throw new Error('Failed to get OTP ID from server');
-      }
-    } catch (err) {
-      console.error('Error in handleContactSubmit:', err);
-      setError(err.message || 'Failed to send OTP. Please try again.');
-    } finally {
-      setLoading(false);
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
     }
-  };
+  }, [isAuthenticated, navigate]);
 
-  const handleOtpSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     
     try {
-      if (!otpId) {
-        throw new Error('Session expired. Please request a new OTP.');
-      }
-      if (!otp || otp.length < 6) {
-        throw new Error('Please enter a valid 6-digit OTP');
+      if (!email) {
+        throw new Error('Email is required');
       }
       
-      await verifyOTP(otpId, otp);
-      // On successful verification, the AuthContext will handle the redirect
+      if (isSignUp && !name) {
+        throw new Error('Name is required for sign up');
+      }
+      
+      await requestMagicLink(email, isSignUp ? name : undefined);
+      setMagicLinkSent(true);
     } catch (err) {
-      console.error('Error in handleOtpSubmit:', err);
-      setError(err.message || 'Failed to verify OTP. Please try again.');
+      console.error('Authentication error:', err);
+      setError(err.message || 'Failed to send magic link. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -68,79 +47,95 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2>Sign In</h2>
+        <h2>{isSignUp ? 'Create Account' : 'Sign In'}</h2>
+        
         {error && (
           <div className="error-message">
             {error}
           </div>
         )}
-        
-        {!otpId ? 
-          <form onSubmit={handleContactSubmit}>
-            <div className="form-group">
-              <label>Email or Phone</label>
-              <div className="contact-options">
-                <div className="email-option" style={{ marginBottom: '10px' }}>
-                  <input
-                    type="email"
-                    placeholder="your.email@example.com"
-                    value={contact.email}
-                    onChange={(e) => setContact({ email: e.target.value, phone: '' })}
-                    className={contact.phone ? '' : 'active'}
-                    disabled={loading}
-                  />
-                </div>
-                <div className="divider">
-                  <span>OR</span>
-                </div>
-                <div className="phone-option" style={{ marginTop: '10px' }}>
-                  <div className="phone-input-group">
-                    <select
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                      disabled={loading}
-                      className="country-select"
-                    >
-                      <option value="IN">+91 (India)</option>
-                      <option value="US">+1 (USA)</option>
-                      <option value="UK">+44 (UK)</option>
-                      <option value="AE">+971 (UAE)</option>
-                    </select>
-                    <input
-                      type="tel"
-                      placeholder="Phone number"
-                      value={contact.phone}
-                      onChange={(e) => setContact({ phone: e.target.value, email: '' })}
-                      disabled={loading}
-                      className={contact.email ? '' : 'active'}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+
+        {magicLinkSent ? (
+          <div className="magic-link-sent">
+            <div className="success-icon">✓</div>
+            <h3>Check Your Email</h3>
+            <p>We've sent a magic link to <strong>{email}</strong></p>
+            <p>Click the link to {isSignUp ? 'complete your registration' : 'sign in'}.</p>
             <button 
-              type="submit" 
-              disabled={loading || (!contact.email && !contact.phone)}
-              className={`submit-button ${loading ? 'loading' : ''}`}
+              className="resend-button"
+              onClick={() => {
+                setMagicLinkSent(false);
+                setError('');
+              }}
+              disabled={loading}
             >
-              {loading ? 'Sending OTP...' : 'Send OTP'}
+              {loading ? 'Sending...' : 'Resend Magic Link'}
             </button>
-          </form> : 
-          <form onSubmit={handleOtpSubmit}>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            {isSignUp && (
+              <div className="form-group">
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+            )}
+            
             <div className="form-group">
-              <label>Enter OTP</label>
+              <label>Email Address</label>
               <input
-                type="text"
-                placeholder="Enter 6-digit OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                type="email"
+                placeholder="your.email@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+                autoComplete="email"
               />
             </div>
-            <button type="submit" disabled={loading}>
-              {loading ? 'Verifying OTP...' : 'Verify OTP'}
+
+            <button 
+              type="submit" 
+              className="login-button"
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Continue with Email'}
             </button>
+
+            <div className="switch-auth-mode">
+              {isSignUp ? (
+                <p>
+                  Already have an account?{' '}
+                  <button 
+                    type="button" 
+                    className="text-button"
+                    onClick={() => setIsSignUp(false)}
+                    disabled={loading}
+                  >
+                    Sign In
+                  </button>
+                </p>
+              ) : (
+                <p>
+                  Don't have an account?{' '}
+                  <button 
+                    type="button" 
+                    className="text-button"
+                    onClick={() => setIsSignUp(true)}
+                    disabled={loading}
+                  >
+                    Sign Up
+                  </button>
+                </p>
+              )}
+            </div>
           </form>
-        }
+        )}
       </div>
     </div>
   );

@@ -1,133 +1,129 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const logout = useCallback(() => {
-    setToken(null);
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('authToken');
-  }, []);
-
-  const fetchUser = useCallback(async () => {
-    try {
-      if (token) {
-        const userData = await authApi.getUser(token);
-        setUser(userData);
-      }
-    } catch (error) {
-      console.error('Failed to fetch user:', error);
-      setError(error.message || 'Failed to fetch user');
-      logout();
-    }
-  }, [token, logout]);
-
+  // Check for existing session on initial load
   useEffect(() => {
-    const savedToken = localStorage.getItem('authToken');
-    if (savedToken) {
-      setToken(savedToken);
-      setIsAuthenticated(true);
-      fetchUser();
+    checkAuthStatus();
+    
+    // Check for magic link in URL
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    
+    if (token) {
+      verifyMagicLink(token);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
-    setLoading(false);
-  }, [fetchUser]);
+  }, [location]);
 
-  const login = async ({ contact, country = 'IN' }) => {
+  const checkAuthStatus = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      
-      // Validate contact is not empty
-      if (!contact) {
-        throw new Error('Email or phone number is required');
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setLoading(false);
+        return;
       }
-      
-      const response = await authApi.requestOTP({ contact, country });
-      console.log('OTP Response:', response);
-      
-      if (!response.otpId) {
-        throw new Error('Invalid response from server: Missing OTP ID');
+
+      const { success, user } = await authApi.getCurrentUser(token);
+      if (success) {
+        setCurrentUser(user);
+      } else {
+        // Invalid token, clear it
+        localStorage.removeItem('authToken');
       }
-      
-      return response;
-    } catch (error) {
-      console.error('Login failed:', error);
-      const errorMessage = error.response?.data?.message || 
-                         error.message || 
-                         'Failed to request OTP';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+    } catch (err) {
+      console.error('Auth status check failed:', err);
+      localStorage.removeItem('authToken');
     } finally {
       setLoading(false);
     }
   };
 
-  const verifyOTP = async (otpId, otp) => {
+  const requestMagicLink = async (email, name) => {
     try {
-      setError(null);
+      setError('');
+      const { success, message } = await authApi.requestMagicLink(email, name);
+      if (!success) {
+        throw new Error(message || 'Failed to send magic link');
+      }
+      return { success: true };
+    } catch (err) {
+      console.error('Magic link request failed:', err);
+      setError(err.message || 'Failed to send magic link');
+      throw err;
+    }
+  };
+
+  const verifyMagicLink = async (token) => {
+    try {
       setLoading(true);
+      setError('');
       
-      if (!otpId || !otp) {
-        throw new Error('OTP ID and OTP are required');
+      const { success, token: authToken, user } = await authApi.verifyMagicLink(token);
+      
+      if (success && authToken) {
+        localStorage.setItem('authToken', authToken);
+        setCurrentUser(user);
+        
+        // Redirect to dashboard or intended URL
+        const from = location.state?.from?.pathname || '/dashboard';
+        navigate(from, { replace: true });
+        
+        return { success: true, user };
+      } else {
+        throw new Error('Invalid or expired magic link');
       }
-      
-      const response = await authApi.verifyOTP(otpId, otp);
-      
-      if (!response.token) {
-        throw new Error('Invalid response from server: Missing authentication token');
-      }
-      
-      // Store the token and update auth state
-      localStorage.setItem('authToken', response.token);
-      setToken(response.token);
-      setIsAuthenticated(true);
-      
-      // Fetch user data
-      await fetchUser();
-      
-      return response;
-    } catch (error) {
-      console.error('OTP verification failed:', error);
-      const errorMessage = error.response?.data?.message || 
-                         error.message || 
-                         'Failed to verify OTP';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+    } catch (err) {
+      console.error('Magic link verification failed:', err);
+      setError(err.message || 'Failed to verify magic link');
+      throw err;
     } finally {
       setLoading(false);
     }
+  };
+
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      // Clear local state regardless of API call result
+      localStorage.removeItem('authToken');
+      setCurrentUser(null);
+      navigate('/login');
+    }
+  };
+
+  const value = {
+    currentUser,
+    isAuthenticated: !!currentUser,
+    loading,
+    error,
+    requestMagicLink,
+    verifyMagicLink,
+    logout,
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        user,
-        token,
-        loading,
-        error,
-        login,
-        verifyOTP,
-        logout
-      }}
-    >
-      {children}
+    <AuthContext.Provider value={value}>
+      {!loading && children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export default AuthContext;

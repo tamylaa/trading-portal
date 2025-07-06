@@ -1,5 +1,4 @@
 import { ensureStory } from '@/stories/ensureStory';
-import { defaultTemplate } from '@/stories/templates/default';
 
 const content = `# EngageKit Demo
 
