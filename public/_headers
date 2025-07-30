@@ -1,47 +1,74 @@
-# Security Headers
-/
-  # Content Security Policy
+# Security Headers for all responses
+/*
+  # Security Headers
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  X-XSS-Protection: 1; mode=block
   Content-Security-Policy: 
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://brevo.com https://conversations-widget.brevo.com https://tamyla.com;
-    script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://brevo.com https://conversations-widget.brevo.com https://tamyla.com;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
-    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
-    img-src 'self' data: https:;
-    font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' *.brevo.com *.google-analytics.com *.googletagmanager.com;
+    style-src 'self' 'unsafe-inline' *.googleapis.com *.fontawesome.com *.brevo.com;
+    img-src 'self' data: blob: https: http:;
+    font-src 'self' data: *.gstatic.com *.fontawesome.com;
     connect-src 'self' 
-      http://127.0.0.1:8787 
       http://localhost:3000 
+      http://localhost:3001 
+      ws://localhost:3000 
+      ws://localhost:3001 
       https://*.brevo.com 
-      https://*.brevo.tech 
-      https://tamyla.com 
-      https://tamyla-auth-staging.workers.dev 
-      https://tamyla-auth.workers.dev;
-    frame-src 'self' https://*.brevo.com;
-    child-src 'self' https://*.brevo.com;
+      https://*.tamyla.com 
+      wss://*.brevo.com;
+    frame-src 'self' *.brevo.com;
+    media-src 'self' data:;
+    object-src 'none';
+    base-uri 'self';
   
-  # CORS Headers
-  Access-Control-Allow-Origin: *
+  # CORS Headers for API requests
+  Access-Control-Allow-Origin: ${ALLOWED_ORIGIN}
   Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
   Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
   Access-Control-Allow-Credentials: true
+  Access-Control-Max-Age: 86400
   
-  # Security Headers
-  X-Frame-Options: SAMEORIGIN
-  X-Content-Type-Options: nosniff
-  X-XSS-Protection: 1; mode=block
-  Referrer-Policy: strict-origin-when-cross-origin
+  # Cache control for static assets
+  /static/*
+    Cache-Control: public, max-age=31536000, immutable
   
-  # Feature Policy (optional, can be adjusted based on needs)
-  Feature-Policy: 
-    accelerometer 'none';
-    camera 'none';
-    geolocation 'none';
-    gyroscope 'none';
-    magnetometer 'none';
-    microphone 'none';
-    payment 'none';
-    usb 'none';
+  # No cache for HTML files
+  /*.html
+    Cache-Control: no-cache, no-store, must-revalidate
   
-  # HTTP Strict Transport Security (HSTS) - Be careful with this in development
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  # API routes - allow CORS and credentials
+  /api/*
+    Access-Control-Allow-Origin: ${ALLOWED_ORIGIN}
+    Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+    Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
+    Access-Control-Allow-Credentials: true
+    Vary: Origin
+
+# Development specific headers (when running locally)
+# These will be overridden in production by the server configuration
+# but are useful for local development
+http://localhost:3000/*
+  Access-Control-Allow-Origin: http://localhost:3000
+  Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
+  Access-Control-Allow-Credentials: true
+  Vary: Origin
+
+http://localhost:3001/*
+  Access-Control-Allow-Origin: http://localhost:3000
+  Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
+  Access-Control-Allow-Credentials: true
+  Vary: Origin
+  
+# Production CORS headers
+https://tamyla.com/*
+  Access-Control-Allow-Origin: https://tamyla.com
+  Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
+  Access-Control-Allow-Credentials: true
+  Vary: Origin

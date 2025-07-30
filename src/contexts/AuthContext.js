@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+// src/contexts/AuthContext.js
+import React, { createContext, useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
@@ -15,48 +16,29 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const verifyMagicLink = useCallback(async (token) => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      const { success, token: authToken, user } = await authApi.verifyMagicLink(token);
-      
-      if (success && authToken) {
-        localStorage.setItem('authToken', authToken);
-        setCurrentUser(user);
-        
-        // Redirect to dashboard or intended URL
-        const from = location.state?.from?.pathname || '/dashboard';
-        navigate(from, { replace: true });
-        
-        return { success: true, user };
-      } else {
-        throw new Error('Invalid or expired magic link');
-      }
-    } catch (err) {
-      console.error('Magic link verification failed:', err);
-      setError(err.message || 'Failed to verify magic link');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [navigate, location.state]);
+  // Check if user is authenticated
+  const isAuthenticated = !!currentUser;
 
-  // Check for existing session on initial load
+  // Check if user has completed profile
+  const isProfileComplete = currentUser?.profileComplete;
+
+  // Check for existing session on mount
   useEffect(() => {
     checkAuthStatus();
-    
-    // Check for magic link in URL
+  }, []);
+
+  // Handle magic link verification from URL
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
     
     if (token) {
       verifyMagicLink(token);
       // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
     }
-  }, [location, verifyMagicLink]);
+  }, [location]);
 
   const checkAuthStatus = async () => {
     try {
@@ -66,7 +48,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      const { success, user } = await authApi.getCurrentUser(token);
+      const { success, user } = await authApi.getCurrentUser();
       if (success) {
         setCurrentUser(user);
       } else {
@@ -96,26 +78,98 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const verifyMagicLink = async (token) => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const { success, token: authToken, user } = await authApi.verifyMagicLink(token);
+      
+      if (success && authToken) {
+        localStorage.setItem('authToken', authToken);
+        setCurrentUser(user);
+        
+        // Check if user needs to complete profile
+        const needsProfile = !user.profileComplete;
+        
+        // Redirect based on profile completion
+        const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
+        const from = location.state?.from?.pathname || redirectTo;
+        
+        navigate(from, { replace: true });
+        return { success: true, user };
+      } else {
+        throw new Error('Invalid or expired magic link');
+      }
+    } catch (err) {
+      console.error('Magic link verification failed:', err);
+      setError(err.message || 'Failed to verify magic link');
+      navigate('/login', { 
+        state: { error: err.message },
+        replace: true 
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProfile = async (profileData) => {
+    try {
+      setLoading(true);
+      const { success, user } = await authApi.updateProfile(profileData);
+      if (success) {
+        // Update the current user in state with the returned user data
+        setCurrentUser(prev => ({
+          ...prev,
+          name: user.name || prev.name,
+          profile: {
+            ...prev.profile,
+            phone: user.phone || user.profile?.phone || '',
+            company: user.company || user.profile?.company || '',
+            position: user.position || user.profile?.position || ''
+          },
+          profileComplete: user.profileComplete || false,
+          isEmailVerified: user.isEmailVerified || prev.isEmailVerified
+        }));
+        
+        return { success: true };
+      }
+      return { success: false };
+    } catch (err) {
+      console.error('Profile update failed:', err);
+      setError(err.message || 'Failed to update profile');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
+      setLoading(true);
       await authApi.logout();
-    } catch (err) {
-      console.error('Logout error:', err);
-    } finally {
-      // Clear local state regardless of API call result
-      localStorage.removeItem('authToken');
       setCurrentUser(null);
+      localStorage.removeItem('authToken');
       navigate('/login');
+    } catch (err) {
+      console.error('Logout failed:', err);
+      setError(err.message || 'Failed to log out');
+      throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
   const value = {
     currentUser,
-    isAuthenticated: !!currentUser,
+    isAuthenticated,
+    isProfileComplete,
     loading,
     error,
     requestMagicLink,
     verifyMagicLink,
+    updateProfile,
     logout,
   };
 
