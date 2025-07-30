@@ -1,5 +1,5 @@
 // src/contexts/AuthContext.js
-import React, { createContext, useState, useEffect, useCallback, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 
@@ -38,6 +38,7 @@ export function AuthProvider({ children }) {
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   const checkAuthStatus = async () => {
