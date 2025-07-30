@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { emailApi } from '../../api/email';
 import './ContactSection.css';
 
 const initialForm = { name: '', email: '', message: '' };
@@ -6,16 +7,41 @@ const initialForm = { name: '', email: '', message: '' };
 const ContactSection: React.FC = () => {
   const [form, setForm] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would integrate with backend/email service
-    setSubmitted(true);
-    setForm(initialForm);
+    setLoading(true);
+    setError('');
+
+    try {
+      // Send email using the email service
+      const result = await emailApi.sendContactEmail({
+        name: form.name,
+        email: form.email,
+        subject: 'Contact Form Submission - Trading Portal',
+        message: form.message
+      });
+
+      if (result.success) {
+        setSubmitted(true);
+        setForm(initialForm);
+      } else {
+        setError(result.message || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      setError('Failed to send message. Please try again or contact us directly.');
+      console.error('Contact form error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,6 +59,7 @@ const ContactSection: React.FC = () => {
             onChange={handleChange}
             required
             autoComplete="name"
+            disabled={loading}
           />
 
           <label htmlFor="contact-email">Email</label>
@@ -44,6 +71,7 @@ const ContactSection: React.FC = () => {
             onChange={handleChange}
             required
             autoComplete="email"
+            disabled={loading}
           />
 
           <label htmlFor="contact-message">Message</label>
@@ -54,10 +82,28 @@ const ContactSection: React.FC = () => {
             onChange={handleChange}
             required
             rows={4}
+            disabled={loading}
           />
 
-          <button className="contact-submit" type="submit">Send Message</button>
-          {submitted && <div className="contact-success">Thank you! We’ll be in touch soon.</div>}
+          <button 
+            className="contact-submit" 
+            type="submit" 
+            disabled={loading}
+          >
+            {loading ? 'Sending...' : 'Send Message'}
+          </button>
+          
+          {submitted && (
+            <div className="contact-success">
+              Thank you! We'll be in touch soon.
+            </div>
+          )}
+          
+          {error && (
+            <div className="contact-error">
+              {error}
+            </div>
+          )}
         </form>
         <div className="contact-info">
           <div className="contact-info-block">

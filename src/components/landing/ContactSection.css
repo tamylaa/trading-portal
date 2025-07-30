@@ -118,6 +118,17 @@
   color: #2563eb;
 }
 
+.contact-error {
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
 @media (max-width: 900px) {
   .contact-row {
     flex-direction: column;
