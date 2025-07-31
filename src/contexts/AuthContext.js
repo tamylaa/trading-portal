@@ -124,29 +124,35 @@ export function AuthProvider({ children }) {
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
-      const { success, user } = await authApi.updateProfile(profileData);
-      if (success) {
+      const result = await authApi.updateProfile(profileData);
+      
+      if (result.success && result.user) {
         // Update the current user in state with the returned user data
         setCurrentUser(prev => ({
           ...prev,
-          name: user.name || prev.name,
+          name: result.user.name || prev.name,
+          phone: result.user.phone || '',
+          company: result.user.company || '',
+          position: result.user.position || '',
           profile: {
             ...prev.profile,
-            phone: user.phone || user.profile?.phone || '',
-            company: user.company || user.profile?.company || '',
-            position: user.position || user.profile?.position || ''
+            phone: result.user.phone || '',
+            company: result.user.company || '',
+            position: result.user.position || ''
           },
-          profileComplete: user.profileComplete || false,
-          isEmailVerified: user.isEmailVerified || prev.isEmailVerified
+          profileComplete: result.user.profileComplete || false,
+          isEmailVerified: result.user.isEmailVerified || prev.isEmailVerified
         }));
         
-        return { success: true };
+        console.log('Profile updated successfully in context:', result.user);
+        return { success: true, user: result.user };
       }
-      return { success: false };
+      
+      throw new Error(result.error || 'Failed to update profile');
     } catch (err) {
       console.error('Profile update failed:', err);
       setError(err.message || 'Failed to update profile');
-      throw err;
+      return { success: false, error: err.message };
     } finally {
       setLoading(false);
     }

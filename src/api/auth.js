@@ -204,7 +204,9 @@ export const authApi = {
         throw new Error('No authentication token found');
       }
 
-      const { data } = await authClient.put(
+      console.log('Sending profile update request:', profileData);
+
+      const response = await authClient.put(
         API_CONFIG.AUTH_SERVICE.ENDPOINTS.CURRENT_USER,
         {
           name: profileData.name,
@@ -220,15 +222,32 @@ export const authApi = {
         }
       );
 
-      return {
-        success: true,
-        user: data.user
-      };
+      console.log('Profile update response:', response.data);
+
+      if (response.data.success) {
+        return {
+          success: true,
+          user: response.data.user,
+          message: response.data.message
+        };
+      } else {
+        return {
+          success: false,
+          error: response.data.error || 'Failed to update profile'
+        };
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
+      
+      // Extract error message from response
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.message || 
+                          'Failed to update profile';
+      
       return {
         success: false,
-        error: error.response?.data?.message || 'Failed to update profile'
+        error: errorMessage
       };
     }
   },
