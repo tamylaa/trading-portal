@@ -136,6 +136,33 @@ export const authApi = {
   },
 
   /**
+   * Exchange session token for JWT token (secure magic link flow)
+   * @param {string} sessionToken - Session token from magic link redirect
+   * @returns {Promise<{success: boolean, token: string, user: object}>}
+   */
+  sessionExchange: async (sessionToken) => {
+    try {
+      const response = await authClient.post(
+        '/auth/session-exchange',
+        { sessionToken }
+      );
+
+      // Store the token if present
+      if (response.data?.token) {
+        localStorage.setItem('authToken', response.data.token);
+      }
+
+      return {
+        success: response.data?.success || false,
+        token: response.data?.token,
+        user: response.data?.user
+      };
+    } catch (error) {
+      return handleApiError(error, 'sessionExchange');
+    }
+  },
+
+  /**
    * Get the current authenticated user's profile
    * @returns {Promise<{success: boolean, user: object}>}
    */
