@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
+import { normalizeUserData, prepareProfileDataForAPI, isProfileComplete } from '../utils/userDataNormalizer';
 
 const AuthContext = createContext();
 
@@ -59,7 +60,8 @@ export function AuthProvider({ children }) {
 
       const { success, user } = await authApi.getCurrentUser();
       if (success) {
-        setCurrentUser(user);
+        const normalizedUser = normalizeUserData(user);
+        setCurrentUser(normalizedUser);
       } else {
         // Invalid token, clear it
         localStorage.removeItem('authToken');
@@ -98,12 +100,14 @@ export function AuthProvider({ children }) {
       
       if (success && authToken) {
         localStorage.setItem('authToken', authToken);
-        setCurrentUser(user);
         
-        console.log('AuthContext: Successfully logged in via magic link, user:', user);
+        const normalizedUser = normalizeUserData(user);
+        setCurrentUser(normalizedUser);
+        
+        console.log('AuthContext: Successfully logged in via magic link, user:', normalizedUser);
         
         // Check if user needs to complete profile
-        const needsProfile = requiresProfileCompletion || !user.profileComplete;
+        const needsProfile = requiresProfileCompletion || !isProfileComplete(normalizedUser);
         
         // Redirect based on profile completion
         const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
@@ -140,23 +144,13 @@ export function AuthProvider({ children }) {
       if (success && authToken) {
         localStorage.setItem('authToken', authToken);
         
-        // Ensure user data has both top-level and nested profile structure
-        const normalizedUser = {
-          ...user,
-          profile: {
-            ...user.profile,
-            phone: user.phone || user.profile?.phone || '',
-            company: user.company || user.profile?.company || '',
-            position: user.position || user.profile?.position || ''
-          }
-        };
-        
+        const normalizedUser = normalizeUserData(user);
         setCurrentUser(normalizedUser);
         
         console.log('AuthContext: Successfully logged in via session exchange, user:', normalizedUser);
         
         // Check if user needs to complete profile
-        const needsProfile = !user.profileComplete;
+        const needsProfile = !isProfileComplete(normalizedUser);
         
         // Redirect based on profile completion
         const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
@@ -184,28 +178,18 @@ export function AuthProvider({ children }) {
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
-      const result = await authApi.updateProfile(profileData);
+      
+      // Prepare data for API using normalizer
+      const apiProfileData = prepareProfileDataForAPI(profileData);
+      const result = await authApi.updateProfile(apiProfileData);
       
       if (result.success && result.user) {
-        // Update the current user in state with the returned user data
-        setCurrentUser(prev => ({
-          ...prev,
-          name: result.user.name || prev.name,
-          phone: result.user.phone || '',
-          company: result.user.company || '',
-          position: result.user.position || '',
-          profile: {
-            ...prev.profile,
-            phone: result.user.phone || '',
-            company: result.user.company || '',
-            position: result.user.position || ''
-          },
-          profileComplete: result.user.profileComplete || false,
-          isEmailVerified: result.user.isEmailVerified || prev.isEmailVerified
-        }));
+        // Normalize the returned user data
+        const normalizedUser = normalizeUserData(result.user);
+        setCurrentUser(normalizedUser);
         
-        console.log('Profile updated successfully in context:', result.user);
-        return { success: true, user: result.user };
+        console.log('Profile updated successfully in context:', normalizedUser);
+        return { success: true, user: normalizedUser };
       }
       
       throw new Error(result.error || 'Failed to update profile');
