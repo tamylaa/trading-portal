@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!currentUser;
 
   // Check if user has completed profile
-  const isProfileComplete = currentUser?.profileComplete;
+  const userProfileComplete = currentUser?.profileComplete;
 
   // Check for existing session on mount
   useEffect(() => {
@@ -244,7 +244,7 @@ export function AuthProvider({ children }) {
   const value = {
     currentUser,
     isAuthenticated,
-    isProfileComplete,
+    isProfileComplete: userProfileComplete,
     loading,
     error,
     requestMagicLink,
