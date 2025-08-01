@@ -150,7 +150,15 @@ export function AuthProvider({ children }) {
         console.log('AuthContext: Successfully logged in via session exchange, user:', normalizedUser);
         
         // Check if user needs to complete profile
+        console.log('AuthContext: Checking profile completion for:', {
+          name: normalizedUser.name,
+          phone: normalizedUser.phone,
+          company: normalizedUser.company,
+          position: normalizedUser.position,
+          profileComplete: normalizedUser.profileComplete
+        });
         const needsProfile = !isProfileComplete(normalizedUser);
+        console.log('AuthContext: isProfileComplete returned:', !needsProfile, 'needsProfile:', needsProfile);
         
         // Redirect based on profile completion
         const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
