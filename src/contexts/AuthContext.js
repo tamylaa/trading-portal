@@ -30,11 +30,11 @@ export function AuthProvider({ children }) {
   // Handle magic link verification from URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const sessionToken = params.get('session'); // Changed from 'token' to 'session'
+    const magicLinkToken = params.get('token'); // Magic link token parameter
     
-    if (sessionToken) {
-      console.log('AuthContext: Starting session exchange for token:', sessionToken);
-      exchangeSessionForToken(sessionToken);
+    if (magicLinkToken) {
+      console.log('AuthContext: Starting magic link verification for token:', magicLinkToken);
+      verifyMagicLinkToken(magicLinkToken);
       // Clean up URL
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
@@ -80,14 +80,14 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const exchangeSessionForToken = async (sessionToken) => {
+  const verifyMagicLinkToken = async (token) => {
     try {
       setLoading(true);
       setError('');
       
-      console.log('AuthContext: Exchanging session token for JWT...', sessionToken);
+      console.log('AuthContext: Verifying magic link token...', token);
       
-      const { success, token: authToken, user } = await authApi.sessionExchange(sessionToken);
+      const { success, token: authToken, user, requiresProfileCompletion } = await authApi.verifyMagicLink(token);
       
       if (success && authToken) {
         localStorage.setItem('authToken', authToken);
@@ -96,7 +96,7 @@ export function AuthProvider({ children }) {
         console.log('AuthContext: Successfully logged in via magic link, user:', user);
         
         // Check if user needs to complete profile
-        const needsProfile = !user.profileComplete;
+        const needsProfile = requiresProfileCompletion || !user.profileComplete;
         
         // Redirect based on profile completion
         const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
@@ -106,10 +106,10 @@ export function AuthProvider({ children }) {
         navigate(from, { replace: true });
         return { success: true, user };
       } else {
-        throw new Error('Invalid or expired session token');
+        throw new Error('Invalid or expired magic link token');
       }
     } catch (err) {
-      console.error('AuthContext: Session exchange failed:', err);
+      console.error('AuthContext: Magic link verification failed:', err);
       setError(err.message || 'Failed to complete magic link login');
       navigate('/login', { 
         state: { error: err.message },
@@ -181,7 +181,7 @@ export function AuthProvider({ children }) {
     loading,
     error,
     requestMagicLink,
-    exchangeSessionForToken,
+    verifyMagicLinkToken,
     updateProfile,
     logout,
   };
