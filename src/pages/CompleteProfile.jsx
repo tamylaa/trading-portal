@@ -21,47 +21,41 @@ const CompleteProfile = () => {
 
   // Debug log the location state and current user
   useEffect(() => {
+    console.log('=== COMPLETE PROFILE DEBUG ===');
     console.log('Location state:', location.state);
-    console.log('Current User:', currentUser);
-  }, [location.state, currentUser]);
+    console.log('userData from location:', location.state?.userData);
+    console.log('Current User from context:', currentUser);
+    console.log('Current formData:', formData);
+    console.log('==============================');
+  }, [location.state, currentUser, formData]);
 
   // Initialize form data when component mounts or when user data changes
   useEffect(() => {
-    const initializeFormData = () => {
-      // First try to get data from location state (when coming from Dashboard)
-      const userDataFromState = location.state?.userData;
-      
-      if (userDataFromState) {
-        console.log('Initializing form from location state:', userDataFromState);
-        setFormData({
-          name: userDataFromState.name || '',
-          // Use normalized data structure
-          phone: userDataFromState.phone || '',
-          company: userDataFromState.company || '',
-          position: userDataFromState.position || ''
-        });
-      } 
-      // If no data in location state, use currentUser from auth context
-      else if (currentUser) {
-        console.log('Initializing form from currentUser:', {
-          name: currentUser.name || '',
-          phone: currentUser.phone || '',
-          company: currentUser.company || '',
-          position: currentUser.position || ''
-        });
-        
-        setFormData({
-          name: currentUser.name || '',
-          // Use normalized data structure
-          phone: currentUser.phone || '',
-          company: currentUser.company || '',
-          position: currentUser.position || ''
-        });
-      }
-    };
+    if (!currentUser) {
+      console.log('No currentUser yet, skipping form initialization');
+      return;
+    }
 
-    initializeFormData();
-  }, [currentUser, location.state]);
+    console.log('=== INITIALIZING FORM DATA ===');
+    
+    // Always use currentUser as the source of truth
+    // location.state?.userData might be stale or incomplete
+    const sourceData = currentUser;
+    
+    console.log('Using currentUser as source:', sourceData);
+    
+    const newFormData = {
+      name: sourceData.name || '',
+      phone: sourceData.phone || '',
+      company: sourceData.company || '',
+      position: sourceData.position || ''
+    };
+    
+    console.log('Setting formData to:', newFormData);
+    setFormData(newFormData);
+    console.log('=================================');
+    
+  }, [currentUser]); // Only depend on currentUser, not location.state
 
   // Redirect if no user is logged in
   useEffect(() => {
