@@ -35,27 +35,27 @@ const CompleteProfile = () => {
         console.log('Initializing form from location state:', userDataFromState);
         setFormData({
           name: userDataFromState.name || '',
-          // Get profile fields from the nested profile object
-          phone: userDataFromState.profile?.phone || '',
-          company: userDataFromState.profile?.company || '',
-          position: userDataFromState.profile?.position || ''
+          // Use normalized data structure
+          phone: userDataFromState.phone || '',
+          company: userDataFromState.company || '',
+          position: userDataFromState.position || ''
         });
       } 
       // If no data in location state, use currentUser from auth context
       else if (currentUser) {
         console.log('Initializing form from currentUser:', {
           name: currentUser.name || '',
-          phone: currentUser.profile?.phone || '',
-          company: currentUser.profile?.company || '',
-          position: currentUser.profile?.position || ''
+          phone: currentUser.phone || '',
+          company: currentUser.company || '',
+          position: currentUser.position || ''
         });
         
         setFormData({
           name: currentUser.name || '',
-          // Get profile fields from the nested profile object
-          phone: currentUser.profile?.phone || '',
-          company: currentUser.profile?.company || '',
-          position: currentUser.profile?.position || ''
+          // Use normalized data structure
+          phone: currentUser.phone || '',
+          company: currentUser.company || '',
+          position: currentUser.position || ''
         });
       }
     };

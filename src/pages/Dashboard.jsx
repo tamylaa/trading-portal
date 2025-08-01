@@ -5,18 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   
   const handleEditProfile = () => {
     console.log('Current User Data:', currentUser);
     
-    // Prepare user data with profile fields from the nested profile object
+    // Prepare user data using normalized structure 
     const userData = {
       name: currentUser?.name || '',
-      phone: currentUser?.profile?.phone || '',
-      company: currentUser?.profile?.company || '',
-      position: currentUser?.profile?.position || '',
+      phone: currentUser?.phone || '',
+      company: currentUser?.company || '',
+      position: currentUser?.position || '',
     };
     
     console.log('Passing to CompleteProfile:', userData);
@@ -58,24 +58,24 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              {currentUser?.profile?.phone && (
+              {currentUser?.phone && (
                 <div className="profile-item">
                   <label>Phone</label>
-                  <div className="profile-value">{currentUser.profile.phone}</div>
+                  <div className="profile-value">{currentUser.phone}</div>
                 </div>
               )}
               
-              {currentUser?.profile?.company && (
+              {currentUser?.company && (
                 <div className="profile-item">
                   <label>Company</label>
-                  <div className="profile-value">{currentUser.profile.company}</div>
+                  <div className="profile-value">{currentUser.company}</div>
                 </div>
               )}
               
-              {currentUser?.profile?.position && (
+              {currentUser?.position && (
                 <div className="profile-item">
                   <label>Position</label>
-                  <div className="profile-value">{currentUser.profile.position}</div>
+                  <div className="profile-value">{currentUser.position}</div>
                 </div>
               )}
             </div>
