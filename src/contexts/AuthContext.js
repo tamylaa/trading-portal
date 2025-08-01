@@ -189,6 +189,21 @@ export function AuthProvider({ children }) {
         setCurrentUser(normalizedUser);
         
         console.log('Profile updated successfully in context:', normalizedUser);
+        
+        // Also refresh user data from API to ensure consistency
+        try {
+          const refreshResult = await authApi.getCurrentUser();
+          if (refreshResult.success) {
+            const refreshedNormalizedUser = normalizeUserData(refreshResult.user);
+            setCurrentUser(refreshedNormalizedUser);
+            console.log('User data refreshed after profile update:', refreshedNormalizedUser);
+            return { success: true, user: refreshedNormalizedUser };
+          }
+        } catch (refreshError) {
+          console.warn('Failed to refresh user data after profile update:', refreshError);
+          // Still return success since the original update succeeded
+        }
+        
         return { success: true, user: normalizedUser };
       }
       

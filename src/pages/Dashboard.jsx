@@ -1,5 +1,5 @@
 // src/pages/Dashboard.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
@@ -8,8 +8,14 @@ const Dashboard = () => {
   const { currentUser, logout, isProfileComplete } = useAuth();
   const navigate = useNavigate();
   
+  // Debug: Log when component renders and user data changes
+  useEffect(() => {
+    console.log('Dashboard component rendered with user:', currentUser);
+  }, [currentUser]);
+  
   const handleEditProfile = () => {
-    console.log('Current User Data:', currentUser);
+    console.log('Current User Data for edit:', currentUser);
+    console.log('Profile complete status:', isProfileComplete);
     
     // Prepare user data using normalized structure 
     const userData = {
@@ -20,6 +26,12 @@ const Dashboard = () => {
     };
     
     console.log('Passing to CompleteProfile:', userData);
+    console.log('Individual field values:', {
+      name: currentUser?.name,
+      phone: currentUser?.phone,
+      company: currentUser?.company,
+      position: currentUser?.position
+    });
     
     navigate('/complete-profile', { 
       state: { 

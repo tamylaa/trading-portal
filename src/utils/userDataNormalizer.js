@@ -12,12 +12,14 @@
 export const normalizeUserData = (user) => {
   if (!user) return null;
 
+  console.log('[normalizeUserData] Input user data:', user);
+
   // Extract profile fields from various possible locations
   const phone = user.phone || user.profile?.phone || '';
   const company = user.company || user.profile?.company || '';
   const position = user.position || user.profile?.position || '';
 
-  return {
+  const normalized = {
     ...user,
     // Ensure top-level fields exist
     phone,
@@ -35,6 +37,9 @@ export const normalizeUserData = (user) => {
     isEmailVerified: user.isEmailVerified || false,
     emailVerified: user.emailVerified || false,
   };
+
+  console.log('[normalizeUserData] Output normalized data:', normalized);
+  return normalized;
 };
 
 /**
