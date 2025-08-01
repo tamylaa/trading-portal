@@ -27,14 +27,21 @@ export function AuthProvider({ children }) {
     checkAuthStatus();
   }, []);
 
-  // Handle magic link verification from URL
+  // Handle magic link verification from URL - support both token and session parameters
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const magicLinkToken = params.get('token'); // Magic link token parameter
+    const token = params.get('token'); // Direct magic link token
+    const sessionToken = params.get('session'); // Session token from auth service redirect
     
-    if (magicLinkToken) {
-      console.log('AuthContext: Starting magic link verification for token:', magicLinkToken);
-      verifyMagicLinkToken(magicLinkToken);
+    if (sessionToken) {
+      console.log('AuthContext: Starting session exchange for session token:', sessionToken);
+      exchangeSessionForToken(sessionToken);
+      // Clean up URL
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    } else if (token) {
+      console.log('AuthContext: Starting direct magic link verification for token:', token);
+      verifyMagicLinkToken(token);
       // Clean up URL
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
@@ -121,6 +128,59 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const exchangeSessionForToken = async (sessionToken) => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      console.log('AuthContext: Exchanging session token for JWT...', sessionToken);
+      
+      const { success, token: authToken, user } = await authApi.sessionExchange(sessionToken);
+      
+      if (success && authToken) {
+        localStorage.setItem('authToken', authToken);
+        
+        // Ensure user data has both top-level and nested profile structure
+        const normalizedUser = {
+          ...user,
+          profile: {
+            ...user.profile,
+            phone: user.phone || user.profile?.phone || '',
+            company: user.company || user.profile?.company || '',
+            position: user.position || user.profile?.position || ''
+          }
+        };
+        
+        setCurrentUser(normalizedUser);
+        
+        console.log('AuthContext: Successfully logged in via session exchange, user:', normalizedUser);
+        
+        // Check if user needs to complete profile
+        const needsProfile = !user.profileComplete;
+        
+        // Redirect based on profile completion
+        const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
+        const from = location.state?.from?.pathname || redirectTo;
+        
+        console.log('AuthContext: Navigating to:', from);
+        navigate(from, { replace: true });
+        return { success: true, user };
+      } else {
+        throw new Error('Invalid or expired session token');
+      }
+    } catch (err) {
+      console.error('AuthContext: Session exchange failed:', err);
+      setError(err.message || 'Failed to complete magic link login');
+      navigate('/login', { 
+        state: { error: err.message },
+        replace: true 
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
@@ -182,6 +242,7 @@ export function AuthProvider({ children }) {
     error,
     requestMagicLink,
     verifyMagicLinkToken,
+    exchangeSessionForToken,
     updateProfile,
     logout,
   };
