@@ -521,4 +521,3 @@ class TamylaContentManager extends HTMLElement {
 
 // Register the component
 customElements.define('tamyla-content-manager', TamylaContentManager);
-//# sourceMappingURL=content-manager.js.map
