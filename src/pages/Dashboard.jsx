@@ -116,7 +116,10 @@ const Dashboard = () => {
               Upload and manage your content files. Upload images, documents, and media for use in your campaigns and communications.
             </p>
             <ContentManager
-              apiBase="http://127.0.0.1:8787/api/v1/content"
+              apiBase={process.env.NODE_ENV === 'production' 
+                ? 'https://content-store.tamyla.workers.dev/api/v1/content'
+                : 'http://127.0.0.1:8787/api/v1/content'
+              }
               showUpload={true}
               showGallery={true}
               showSearch={true}
