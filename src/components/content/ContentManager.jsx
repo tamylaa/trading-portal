@@ -49,89 +49,80 @@ export function ContentManager({
     loadComponent();
   }, [onError]);
 
-  // Set up props and event listeners
+  // Configure the component when it's available
   useEffect(() => {
-    const element = componentRef.current;
-    if (!element) return;
-
-    // Set properties
-    element.apiBase = apiBase;
-    element.authToken = token;
-    element.userContext = currentUser;
-    element.selectionMode = selectionMode;
-    element.showUpload = showUpload;
-    element.showGallery = showGallery;
-    element.showSearch = showSearch;
-    element.maxFileSize = maxFileSize;
+    const component = componentRef.current;
+    if (!component) return;
 
     // Set up event listeners
     const handleContentUploaded = (event) => {
-      if (onContentUploaded) {
-        onContentUploaded(event.detail);
-      }
+      console.log('Content uploaded event:', event.detail);
+      if (onContentUploaded) onContentUploaded(event.detail);
     };
 
     const handleAuthRequired = (event) => {
-      if (onAuthRequired) {
-        onAuthRequired(event.detail);
-      }
+      console.log('Auth required event:', event.detail);
+      if (onAuthRequired) onAuthRequired(event.detail);
     };
 
     const handleError = (event) => {
-      if (onError) {
-        onError(event.detail);
-      }
-    };
-
-    const handleSelectionChanged = (event) => {
-      if (onSelectionChanged) {
-        onSelectionChanged(event.detail);
-      }
+      console.error('Content manager error:', event.detail);
+      if (onError) onError(event.detail);
     };
 
     const handleSearchChanged = (event) => {
-      if (onSearchChanged) {
-        onSearchChanged(event.detail);
-      }
+      console.log('Search changed:', event.detail);
+      if (onSearchChanged) onSearchChanged(event.detail);
     };
 
     const handleFilterChanged = (event) => {
-      if (onFilterChanged) {
-        onFilterChanged(event.detail);
-      }
+      console.log('Filter changed:', event.detail);
+      if (onFilterChanged) onFilterChanged(event.detail);
     };
 
-    element.addEventListener('content-uploaded', handleContentUploaded);
-    element.addEventListener('auth-required', handleAuthRequired);
-    element.addEventListener('content-error', handleError);
-    element.addEventListener('selection-changed', handleSelectionChanged);
-    element.addEventListener('search-changed', handleSearchChanged);
-    element.addEventListener('filter-changed', handleFilterChanged);
+    const handleSelectionChanged = (event) => {
+      console.log('Selection changed:', event.detail);
+      if (onSelectionChanged) onSelectionChanged(event.detail);
+    };
 
+    // Add event listeners
+    component.addEventListener('contentUploaded', handleContentUploaded);
+    component.addEventListener('authRequired', handleAuthRequired);
+    component.addEventListener('error', handleError);
+    component.addEventListener('searchChanged', handleSearchChanged);
+    component.addEventListener('filterChanged', handleFilterChanged);
+    component.addEventListener('selectionChanged', handleSelectionChanged);
+
+    // Cleanup
     return () => {
-      element.removeEventListener('content-uploaded', handleContentUploaded);
-      element.removeEventListener('auth-required', handleAuthRequired);
-      element.removeEventListener('content-error', handleError);
-      element.removeEventListener('selection-changed', handleSelectionChanged);
-      element.removeEventListener('search-changed', handleSearchChanged);
-      element.removeEventListener('filter-changed', handleFilterChanged);
+      component.removeEventListener('contentUploaded', handleContentUploaded);
+      component.removeEventListener('authRequired', handleAuthRequired);
+      component.removeEventListener('error', handleError);
+      component.removeEventListener('searchChanged', handleSearchChanged);
+      component.removeEventListener('filterChanged', handleFilterChanged);
+      component.removeEventListener('selectionChanged', handleSelectionChanged);
     };
-  }, [
-    token, 
-    currentUser, 
-    apiBase, 
-    selectionMode, 
-    showUpload, 
-    showGallery, 
-    showSearch, 
-    maxFileSize,
-    onContentUploaded,
-    onAuthRequired,
-    onError,
-    onSelectionChanged,
-    onSearchChanged,
-    onFilterChanged
-  ]);
+  }, [onContentUploaded, onAuthRequired, onError, onSearchChanged, onFilterChanged, onSelectionChanged]);
+
+  // Update component properties when they change
+  useEffect(() => {
+    const component = componentRef.current;
+    if (!component) return;
+
+    // Set component properties
+    component.apiBase = apiBase;
+    component.selectionMode = selectionMode;
+    component.showUpload = showUpload;
+    component.showGallery = showGallery;
+    component.showSearch = showSearch;
+    component.maxFileSize = maxFileSize;
+
+    // Set authentication data
+    if (currentUser && token) {
+      component.authToken = token;
+      component.currentUser = currentUser;
+    }
+  }, [apiBase, selectionMode, showUpload, showGallery, showSearch, maxFileSize, currentUser, token]);
 
   return (
     <div className={`content-manager-wrapper ${className || ''}`} style={style}>
