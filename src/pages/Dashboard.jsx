@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import ContentManager from '../components/content/ContentManager';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -39,6 +40,22 @@ const Dashboard = () => {
         from: { pathname: '/dashboard' }
       } 
     });
+  };
+
+  // Content Manager event handlers
+  const handleContentUploaded = (content) => {
+    console.log('Content uploaded successfully:', content);
+    // You can add notifications or other actions here
+  };
+
+  const handleAuthRequired = (details) => {
+    console.log('Authentication required:', details);
+    // Could redirect to login or refresh token
+  };
+
+  const handleContentError = (error) => {
+    console.error('Content manager error:', error);
+    // Handle errors gracefully
   };
 
   return (
@@ -91,6 +108,24 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="content-management-section">
+            <h2>Content Library</h2>
+            <p className="section-description">
+              Upload and manage your content files. Upload images, documents, and media for use in your campaigns and communications.
+            </p>
+            <ContentManager
+              apiBase="http://127.0.0.1:8787/api/v1/content"
+              showUpload={true}
+              showGallery={true}
+              showSearch={true}
+              selectionMode={false}
+              onContentUploaded={handleContentUploaded}
+              onAuthRequired={handleAuthRequired}
+              onError={handleContentError}
+              className="dashboard-content-manager"
+            />
           </div>
           
           <div className="dashboard-actions">
