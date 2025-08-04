@@ -2,8 +2,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import ContentManager from '../components/content/ContentManager';
-import { canEnhanceProfile } from '../utils/userDataNormalizer';
+import { ContentManager } from '../components/content/ContentManager';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -43,22 +42,6 @@ const Dashboard = () => {
     });
   };
 
-  // Content Manager event handlers
-  const handleContentUploaded = (content) => {
-    console.log('Content uploaded successfully:', content);
-    // You can add notifications or other actions here
-  };
-
-  const handleAuthRequired = (details) => {
-    console.log('Authentication required:', details);
-    // Could redirect to login or refresh token
-  };
-
-  const handleContentError = (error) => {
-    console.error('Content manager error:', error);
-    // Handle errors gracefully
-  };
-
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
@@ -67,24 +50,6 @@ const Dashboard = () => {
             <h1>Dashboard</h1>
             <p className="welcome-message">Welcome back, {currentUser?.name || 'User'}!</p>
           </div>
-
-          {/* Profile Enhancement Banner */}
-          {canEnhanceProfile(currentUser) && (
-            <div className="profile-enhancement-banner">
-              <div className="banner-content">
-                <div className="banner-text">
-                  <h3>🚀 Enhance Your Profile</h3>
-                  <p>Complete your profile with company and contact details to unlock more features!</p>
-                </div>
-                <button 
-                  onClick={handleEditProfile} 
-                  className="banner-button"
-                >
-                  Complete Profile
-                </button>
-              </div>
-            </div>
-          )}
           
           <div className="profile-section">
             <h2>Profile Information</h2>
@@ -128,26 +93,30 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-
-          <div className="content-management-section">
+          
+          {/* Content Library Section */}
+          <div className="content-section">
             <h2>Content Library</h2>
             <p className="section-description">
               Upload and manage your content files. Upload images, documents, and media for use in your campaigns and communications.
             </p>
-            <ContentManager
-              apiBase={process.env.NODE_ENV === 'production' 
-                ? 'https://content-store-service.tamylatrading.workers.dev/api/v1/content'
-                : 'http://127.0.0.1:8787/api/v1/content'
-              }
-              showUpload={true}
-              showGallery={true}
-              showSearch={true}
-              selectionMode={false}
-              onContentUploaded={handleContentUploaded}
-              onAuthRequired={handleAuthRequired}
-              onError={handleContentError}
-              className="dashboard-content-manager"
-            />
+            
+            <div className="content-manager-container">
+              <ContentManager
+                apiBase="https://content-store-service.tamylatrading.workers.dev/api/v1/content"
+                showUpload={true}
+                showGallery={true}
+                showSearch={true}
+                maxFileSize={25 * 1024 * 1024}
+                onContentUploaded={(content) => {
+                  console.log('Content uploaded:', content);
+                }}
+                onError={(error) => {
+                  console.error('Content manager error:', error);
+                }}
+                className="dashboard-content-manager"
+              />
+            </div>
           </div>
           
           <div className="dashboard-actions">
