@@ -136,7 +136,7 @@ const Dashboard = () => {
             </p>
             <ContentManager
               apiBase={process.env.NODE_ENV === 'production' 
-                ? 'https://content-store.tamyla.workers.dev/api/v1/content'
+                ? 'https://content-store-service.tamylatrading.workers.dev/api/v1/content'
                 : 'http://127.0.0.1:8787/api/v1/content'
               }
               showUpload={true}
