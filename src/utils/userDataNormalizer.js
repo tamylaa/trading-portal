@@ -95,27 +95,12 @@ export const validateProfileData = (profileData) => {
 export const isProfileComplete = (user) => {
   if (!user) return false;
   
-  // Only require name and email for basic profile completion
-  // This allows users to access dashboard without completing all profile fields
   const hasName = user.name && user.name.trim().length > 0;
-  const hasEmail = user.email && user.email.trim().length > 0;
-
-  return hasName && hasEmail;
-};
-
-/**
- * Checks if user profile needs additional details (for optional completion)
- * @param {Object} user - User object to check
- * @returns {boolean} - True if profile could be enhanced
- */
-export const canEnhanceProfile = (user) => {
-  if (!user) return true;
-  
   const hasPhone = (user.phone || user.profile?.phone || '').trim().length > 0;
   const hasCompany = (user.company || user.profile?.company || '').trim().length > 0;
   const hasPosition = (user.position || user.profile?.position || '').trim().length > 0;
 
-  return !(hasPhone && hasCompany && hasPosition);
+  return hasName && hasPhone && hasCompany && hasPosition;
 };
 
 /**
