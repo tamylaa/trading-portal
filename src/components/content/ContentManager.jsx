@@ -27,27 +27,27 @@ export function ContentManager({
 
   // Load the web component
   useEffect(() => {
-    const loadComponent = async () => {
-      try {
-        // Dynamically import the web component from public directory
-        await import('/ui-components/content-manager.js');
-        console.log('✅ Content Manager web component loaded');
-      } catch (error) {
-        console.error('❌ Failed to load content manager component:', error);
-        console.error('Trying alternative approach...');
-        
-        // Fallback: Load via script tag
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = '/ui-components/content-manager.js';
-        script.onload = () => console.log('✅ Content Manager loaded via script tag');
-        script.onerror = (err) => console.error('❌ Script loading failed:', err);
-        document.head.appendChild(script);
+    const loadComponent = () => {
+      // Check if component is already loaded
+      if (customElements.get('tamyla-content-manager')) {
+        console.log('✅ Content Manager already loaded');
+        return;
       }
+
+      // Load via script tag (production-safe approach)
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = `${process.env.PUBLIC_URL || ''}/ui-components/content-manager.js`;
+      script.onload = () => console.log('✅ Content Manager web component loaded');
+      script.onerror = (err) => {
+        console.error('❌ Failed to load content manager component:', err);
+        if (onError) onError(new Error('Failed to load content manager component'));
+      };
+      document.head.appendChild(script);
     };
 
     loadComponent();
-  }, []);
+  }, [onError]);
 
   // Set up props and event listeners
   useEffect(() => {
