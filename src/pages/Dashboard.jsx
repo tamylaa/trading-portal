@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ContentManager from '../components/content/ContentManager';
+import { canEnhanceProfile } from '../utils/userDataNormalizer';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -66,6 +67,24 @@ const Dashboard = () => {
             <h1>Dashboard</h1>
             <p className="welcome-message">Welcome back, {currentUser?.name || 'User'}!</p>
           </div>
+
+          {/* Profile Enhancement Banner */}
+          {canEnhanceProfile(currentUser) && (
+            <div className="profile-enhancement-banner">
+              <div className="banner-content">
+                <div className="banner-text">
+                  <h3>🚀 Enhance Your Profile</h3>
+                  <p>Complete your profile with company and contact details to unlock more features!</p>
+                </div>
+                <button 
+                  onClick={handleEditProfile} 
+                  className="banner-button"
+                >
+                  Complete Profile
+                </button>
+              </div>
+            </div>
+          )}
           
           <div className="profile-section">
             <h2>Profile Information</h2>
