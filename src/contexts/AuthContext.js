@@ -12,6 +12,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ export function AuthProvider({ children }) {
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
+        setToken(null);
         setLoading(false);
         return;
       }
@@ -62,13 +64,16 @@ export function AuthProvider({ children }) {
       if (success) {
         const normalizedUser = normalizeUserData(user);
         setCurrentUser(normalizedUser);
+        setToken(token); // Set the token in state
       } else {
         // Invalid token, clear it
         localStorage.removeItem('authToken');
+        setToken(null);
       }
     } catch (err) {
       console.error('Auth status check failed:', err);
       localStorage.removeItem('authToken');
+      setToken(null);
     } finally {
       setLoading(false);
     }
@@ -100,6 +105,7 @@ export function AuthProvider({ children }) {
       
       if (success && authToken) {
         localStorage.setItem('authToken', authToken);
+        setToken(authToken); // Set token in state
         
         const normalizedUser = normalizeUserData(user);
         setCurrentUser(normalizedUser);
@@ -143,6 +149,7 @@ export function AuthProvider({ children }) {
       
       if (success && authToken) {
         localStorage.setItem('authToken', authToken);
+        setToken(authToken); // Set token in state
         
         const normalizedUser = normalizeUserData(user);
         setCurrentUser(normalizedUser);
@@ -230,6 +237,7 @@ export function AuthProvider({ children }) {
       setLoading(true);
       await authApi.logout();
       setCurrentUser(null);
+      setToken(null); // Clear token from state
       localStorage.removeItem('authToken');
       navigate('/login');
     } catch (err) {
@@ -243,6 +251,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    token,
     isAuthenticated,
     isProfileComplete: userProfileComplete,
     loading,
