@@ -5,7 +5,7 @@ class TamylaContentManager extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     
     // Initialize properties with defaults
-    this._apiBase = 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
+    this._apiBase = 'https://content-store.tamyla.com/api/v1/content';
     this._maxFileSize = 25 * 1024 * 1024;
     
     // Internal state
@@ -17,7 +17,7 @@ class TamylaContentManager extends HTMLElement {
   
   // Property getters and setters for React integration
   get apiBase() {
-    const value = this._apiBase || this.getAttribute('api-base') || 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
+    const value = this._apiBase || this.getAttribute('api-base') || 'https://content-store.tamyla.com/api/v1/content';
     console.log('🔍 Getting apiBase:', value);
     return value;
   }
