@@ -17,7 +17,9 @@ class TamylaContentManager extends HTMLElement {
   
   // Property getters and setters for React integration
   get apiBase() {
-    return this._apiBase || this.getAttribute('api-base') || 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
+    const value = this._apiBase || this.getAttribute('api-base') || 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
+    console.log('🔍 Getting apiBase:', value);
+    return value;
   }
   
   set apiBase(value) {
