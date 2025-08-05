@@ -37,7 +37,7 @@ export function ContentManager({
       // Load via script tag (production-safe approach)
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = `${process.env.PUBLIC_URL || ''}/ui-components/content-manager-fixed.js`;
+      script.src = `${process.env.PUBLIC_URL || ''}/ui-components/content-manager-fixed.js?v=${Date.now()}`;
       script.onload = () => console.log('✅ Content Manager web component loaded');
       script.onerror = (err) => {
         console.error('❌ Failed to load content manager component:', err);
@@ -110,6 +110,7 @@ export function ContentManager({
     if (!component) return;
 
     // Set component properties
+    console.log('🔧 React setting component properties:', { apiBase, selectionMode, showUpload, showGallery, showSearch, maxFileSize });
     component.apiBase = apiBase;
     component.selectionMode = selectionMode;
     component.showUpload = showUpload;
