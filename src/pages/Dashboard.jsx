@@ -6,13 +6,14 @@ import { ContentManager } from '../components/content/ContentManager';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const { currentUser, logout, isProfileComplete } = useAuth();
+  const { currentUser, logout, isProfileComplete, token } = useAuth();
   const navigate = useNavigate();
   
   // Debug: Log when component renders and user data changes
   useEffect(() => {
     console.log('Dashboard component rendered with user:', currentUser);
-  }, [currentUser]);
+    console.log('Dashboard auth token:', token ? 'Token available' : 'No token');
+  }, [currentUser, token]);
   
   const handleEditProfile = () => {
     console.log('Current User Data for edit:', currentUser);

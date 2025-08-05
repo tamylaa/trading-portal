@@ -25,6 +25,16 @@ export function ContentManager({
   const { currentUser, token } = useAuth();
   const componentRef = useRef(null);
 
+  // Debug auth data in ContentManager
+  useEffect(() => {
+    console.log('ContentManager auth data:', { 
+      hasCurrentUser: !!currentUser, 
+      hasToken: !!token,
+      tokenLength: token?.length,
+      userEmail: currentUser?.email 
+    });
+  }, [currentUser, token]);
+
   // Load the web component
   useEffect(() => {
     const loadComponent = () => {
