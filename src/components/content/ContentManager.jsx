@@ -37,7 +37,7 @@ export function ContentManager({
       // Load via script tag (production-safe approach)
       const script = document.createElement('script');
       script.type = 'module';
-      script.src = `${process.env.PUBLIC_URL || ''}/ui-components/content-manager-minimal.js`;
+      script.src = `${process.env.PUBLIC_URL || ''}/ui-components/content-manager-fixed.js`;
       script.onload = () => console.log('✅ Content Manager web component loaded');
       script.onerror = (err) => {
         console.error('❌ Failed to load content manager component:', err);
