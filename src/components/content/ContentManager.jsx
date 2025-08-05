@@ -120,8 +120,18 @@ export function ContentManager({
 
     // Set authentication data
     if (currentUser && token) {
+      console.log('🔑 React setting auth data:', { 
+        hasCurrentUser: !!currentUser, 
+        hasToken: !!token, 
+        tokenLength: token?.length 
+      });
       component.authToken = token;
       component.currentUser = currentUser;
+    } else {
+      console.log('🔑 React auth data missing:', { 
+        hasCurrentUser: !!currentUser, 
+        hasToken: !!token 
+      });
     }
   }, [apiBase, selectionMode, showUpload, showGallery, showSearch, maxFileSize, currentUser, token]);
 
