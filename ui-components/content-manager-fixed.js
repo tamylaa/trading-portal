@@ -283,8 +283,14 @@ class TamylaContentManager extends HTMLElement {
   }
   
   // Property setters for React integration
-  set authToken(token) { this._authToken = token; }
-  get authToken() { return this._authToken; }
+  set authToken(token) { 
+    console.log('🔑 Setting authToken:', token ? 'Token received' : 'No token'); 
+    this._authToken = token; 
+  }
+  get authToken() { 
+    console.log('🔑 Getting authToken:', this._authToken ? 'Token available' : 'No token');
+    return this._authToken; 
+  }
   
   set currentUser(user) { this._currentUser = user; }
   get currentUser() { return this._currentUser; }
