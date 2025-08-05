@@ -5,7 +5,7 @@ class TamylaContentManager extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     
     // Initialize properties
-    this.apiBase = this.getAttribute('api-base') || '/api/content';
+    this.apiBase = this.getAttribute('api-base') || 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
     this.maxFileSize = parseInt(this.getAttribute('max-file-size')) || 25 * 1024 * 1024;
     
     // Internal state
