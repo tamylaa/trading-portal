@@ -4,15 +4,32 @@ class TamylaContentManager extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     
-    // Initialize properties
-    this.apiBase = this.getAttribute('api-base') || 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
-    this.maxFileSize = parseInt(this.getAttribute('max-file-size')) || 25 * 1024 * 1024;
+    // Initialize properties with defaults
+    this._apiBase = 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
+    this._maxFileSize = 25 * 1024 * 1024;
     
     // Internal state
     this.content = [];
     this.isLoading = false;
     this.searchQuery = '';
     this.currentFilter = 'all';
+  }
+  
+  // Property getters and setters for React integration
+  get apiBase() {
+    return this._apiBase || this.getAttribute('api-base') || 'https://content-store-service.tamylatrading.workers.dev/api/v1/content';
+  }
+  
+  set apiBase(value) {
+    this._apiBase = value;
+  }
+  
+  get maxFileSize() {
+    return this._maxFileSize || parseInt(this.getAttribute('max-file-size')) || 25 * 1024 * 1024;
+  }
+  
+  set maxFileSize(value) {
+    this._maxFileSize = value;
   }
   
   connectedCallback() {
@@ -155,6 +172,8 @@ class TamylaContentManager extends HTMLElement {
     const formData = new FormData();
     formData.append('file', file);
     
+    console.log('🔗 Upload API URL:', this.apiBase + '/upload');
+    
     try {
       this.showLoading(true);
       
@@ -184,6 +203,7 @@ class TamylaContentManager extends HTMLElement {
   }
   
   async loadContent() {
+    console.log('🔗 Load API URL:', this.apiBase + '/library');
     this.showLoading(true);
     
     try {
