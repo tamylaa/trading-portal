@@ -21,7 +21,14 @@ class TamylaContentManager extends HTMLElement {
   }
   
   set apiBase(value) {
+    console.log('🔧 Setting apiBase to:', value);
     this._apiBase = value;
+    // Load content when apiBase is set for the first time
+    if (value && !this._initialLoadComplete) {
+      this._initialLoadComplete = true;
+      console.log('🚀 Loading content with apiBase:', value);
+      this.loadContent();
+    }
   }
   
   get maxFileSize() {
@@ -34,7 +41,7 @@ class TamylaContentManager extends HTMLElement {
   
   connectedCallback() {
     this.render();
-    this.loadContent();
+    // Don't load content immediately - wait for React to set apiBase
   }
   
   render() {
