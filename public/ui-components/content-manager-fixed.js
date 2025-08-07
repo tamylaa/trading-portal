@@ -245,24 +245,35 @@ class TamylaContentManager extends HTMLElement {
       return;
     }
     
-    grid.innerHTML = this.content.map(item => `
-      <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
-        <div style="height: 120px; background: #f9fafb; display: flex; align-items: center; justify-content: center;">
-          ${item.category === 'image' 
-            ? '<img src="' + item.file_url + '" alt="' + item.original_filename + '" style="width: 100%; height: 100%; object-fit: cover;">'
-            : '<div style="font-size: 2rem;">📄</div>'
-          }
-        </div>
-        <div style="padding: 0.75rem;">
-          <div style="font-weight: 500; font-size: 0.875rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-            ${item.original_filename}
+    grid.innerHTML = this.content.map(item => {
+      const name = item.original_filename || item.name || 'Unnamed file';
+      const fileUrl = item.file_url || item.url || '';
+      const isImage = (item.category === 'image') || (item.type && item.type.startsWith && item.type.startsWith('image'));
+      const size = (typeof item.file_size === 'number' && !isNaN(item.file_size)) ? this.formatFileSize(item.file_size) : 'Unknown size';
+      let dateStr = 'Unknown date';
+      if (item.created_at) {
+        const d = new Date(item.created_at);
+        if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString();
+      }
+      return `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+          <div style="height: 120px; background: #f9fafb; display: flex; align-items: center; justify-content: center;">
+            ${isImage && fileUrl
+              ? '<img src="' + fileUrl + '" alt="' + name + '" style="width: 100%; height: 100%; object-fit: cover;">'
+              : '<div style="font-size: 2rem;">📄</div>'
+            }
           </div>
-          <div style="font-size: 0.75rem; color: #6b7280;">
-            ${this.formatFileSize(item.file_size)} • ${new Date(item.created_at).toLocaleDateString()}
+          <div style="padding: 0.75rem;">
+            <div style="font-weight: 500; font-size: 0.875rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              ${name}
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280;">
+              ${size} • ${dateStr}
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
   
   formatFileSize(bytes) {
