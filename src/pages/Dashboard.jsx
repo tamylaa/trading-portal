@@ -104,7 +104,7 @@ const Dashboard = () => {
             
             <div className="content-manager-container">
               <ContentManager
-                apiBase="https://content.tamyla.com/"
+                apiBase="https://content.tamyla.com"
                 showUpload={true}
                 showGallery={true}
                 showSearch={true}
