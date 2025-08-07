@@ -1,9 +1,13 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import ContentSharing from './ContentSharing';
+import EmailBlaster from './EmailBlaster';
+import './ContentManager.css';
 
 /**
  * React wrapper for the Tamyla Content Manager Web Component
  * Dynamically loads the web component from the public directory
+ * Enhanced with sharing and email blast capabilities
  */
 export function ContentManager({
   apiBase = '/api/content',
@@ -11,6 +15,8 @@ export function ContentManager({
   showUpload = true,
   showGallery = true,
   showSearch = true,
+  showSharing = true,
+  showEmailBlaster = true,
   maxFileSize = 25 * 1024 * 1024,
   onContentUploaded,
   onAuthRequired,
@@ -18,12 +24,18 @@ export function ContentManager({
   onSearchChanged,
   onFilterChanged,
   onSelectionChanged,
+  onContentShared,
+  onCampaignSent,
   className,
   style,
   ...props
 }) {
   const { currentUser, token } = useAuth();
   const componentRef = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [showContentSharing, setShowContentSharing] = useState(false);
+  const [showEmailBlaster, setShowEmailBlaster] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   // Debug auth data in ContentManager
   useEffect(() => {
@@ -92,6 +104,7 @@ export function ContentManager({
 
     const handleSelectionChanged = (event) => {
       console.log('Selection changed:', event.detail);
+      setSelectedFiles(event.detail.selectedFiles || []);
       if (onSelectionChanged) onSelectionChanged(event.detail);
     };
 
@@ -145,12 +158,118 @@ export function ContentManager({
     }
   }, [apiBase, selectionMode, showUpload, showGallery, showSearch, maxFileSize, currentUser, token]);
 
+  // Notification auto-hide
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  const handleShareFiles = () => {
+    if (selectedFiles.length === 0) {
+      setNotification({ type: 'error', message: 'Please select files to share' });
+      return;
+    }
+    setShowContentSharing(true);
+  };
+
+  const handleEmailBlaster = () => {
+    setShowEmailBlaster(true);
+  };
+
+  const handleContentSharingSuccess = (result) => {
+    setShowContentSharing(false);
+    setNotification({ 
+      type: 'success', 
+      message: result.message || 'Files shared successfully!'
+    });
+    onContentShared?.(result);
+  };
+
+  const handleContentSharingError = (error) => {
+    setNotification({ 
+      type: 'error', 
+      message: error.message || 'Failed to share files'
+    });
+    onError?.(error);
+  };
+
+  const handleEmailBlasterSuccess = (result) => {
+    setShowEmailBlaster(false);
+    setNotification({ 
+      type: 'success', 
+      message: result.message || 'Campaign sent successfully!'
+    });
+    onCampaignSent?.(result);
+  };
+
+  const handleEmailBlasterError = (error) => {
+    setNotification({ 
+      type: 'error', 
+      message: error.message || 'Failed to send campaign'
+    });
+    onError?.(error);
+  };
+
   return (
     <div className={`content-manager-wrapper ${className || ''}`} style={style}>
+      {/* Notification */}
+      {notification && (
+        <div className={`content-notification ${notification.type}`}>
+          <span>{notification.message}</span>
+          <button onClick={() => setNotification(null)}>×</button>
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      {(showSharing || showEmailBlaster) && (
+        <div className="content-actions">
+          {showSharing && (
+            <button
+              onClick={handleShareFiles}
+              disabled={selectedFiles.length === 0}
+              className="share-files-btn"
+              title="Share selected files via email"
+            >
+              📧 Share Files ({selectedFiles.length})
+            </button>
+          )}
+          {showEmailBlaster && (
+            <button
+              onClick={handleEmailBlaster}
+              className="email-blaster-btn"
+              title="Create email campaign"
+            >
+              📢 Email Campaign
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Content Manager Web Component */}
       <tamyla-content-manager
         ref={componentRef}
         {...props}
       />
+
+      {/* Modals */}
+      {showContentSharing && (
+        <ContentSharing
+          selectedFiles={selectedFiles}
+          onClose={() => setShowContentSharing(false)}
+          onSuccess={handleContentSharingSuccess}
+          onError={handleContentSharingError}
+        />
+      )}
+
+      {showEmailBlaster && (
+        <EmailBlaster
+          onClose={() => setShowEmailBlaster(false)}
+          onSuccess={handleEmailBlasterSuccess}
+          onError={handleEmailBlasterError}
+        />
+      )}
     </div>
   );
 }

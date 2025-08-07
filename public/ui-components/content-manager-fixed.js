@@ -5,7 +5,7 @@ class TamylaContentManager extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     
     // Initialize properties with defaults
-    this._apiBase = 'https://content.tamyla.com/api/v1/content';
+    this._apiBase = 'https://content.tamyla.com';
     this._maxFileSize = 25 * 1024 * 1024;
     
     // Internal state
@@ -17,7 +17,7 @@ class TamylaContentManager extends HTMLElement {
   
   // Property getters and setters for React integration
   get apiBase() {
-    const value = this._apiBase || this.getAttribute('api-base') || 'https://content.tamyla.com/api/v1/content';
+    const value = this._apiBase || this.getAttribute('api-base') || 'https://content.tamyla.com';
     console.log('🔍 Getting apiBase:', value);
     return value;
   }
@@ -212,12 +212,12 @@ class TamylaContentManager extends HTMLElement {
   }
   
   async loadContent() {
-    console.log('🔗 Load API URL:', this.apiBase + '/library');
+    console.log('🔗 Load API URL:', this.apiBase + '/files');
     this.showLoading(true);
     
     try {
       const headers = this.authToken ? { 'Authorization': 'Bearer ' + this.authToken } : {};
-      const response = await fetch(this.apiBase + '/library', { headers });
+      const response = await fetch(this.apiBase + '/files', { headers });
       const result = await response.json();
       
       if (result.success) {

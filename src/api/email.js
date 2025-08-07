@@ -179,6 +179,77 @@ export const emailApi = {
   },
 
   /**
+   * Send a content sharing email with file attachments
+   * @param {Object} sharingData - Content sharing data
+   * @param {string} sharingData.to - Recipient email
+   * @param {string} sharingData.subject - Email subject
+   * @param {string} sharingData.message - Personal message
+   * @param {Array} sharingData.files - Array of file objects
+   * @param {string} sharingData.senderName - Sender's name
+   * @param {string} sharingData.senderEmail - Sender's email
+   * @returns {Promise<{success: boolean, message: string}>}
+   */
+  sendContentShare: async (sharingData) => {
+    try {
+      const response = await emailClient.post('/send/content-share', {
+        to: sharingData.to,
+        subject: sharingData.subject,
+        message: sharingData.message,
+        files: sharingData.files,
+        senderName: sharingData.senderName,
+        senderEmail: sharingData.senderEmail,
+        source: 'trading-portal-content-share'
+      });
+
+      return {
+        success: true,
+        message: 'Content sharing email sent successfully',
+        emailId: response.data.emailId
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to send content sharing email'
+      };
+    }
+  },
+
+  /**
+   * Send bulk campaign email
+   * @param {Object} campaignData - Campaign data
+   * @param {Array} campaignData.recipients - Array of recipient emails
+   * @param {string} campaignData.subject - Email subject
+   * @param {string} campaignData.template - Template name
+   * @param {Object} campaignData.data - Template data
+   * @param {Array} campaignData.attachments - File attachments
+   * @returns {Promise<{success: boolean, message: string, results: Array}>}
+   */
+  sendBulkCampaign: async (campaignData) => {
+    try {
+      const response = await emailClient.post('/send/bulk-campaign', {
+        recipients: campaignData.recipients,
+        subject: campaignData.subject,
+        template: campaignData.template || 'campaign',
+        data: campaignData.data,
+        attachments: campaignData.attachments || [],
+        source: 'trading-portal-campaign'
+      });
+
+      return {
+        success: true,
+        message: 'Bulk campaign sent successfully',
+        campaignId: response.data.campaignId,
+        results: response.data.results
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to send bulk campaign'
+      };
+    }
+  },
+
+  /**
    * Get email templates available for user
    * @returns {Promise<{success: boolean, templates: Array}>}
    */
