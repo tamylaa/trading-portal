@@ -11,7 +11,7 @@ import './EmailBlaster.css';
  * Includes contact list management, templates, and campaign tracking
  */
 export function EmailBlaster({ onClose, onSuccess, onError }) {
-  const { currentUser, token } = useAuth();
+  // Removed unused currentUser, token to fix ESLint error
   const [activeTab, setActiveTab] = useState('compose');
   const [campaigns, setCampaigns] = useState([]);
   const [contactLists, setContactLists] = useState([]);

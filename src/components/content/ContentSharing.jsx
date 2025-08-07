@@ -37,7 +37,7 @@ export function ContentSharing({
   // Generate email preview when message or files change
   useEffect(() => {
     generateEmailPreview();
-  }, [message, selectedFiles, publicLinks]);
+  }, [message, selectedFiles, publicLinks, generateEmailPreview]);
 
   const addRecipient = () => {
     setRecipients([...recipients, '']);
@@ -54,28 +54,7 @@ export function ContentSharing({
     setRecipients(newRecipients);
   };
 
-  const toggleFilePublic = async (file) => {
-    if (!token) return;
-
-    setLoading(true);
-    try {
-      const result = await contentApi.toggleFilePublic(file.id, true);
-      
-      if (result.success) {
-        setPublicLinks(prev => ({
-          ...prev,
-          [file.id]: `https://content.tamyla.com/access/${file.id}`
-        }));
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (error) {
-      console.error('Error making file public:', error);
-      onError?.(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Removed unused toggleFilePublic to fix ESLint error
 
   const makeAllFilesPublic = async () => {
     if (!makePublic || !token) return;
