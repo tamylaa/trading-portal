@@ -219,9 +219,9 @@ class TamylaContentManager extends HTMLElement {
       const headers = this.authToken ? { 'Authorization': 'Bearer ' + this.authToken } : {};
       const response = await fetch(this.apiBase + '/files', { headers });
       const result = await response.json();
-      
       if (result.success) {
-        this.content = result.content || [];
+        // Support both 'files' and 'content' keys for compatibility
+        this.content = result.files || result.content || [];
         this.renderGallery();
       }
     } catch (error) {
