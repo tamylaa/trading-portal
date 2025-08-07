@@ -35,13 +35,23 @@ export function ContentSharing({
   }, [selectedFiles, subject]);
 
   // Generate email preview when message or files change
+  const generateEmailPreview = React.useCallback(() => {
+    const fileList = selectedFiles.map(file => {
+      const link = publicLinks[file.id] || `https://content.tamyla.com/access/${file.id}`;
+      return `• ${file.name} - ${link}`;
+    }).join('\n');
+
+    let sender = '';
+    if (currentUser) {
+      sender = currentUser.name ? currentUser.name : (currentUser.email ? currentUser.email : '');
+    }
+    const preview = `\n${message}\n\n${selectedFiles.length > 0 ? `Shared Files:\n${fileList}` : ''}\n\n--\nShared via Tamyla Trading Portal\n${sender}`.trim();
+    setEmailPreview(preview);
+  }, [message, selectedFiles, publicLinks, currentUser]);
+
   useEffect(() => {
     generateEmailPreview();
-  }, [message, selectedFiles, publicLinks, generateEmailPreview]);
-
-  const addRecipient = () => {
-    setRecipients([...recipients, '']);
-  };
+  }, [generateEmailPreview]);
 
   const removeRecipient = (index) => {
     const newRecipients = recipients.filter((_, i) => i !== index);
@@ -81,24 +91,7 @@ export function ContentSharing({
     }
   };
 
-  const generateEmailPreview = () => {
-    const fileList = selectedFiles.map(file => {
-      const link = publicLinks[file.id] || `https://content.tamyla.com/access/${file.id}`;
-      return `• ${file.name} - ${link}`;
-    }).join('\n');
-
-    const preview = `
-${message}
-
-${selectedFiles.length > 0 ? `Shared Files:\n${fileList}` : ''}
-
---
-Shared via Tamyla Trading Portal
-${currentUser?.name || currentUser?.email}
-    `.trim();
-
-    setEmailPreview(preview);
-  };
+  // (removed duplicate/broken generateEmailPreview)
 
   const sendEmails = async () => {
     const validRecipients = recipients.filter(email => email.trim() && email.includes('@'));
@@ -132,8 +125,8 @@ ${currentUser?.name || currentUser?.email}
             size: file.size,
             type: file.type
           })),
-          senderName: currentUser?.name || currentUser?.email,
-          senderEmail: currentUser?.email
+          senderName: currentUser && (currentUser.name ? currentUser.name : (currentUser.email ? currentUser.email : '')),
+          senderEmail: currentUser && currentUser.email ? currentUser.email : ''
         })
       );
 

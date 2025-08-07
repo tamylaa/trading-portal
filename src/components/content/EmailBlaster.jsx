@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+// import { useAuth } from '../../contexts/AuthContext';
 import { emailApi } from '../../api/email';
 import ContentSharing from './ContentSharing';
 import './EmailBlaster.css';
