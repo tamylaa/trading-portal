@@ -25,6 +25,8 @@ export function ContentSharing({
   const [publicLinks, setPublicLinks] = useState({});
   const [emailPreview, setEmailPreview] = useState('');
 
+  // ...existing code...
+
   // Auto-generate subject if files are selected
   useEffect(() => {
     if (selectedFiles.length > 0 && !subject) {
@@ -62,6 +64,10 @@ export function ContentSharing({
     const newRecipients = [...recipients];
     newRecipients[index] = value;
     setRecipients(newRecipients);
+  };
+
+  const addRecipient = () => {
+    setRecipients([...recipients, '']);
   };
 
   // Removed unused toggleFilePublic to fix ESLint error
