@@ -16,7 +16,6 @@ export function ContentManager({
   showGallery = true,
   showSearch = true,
   showSharing = true,
-  showEmailBlaster = true,
   maxFileSize = 25 * 1024 * 1024,
   onContentUploaded,
   onAuthRequired,
