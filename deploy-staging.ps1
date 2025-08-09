@@ -34,6 +34,8 @@ git checkout staging-ui
 # 4. Remove all files except build and deploy script
 Get-ChildItem -Path . -Exclude ".git","deploy-staging.ps1" | Remove-Item -Recurse -Force
 Copy-Item -Path "../build/*" -Destination . -Recurse -Force
+Copy-Item -Path "../package.json" -Destination . -Force
+Copy-Item -Path "../package-lock.json" -Destination . -Force
 
 # 5. Commit and push
 git add .
