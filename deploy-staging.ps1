@@ -29,12 +29,11 @@ $branchExists = git branch --list staging-ui
 if ($branchExists) {
     git branch -D staging-ui
 }
-git checkout --orphan staging-ui
+git checkout staging-ui
 
 # 4. Remove all files except build and deploy script
-Get-ChildItem -Exclude build,deploy-staging.ps1 | Remove-Item -Recurse -Force
-Move-Item -Path build\* -Destination .
-Remove-Item -Recurse -Force build
+Get-ChildItem -Path . -Exclude ".git","deploy-staging.ps1" | Remove-Item -Recurse -Force
+Copy-Item -Path "../build/*" -Destination . -Recurse -Force
 
 # 5. Commit and push
 git add .
