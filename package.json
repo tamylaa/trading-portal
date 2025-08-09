@@ -1,0 +1,59 @@
+{
+  "name": "auth-service",
+  "version": "1.0.0",
+  "description": "Authentication service for Tamyla",
+  "main": "build/worker.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.js",
+    "prod": "node scripts/prod-simulator.js",
+    "test:health": "node scripts/test-health.js",
+    "build": "python build_worker.py",
+    "build:staging": "python build_worker.py --staging",
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "lint": "eslint \"**/*.js\" --fix",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch",
+    "test:email": "vitest run tests/integration/email-flow.test.js",
+    "test:magic-link": "node scripts/test-magic-link.js",
+    "monitor:email": "node scripts/email-monitor.js",
+    "monitor:email:once": "node scripts/email-monitor.js --once"
+  },
+  "keywords": [
+    "auth",
+    "authentication",
+    "jwt",
+    "cloudflare-workers"
+  ],
+  "author": "Tamyla Team",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^4.4.1",
+    "jose": "^5.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240208.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "chalk": "^5.4.1",
+    "dotenv": "^16.4.1",
+    "esbuild": "^0.25.6",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "miniflare": "^4.0.0",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.0.3",
+    "prettier": "^3.2.4",
+    "toml": "^3.0.0",
+    "undici": "^5.28.0",
+    "vitest": "^1.6.1",
+    "wrangler": "^4.28.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
