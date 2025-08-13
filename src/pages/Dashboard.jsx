@@ -1,8 +1,9 @@
-// src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx - Enhanced with Professional Redux Features
 import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ContentManager } from '../components/content/ContentManager';
+import ReduxFeaturesDemo from '../components/demo/ReduxFeaturesDemo';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -93,6 +94,11 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
+          </div>
+          
+          {/* Redux Features Demo Section */}
+          <div className="redux-demo-section">
+            <ReduxFeaturesDemo />
           </div>
           
           {/* Content Library Section */}
