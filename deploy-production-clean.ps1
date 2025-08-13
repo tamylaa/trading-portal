@@ -36,7 +36,13 @@ try {
     if (!(Test-Path "package.json")) {
         throw "Not in React project directory"
     }
-    
+
+    Write-Step "Installing dependencies (npm ci)"
+    npm ci
+    if ($LASTEXITCODE -ne 0) {
+        throw "npm ci failed. Please check your package.json and lockfile."
+    }
+
     $gitStatus = git status --porcelain
     if ($gitStatus -and !$Force) {
         Write-Warning "Uncommitted changes detected"

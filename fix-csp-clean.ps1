@@ -3,6 +3,15 @@
 
 Write-Host "Fixing Content Security Policy for auth service and Brevo chat..." -ForegroundColor Cyan
 
+
+# Ensure dependencies are installed
+Write-Host "Installing dependencies (npm ci)..." -ForegroundColor Yellow
+npm ci
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "npm ci failed. Please check your package.json and lockfile." -ForegroundColor Red
+    exit 1
+}
+
 # Rebuild with updated headers
 Write-Host "Rebuilding with updated CSP..." -ForegroundColor Yellow
 npm run build
