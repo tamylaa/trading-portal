@@ -22,8 +22,6 @@ const ProgressTracker = ({ progress, streak, goals }) => {
     return "🌟 Ready to make today productive?";
   };
   
-  const completedGoals = goals.filter((_, index) => (index + 1) * (100 / goals.length) <= progress);
-  
   return (
     <div className="progress-tracker">
       <div className="progress-header">

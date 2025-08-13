@@ -12,6 +12,21 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
+# Run compilation checks before building
+Write-Host "Running ESLint checks..." -ForegroundColor Yellow
+npx eslint src --ext .js,.jsx,.ts,.tsx --fix
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ESLint errors detected. Please fix manually." -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Running TypeScript compilation check..." -ForegroundColor Yellow
+npx tsc --noEmit
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "TypeScript compilation errors detected. Please fix manually." -ForegroundColor Red
+    exit 1
+}
+
 # Rebuild with updated headers
 Write-Host "Rebuilding with updated CSP..." -ForegroundColor Yellow
 npm run build

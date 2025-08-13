@@ -92,12 +92,39 @@ try {
     exit 1
 }
 
-# Step 3: Production Build
+# Step 3: Production Build with ESLint Fix
 Write-Step "Creating Production Build"
 try {
+    Write-Info "Running ESLint checks first..."
+    $eslintOutput = npx eslint src --ext .js,.jsx,.ts,.tsx --max-warnings 0 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "ESLint warnings detected. Attempting auto-fix..."
+        npx eslint src --ext .js,.jsx,.ts,.tsx --fix
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "ESLint errors remain after auto-fix. Please review manually."
+            throw "ESLint validation failed"
+        } else {
+            Write-Success "ESLint warnings auto-fixed successfully"
+        }
+    } else {
+        Write-Success "ESLint validation passed"
+    }
+    
+    Write-Info "Running TypeScript compilation check..."
+    $tscOutput = npx tsc --noEmit 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "TypeScript compilation errors detected:"
+        Write-Host $tscOutput -ForegroundColor Red
+        throw "TypeScript compilation failed"
+    } else {
+        Write-Success "TypeScript compilation check passed"
+    }
+    
     Write-Info "Building production version..."
     $buildOutput = npm run build 2>&1
     if ($LASTEXITCODE -ne 0) {
+        Write-Error "Production build failed:"
+        Write-Host $buildOutput -ForegroundColor Red
         throw "Production build failed"
     }
     
