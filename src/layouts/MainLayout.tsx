@@ -3,6 +3,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/header/header';
 import Sidebar from '../components/sidebar/sidebar';
+import { useAuth } from '../contexts/AuthContext';
 import Footer from '../components/footer/footer';
 import { useSidebar } from '../contexts/SidebarContext';
 import ChatButton from '../components/chat/ChatButton';
@@ -10,6 +11,7 @@ import './MainLayout.css';
 
 const MainLayout: React.FC = () => {
     const { isOpen } = useSidebar();
+    const { isAuthenticated } = useAuth();
 
     // Add a collapsed class to the layout when sidebar is closed
     const layoutClass = `app-layout${isOpen ? '' : ' sidebar-collapsed'}`;
@@ -17,7 +19,7 @@ const MainLayout: React.FC = () => {
     return (
         <div className={layoutClass}>
             <Header />
-            <Sidebar />
+            {isAuthenticated && <Sidebar />}
             <main className="content-wrapper">
                 <Outlet />
             </main>

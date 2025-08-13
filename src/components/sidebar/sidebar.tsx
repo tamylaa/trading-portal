@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { useSidebar } from '../../contexts/SidebarContext';
 import { SidebarSection } from './SidebarSection';
 import { SidebarFooter } from './SidebarFooter';
@@ -6,6 +7,9 @@ import './sidebar.css';
 
 const Sidebar: React.FC = () => {
     const { isOpen, toggleSidebar } = useSidebar();
+    const { isAuthenticated } = useAuth();
+
+    if (!isAuthenticated) return null;
 
     const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
 

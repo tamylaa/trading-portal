@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavItemProps } from './components/NavItem';
 import { NavItem } from './components/NavItem';
-import './styles/nav-item.css';
 
 interface SidebarSectionProps {
   title: string;
