@@ -13,18 +13,21 @@
 .sidebar-navigation {
   position: fixed;
   left: 0;
-  top: 0;
-  height: 100vh;
+  top: var(--header-height, 64px); /* Position below header */
+  height: calc(100vh - var(--header-height, 64px));
   width: 280px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   transform: translateX(0);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  /* DEBUG: Make sure it's visible */
+  border: 2px solid red !important;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
 }
 
 .sidebar-navigation.closed {
