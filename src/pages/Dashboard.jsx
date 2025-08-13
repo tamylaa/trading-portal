@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx - Professional Dashboard with Behavioral UX
 import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import ProfessionalDashboard from '../components/dashboard/ProfessionalDashboard';
 import './Dashboard.css';
 
