@@ -8,9 +8,6 @@ import './sidebar.css';
 const Sidebar: React.FC = () => {
     const { isOpen, toggleSidebar } = useSidebar();
     const { isAuthenticated } = useAuth();
-
-    if (!isAuthenticated) return null;
-
     const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
 
     useEffect(() => {
@@ -18,6 +15,8 @@ const Sidebar: React.FC = () => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    if (!isAuthenticated) return null;
 
     // Centralized nav config
     const mainMenuItems = [
