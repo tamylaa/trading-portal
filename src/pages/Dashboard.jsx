@@ -7,7 +7,6 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const { currentUser, token } = useAuth();
-  const navigate = useNavigate();
   
   // Debug: Log when component renders and user data changes
   useEffect(() => {
