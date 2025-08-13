@@ -1,0 +1,153 @@
+/* Progress Tracker Styles */
+
+.progress-tracker {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.progress-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.streak-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(45deg, #ff6b6b, #ffa726);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.streak-emoji {
+  font-size: 1.2rem;
+}
+
+.motivation-message {
+  font-size: 1.1rem;
+  color: #667eea;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.progress-visualization {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.progress-bar-container {
+  flex: 1;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 12px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 6px;
+  width: var(--progress, 0%);
+  transition: width 1s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.progress-percentage {
+  position: absolute;
+  top: -25px;
+  right: 0;
+  font-weight: 700;
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.progress-goals {
+  min-width: 200px;
+}
+
+.goal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+}
+
+.goal-item.completed {
+  opacity: 1;
+}
+
+.goal-item:not(.completed) {
+  opacity: 0.6;
+}
+
+.goal-icon {
+  font-size: 1.2rem;
+}
+
+.goal-text {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.progress-rings {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-percentage {
+  position: absolute;
+  font-weight: 700;
+  color: #667eea;
+  font-size: 0.9rem;
+}
+
+/* Dark theme */
+.theme-dark .progress-tracker {
+  background: rgba(26, 26, 46, 0.9);
+}
+
+.theme-dark .progress-header h2 {
+  color: white;
+}
+
+.theme-dark .goal-text {
+  color: #ccc;
+}
+
+.theme-dark .ring-percentage {
+  color: #a78bfa;
+}

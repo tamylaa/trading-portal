@@ -1,0 +1,137 @@
+/* Quick Actions Styles */
+
+.quick-actions {
+  margin-bottom: 30px;
+}
+
+.quick-actions-title {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.action-button {
+  position: relative;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.action-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: var(--color);
+}
+
+.action-button:active {
+  transform: translateY(-2px);
+}
+
+.action-content {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.action-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.action-info {
+  flex: 1;
+  text-align: left;
+}
+
+.action-title {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.action-description {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.action-reward {
+  background: var(--color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.action-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--color), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.action-button:hover .action-glow {
+  opacity: 0.1;
+}
+
+/* Dark theme */
+.theme-dark .quick-actions-title {
+  color: white;
+}
+
+.theme-dark .action-button {
+  background: rgba(26, 26, 46, 0.9);
+}
+
+.theme-dark .action-title {
+  color: white;
+}
+
+.theme-dark .action-description {
+  color: #ccc;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-content {
+    padding: 16px;
+  }
+  
+  .action-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* Accessibility */
+.action-button:focus {
+  outline: 2px solid var(--color);
+  outline-offset: 2px;
+}

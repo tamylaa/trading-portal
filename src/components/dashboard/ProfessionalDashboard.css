@@ -1,0 +1,292 @@
+/* Professional Dashboard Styles - Behavioral Psychology UX */
+
+.professional-dashboard {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-dark .professional-dashboard {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* Sidebar Styles */
+.dashboard-sidebar {
+  width: 280px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, width 0.3s ease;
+  z-index: 1000;
+}
+
+.theme-dark .dashboard-sidebar {
+  background: rgba(26, 26, 46, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-closed .dashboard-sidebar {
+  transform: translateX(-100%);
+}
+
+@media (max-width: 768px) {
+  .dashboard-sidebar {
+    position: fixed;
+    height: 100vh;
+    width: 300px;
+  }
+}
+
+/* Main Content */
+.dashboard-main {
+  flex: 1;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+}
+
+.sidebar-open .dashboard-main {
+  margin-left: 0;
+}
+
+.sidebar-closed .dashboard-main {
+  margin-left: 0;
+}
+
+/* Progress Tracker - Behavioral Feedback */
+.progress-tracker {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.progress-bar {
+  height: 8px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+  animation: progressFill 1s ease-out;
+}
+
+@keyframes progressFill {
+  from { width: 0; }
+  to { width: var(--progress, 0%); }
+}
+
+.streak-indicator {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(45deg, #ff6b6b, #ffa726);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-left: 10px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Quick Actions - Immediate Value */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.action-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  backdrop-filter: blur(10px);
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.action-card:active {
+  transform: translateY(-2px);
+}
+
+.action-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.action-title {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.action-description {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Widget Container */
+.dashboard-widget-container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  min-height: 400px;
+}
+
+.theme-dark .dashboard-widget-container {
+  background: rgba(26, 26, 46, 0.9);
+  color: white;
+}
+
+/* Achievement Popup - Addictive Feedback */
+.achievement-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  animation: slideInRight 0.5s ease, fadeOut 3s 2s;
+  z-index: 2000;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Micro-interactions */
+.widget-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.widget-title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .professional-dashboard {
+    flex-direction: column;
+  }
+  
+  .dashboard-main {
+    padding: 15px;
+    margin-left: 0 !important;
+  }
+  
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+  
+  .achievement-popup {
+    left: 20px;
+    right: 20px;
+    top: auto;
+    bottom: 20px;
+  }
+}
+
+/* Loading States */
+.widget-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(102, 126, 234, 0.3);
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessibility */
+.action-card:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.progress-tracker:focus-within {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+/* Dark theme adjustments */
+.theme-dark .action-card {
+  background: rgba(26, 26, 46, 0.9);
+  color: white;
+}
+
+.theme-dark .action-title {
+  color: white;
+}
+
+.theme-dark .action-description {
+  color: #ccc;
+}
+
+.theme-dark .widget-title {
+  color: white;
+}

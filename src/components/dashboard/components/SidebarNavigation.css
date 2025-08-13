@@ -1,0 +1,274 @@
+/* Sidebar Navigation Styles */
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.sidebar-navigation {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  transform: translateX(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-navigation.closed {
+  transform: translateX(-100%);
+}
+
+/* Header */
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.user-status {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.streak-badge {
+  background: linear-gradient(45deg, #ff6b6b, #ffa726);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Menu */
+.sidebar-menu {
+  padding: 20px 0;
+  flex: 1;
+}
+
+.menu-item {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: left;
+}
+
+.menu-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.menu-item.active {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border-right: 3px solid #667eea;
+}
+
+.menu-icon {
+  font-size: 1.5rem;
+  width: 24px;
+  text-align: center;
+}
+
+.menu-content {
+  flex: 1;
+}
+
+.menu-label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.menu-description {
+  display: block;
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.menu-badge {
+  background: #ff6b6b;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* Progress Section */
+.sidebar-progress {
+  padding: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-progress h4 {
+  margin: 0 0 15px 0;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.progress-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.check {
+  font-size: 1rem;
+}
+
+/* Stats */
+.sidebar-stats {
+  padding: 20px;
+  display: flex;
+  justify-content: space-around;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Dark theme */
+.theme-dark .sidebar-navigation {
+  background: rgba(26, 26, 46, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark .user-name {
+  color: white;
+}
+
+.theme-dark .user-status {
+  color: #ccc;
+}
+
+.theme-dark .menu-label {
+  color: white;
+}
+
+.theme-dark .menu-description {
+  color: #ccc;
+}
+
+.theme-dark .sidebar-progress h4 {
+  color: white;
+}
+
+.theme-dark .progress-item {
+  color: #ccc;
+}
+
+.theme-dark .sidebar-stats {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.theme-dark .stat-label {
+  color: #ccc;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .sidebar-navigation {
+    width: 300px;
+  }
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.sidebar-navigation.open {
+  animation: slideIn 0.3s ease;
+}
