@@ -28,7 +28,19 @@
 }
 
 .sidebar-navigation.closed {
-  transform: translateX(-100%);
+  width: 80px; /* Mini sidebar width instead of hiding completely */
+}
+
+.sidebar-navigation.closed .sidebar-header .user-info,
+.sidebar-navigation.closed .menu-content,
+.sidebar-navigation.closed .sidebar-progress,
+.sidebar-navigation.closed .sidebar-stats {
+  display: none; /* Hide text content in mini mode */
+}
+
+.sidebar-navigation.closed .menu-label,
+.sidebar-navigation.closed .menu-description {
+  display: none; /* Hide labels in mini mode */
 }
 
 /* Header */

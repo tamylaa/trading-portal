@@ -45,12 +45,17 @@
     padding-top: var(--header-height) !important;
     padding-right: 0px;
     margin-top: 0 !important;
-    margin-left: var(--sidebar-width-full);
+    margin-left: 280px; /* Professional sidebar width */
     max-width: 1400px;
     margin-right: 12px;
-    transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1), max-width 0.3s cubic-bezier(0.4,0,0.2,1);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4,0,0.2,1);
     display: flex;
     flex-direction: column;
+}
+
+/* Sidebar collapsed state */
+.app-layout.sidebar-collapsed .content-wrapper {
+    margin-left: 80px; /* Mini sidebar width when closed */
 }
 
 .footer {
