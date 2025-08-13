@@ -247,6 +247,14 @@ class TamylaContentManager extends HTMLElement {
           // Support both 'files' and 'content' keys for compatibility
           this.content = result.files || result.content || [];
           console.log(`📊 Loaded ${this.content.length} files from API`);
+          
+          // Debug: Check the structure of individual items
+          if (this.content.length > 0) {
+            console.log('🔍 Sample file item structure:', JSON.stringify(this.content[0], null, 2));
+            console.log('🔍 File size field:', this.content[0].file_size, typeof this.content[0].file_size);
+            console.log('🔍 Created at field:', this.content[0].created_at);
+          }
+          
           this.renderGallery();
         } else {
           console.log('❌ Load failed - no success or files in response');
@@ -280,11 +288,35 @@ class TamylaContentManager extends HTMLElement {
       const name = item.original_filename || item.name || 'Unnamed file';
       const fileUrl = item.file_url || item.url || '';
       const isImage = (item.category === 'image') || (item.type && item.type.startsWith && item.type.startsWith('image'));
-      const size = (typeof item.file_size === 'number' && !isNaN(item.file_size)) ? this.formatFileSize(item.file_size) : 'Unknown size';
+      
+      // Debug individual item data
+      console.log('🔍 Processing item:', { 
+        file_size: item.file_size, 
+        size: item.size,
+        created_at: item.created_at,
+        upload_date: item.upload_date,
+        timestamp: item.timestamp
+      });
+      
+      // Try multiple possible size fields
+      let size = 'Unknown size';
+      if (typeof item.file_size === 'number' && !isNaN(item.file_size)) {
+        size = this.formatFileSize(item.file_size);
+      } else if (typeof item.size === 'number' && !isNaN(item.size)) {
+        size = this.formatFileSize(item.size);
+      }
+      
+      // Try multiple possible date fields
       let dateStr = 'Unknown date';
-      if (item.created_at) {
-        const d = new Date(item.created_at);
-        if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString();
+      const possibleDateFields = [item.created_at, item.upload_date, item.timestamp, item.date];
+      for (const dateField of possibleDateFields) {
+        if (dateField) {
+          const d = new Date(dateField);
+          if (!isNaN(d.getTime())) {
+            dateStr = d.toLocaleDateString();
+            break;
+          }
+        }
       }
       return `
         <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
