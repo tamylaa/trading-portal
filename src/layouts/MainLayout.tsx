@@ -5,13 +5,13 @@ import Header from '../components/header/header';
 import Footer from '../components/footer/footer';
 import ChatButton from '../components/chat/ChatButton';
 import SidebarNavigation from '../components/dashboard/components/SidebarNavigation';
-import { useAuth, useSidebar } from '../store/hooks';
+import { useAuth } from '../store/hooks';
+import { useSidebar } from '../contexts/SidebarContext';
 import './MainLayout.css';
 
 const MainLayout: React.FC = () => {
-    // 🚀 Enhanced Redux hooks with better performance and features
-    const { isAuthenticated } = useAuth();
-    const { isOpen } = useSidebar();
+    const { isAuthenticated, user } = useAuth(); // Get user data
+    const { isOpen } = useSidebar(); // Use SidebarContext instead of Redux
 
     // Add a collapsed class to the layout when sidebar is closed
     const layoutClass = `app-layout${isOpen ? '' : ' sidebar-collapsed'}`;
@@ -24,8 +24,8 @@ const MainLayout: React.FC = () => {
                 <SidebarNavigation 
                     activeSection="dashboard"
                     onSectionChange={() => {}} // MainLayout doesn't need to handle section changes
-                    user={{ name: 'Trading User' }} // This will come from auth context
-                    streak={7} // This will come from user data
+                    user={user || { name: 'User' }} // Pass actual user data
+                    streak={7} // This could come from user data or localStorage
                 />
             )}
             <main className="content-wrapper">
