@@ -1,52 +1,104 @@
-// Sidebar Navigation - Professional & Engaging
+// Professional Sidebar Navigation - Complete Navigation System
 import React from 'react';
-import { useAppDispatch } from '../../../store/hooks';
-import { uiActions } from '../../../store';
+import { Link } from 'react-router-dom';
+import { useSidebar } from '../../../contexts/SidebarContext';
 import './SidebarNavigation.css';
 
 const SidebarNavigation = ({ 
-  isOpen, 
-  isMobile, 
   activeSection, 
   onSectionChange, 
   user, 
   streak 
 }) => {
-  const dispatch = useAppDispatch();
+  // Use existing header toggle system
+  const { isOpen, toggleSidebar } = useSidebar();
+  const isMobile = window.innerWidth <= 768;
   
+  // Complete navigation structure combining old sidebar items with new professional design
   const navigationItems = [
+    // Main Navigation
     {
-      id: 'overview',
-      label: 'Overview',
-      icon: '📊',
-      description: 'Your daily dashboard',
-      badge: null
+      id: 'home',
+      label: 'Home',
+      icon: '🏠',
+      description: 'Main landing page',
+      route: '/',
+      badge: null,
+      section: 'main'
     },
     {
-      id: 'content',
-      label: 'Content Library',
+      id: 'dashboard',
+      label: 'Dashboard',
+      icon: '📊',
+      description: 'Your daily dashboard',
+      route: '/dashboard',
+      badge: null,
+      section: 'main'
+    },
+    {
+      id: 'content-upload',
+      label: 'Upload Content',
       icon: '📁',
       description: 'Manage your files',
-      badge: null
+      route: '/content-upload',
+      badge: null,
+      section: 'main'
     },
     {
       id: 'analytics',
       label: 'Analytics',
       icon: '📈',
       description: 'Performance insights',
-      badge: 'New'
+      route: '/analytics',
+      badge: 'New',
+      section: 'main'
+    },
+    {
+      id: 'trades',
+      label: 'Trading',
+      icon: '💹',
+      description: 'Trade management',
+      route: '/trades',
+      badge: null,
+      section: 'main'
+    },
+    // Account Section
+    {
+      id: 'profile',
+      label: 'Profile',
+      icon: '👤',
+      description: 'Account settings',
+      route: '/profile',
+      badge: null,
+      section: 'account'
     },
     {
       id: 'achievements',
       label: 'Achievements',
       icon: '🏆',
       description: 'Your progress',
-      badge: streak > 5 ? '🔥' : null
+      route: '/achievements',
+      badge: streak > 5 ? '🔥' : null,
+      section: 'account'
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: '⚙️',
+      description: 'App preferences',
+      route: '/settings',
+      badge: null,
+      section: 'account'
     }
   ];
+  
+  // Group navigation items by section
+  const mainItems = navigationItems.filter(item => item.section === 'main');
+  const accountItems = navigationItems.filter(item => item.section === 'account');
 
-  const toggleSidebar = () => {
-    dispatch(uiActions.toggleSidebar());
+  const handleToggle = () => {
+    // Use existing header toggle system
+    toggleSidebar();
   };
 
   return (
@@ -55,7 +107,7 @@ const SidebarNavigation = ({
       {isMobile && isOpen && (
         <div 
           className="sidebar-overlay"
-          onClick={toggleSidebar}
+          onClick={handleToggle}
         />
       )}
       
@@ -80,31 +132,67 @@ const SidebarNavigation = ({
           
           <button 
             className="sidebar-toggle"
-            onClick={toggleSidebar}
+            onClick={handleToggle}
             aria-label="Toggle sidebar"
           >
             {isOpen ? '←' : '→'}
           </button>
         </div>
 
-        {/* Navigation Items */}
+        {/* Main Navigation Items */}
         <div className="sidebar-menu">
-          {navigationItems.map((item) => (
-            <button
-              key={item.id}
-              className={`menu-item ${activeSection === item.id ? 'active' : ''}`}
-              onClick={() => onSectionChange(item.id)}
-            >
-              <span className="menu-icon">{item.icon}</span>
-              <div className="menu-content">
-                <span className="menu-label">{item.label}</span>
-                <span className="menu-description">{item.description}</span>
-              </div>
-              {item.badge && (
-                <span className="menu-badge">{item.badge}</span>
-              )}
-            </button>
-          ))}
+          <div className="menu-section">
+            <h4 className="section-title">Main Menu</h4>
+            {mainItems.map((item) => (
+              <Link
+                key={item.id}
+                to={item.route}
+                className={`menu-item ${activeSection === item.id ? 'active' : ''}`}
+                onClick={() => {
+                  onSectionChange && onSectionChange(item.id);
+                  // Auto-close sidebar on mobile after navigation
+                  if (isMobile) handleToggle();
+                }}
+              >
+                <span className="menu-icon">{item.icon}</span>
+                <div className="menu-content">
+                  <span className="menu-label">{item.label}</span>
+                  <span className="menu-description">{item.description}</span>
+                </div>
+                {item.badge && (
+                  <span className="menu-badge">{item.badge}</span>
+                )}
+              </Link>
+            ))}
+          </div>
+
+          <hr className="sidebar-divider" />
+
+          {/* Account Navigation Items */}
+          <div className="menu-section">
+            <h4 className="section-title">Account</h4>
+            {accountItems.map((item) => (
+              <Link
+                key={item.id}
+                to={item.route}
+                className={`menu-item ${activeSection === item.id ? 'active' : ''}`}
+                onClick={() => {
+                  onSectionChange && onSectionChange(item.id);
+                  // Auto-close sidebar on mobile after navigation
+                  if (isMobile) handleToggle();
+                }}
+              >
+                <span className="menu-icon">{item.icon}</span>
+                <div className="menu-content">
+                  <span className="menu-label">{item.label}</span>
+                  <span className="menu-description">{item.description}</span>
+                </div>
+                {item.badge && (
+                  <span className="menu-badge">{item.badge}</span>
+                )}
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Progress Section */}

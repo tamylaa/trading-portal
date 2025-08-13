@@ -8,6 +8,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/auth/Login';
 import Dashboard from './pages/Dashboard';
 import CompleteProfile from './pages/CompleteProfile';
+import ContentUpload from './pages/ContentUpload';
+import Achievements from './pages/Achievements';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import BrevoChatWidget from './components/chat/BrevoChatWidget';
 import EngageKitInitializer from './components/engagekit/EngageKitInitializer';
@@ -46,6 +48,22 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <CompleteProfile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="content-upload"
+                    element={
+                      <ProtectedRoute>
+                        <ContentUpload />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="achievements"
+                    element={
+                      <ProtectedRoute>
+                        <Achievements />
                       </ProtectedRoute>
                     }
                   />

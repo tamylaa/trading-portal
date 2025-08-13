@@ -1,27 +1,26 @@
 // Professional Dashboard with Behavioral Psychology UX
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSidebar } from '../../contexts/SidebarContext';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store';
 import './ProfessionalDashboard.css';
 
 // Dashboard Widgets
-import SidebarNavigation from './components/SidebarNavigation';
 import DashboardOverview from './components/DashboardOverview';
 import ProgressTracker from './components/ProgressTracker';
 import QuickActions from './components/QuickActions';
 import { ContentLibrary, Analytics, Achievements } from './components/WidgetComponents';
 
 const ProfessionalDashboard = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const dispatch = useAppDispatch();
   
-  // Redux state
-  const sidebar = useAppSelector(state => state.ui.sidebar);
+  // Enhanced sidebar integration
+  const { isOpen: sidebarOpen } = useSidebar();
   const theme = useAppSelector(state => state.ui.theme);
-  const viewport = useAppSelector(state => state.ui.viewport);
   
-  // Local state for dashboard
+  // Local state for dashboard widgets
   const [activeWidget, setActiveWidget] = useState('overview');
   const [dailyStreak, setDailyStreak] = useState(7);
   const [todayProgress, setTodayProgress] = useState(65);
@@ -101,20 +100,8 @@ const ProfessionalDashboard = () => {
 
   return (
     <div className={`professional-dashboard theme-${theme.mode}`}>
-      {/* Sidebar Navigation - Only visible to authenticated users */}
-      {isAuthenticated && (
-        <SidebarNavigation
-          isOpen={sidebar.isOpen}
-          isMobile={viewport.isMobile}
-          activeSection={activeWidget}
-          onSectionChange={handleWidgetChange}
-          user={user}
-          streak={dailyStreak}
-        />
-      )}
-      
-      {/* Main Content Area */}
-      <main className={`dashboard-main ${sidebar.isOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      {/* Main Content Area - Uses professional sidebar from MainLayout */}
+      <main className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Top Progress Bar - Behavioral feedback */}
         <ProgressTracker 
           progress={todayProgress}

@@ -18,15 +18,18 @@ const Sidebar: React.FC = () => {
 
     if (!isAuthenticated) return null;
 
-    // Centralized nav config
+    // Enhanced nav config with dashboard features
     const mainMenuItems = [
         { to: '/', icon: 'home', label: 'Home', end: true },
         { to: '/dashboard', icon: 'chart-line', label: 'Dashboard' },
+        { to: '/content-upload', icon: 'cloud-upload', label: 'Upload Content' },
+        { to: '/analytics', icon: 'chart-bar', label: 'Analytics' },
         { to: '/trades', icon: 'exchange-alt', label: 'Trades' }
     ];
 
     const accountItems = [
         { to: '/profile', icon: 'user', label: 'Profile' },
+        { to: '/achievements', icon: 'trophy', label: 'Achievements' },
         { to: '/settings', icon: 'cog', label: 'Settings' }
     ];
 

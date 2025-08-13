@@ -1,0 +1,365 @@
+/* Achievements Page Styles */
+.achievements-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 120px);
+}
+
+.achievements-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.achievements-header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.achievements-header p {
+  font-size: 1.1rem;
+  color: #6c757d;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Stats Dashboard */
+.stats-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-card.level-card {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.stat-info p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.level-card .progress-fill {
+  background: linear-gradient(90deg, #ffd700, #ff6b6b);
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Achievements Grid */
+.achievements-grid {
+  margin-bottom: 3rem;
+}
+
+.achievements-grid h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+
+.achievements-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.achievement-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.achievement-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dee2e6, #adb5bd);
+  transition: all 0.3s ease;
+}
+
+.achievement-card.earned::before {
+  background: linear-gradient(90deg, #ffd700, #ff6b6b);
+}
+
+.achievement-card.earned {
+  border: 2px solid #ffd700;
+  background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+}
+
+.achievement-card.locked {
+  opacity: 0.7;
+  background: #f8f9fa;
+}
+
+.achievement-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.achievement-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.achievement-content {
+  text-align: center;
+}
+
+.achievement-title {
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.achievement-description {
+  color: #6c757d;
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.earned-date {
+  color: #28a745;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.achievement-progress {
+  margin: 1rem 0;
+}
+
+.achievement-progress .progress-bar {
+  background: #e9ecef;
+}
+
+.achievement-points {
+  color: #6f42c1;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, #f8f4ff 0%, #e8d5ff 100%);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+/* Recent Activity */
+.recent-activity {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.recent-activity h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+  background: #e9ecef;
+  transform: translateX(4px);
+}
+
+.activity-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.activity-text {
+  flex: 1;
+  color: #495057;
+  font-weight: 500;
+}
+
+.activity-time {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+/* Motivational Footer */
+.motivation-footer {
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.motivation-footer h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.motivation-footer p {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .achievements-page {
+    padding: 1rem;
+  }
+  
+  .stats-dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card.level-card {
+    grid-column: span 1;
+  }
+  
+  .achievements-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .activity-item {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .activity-time {
+    align-self: flex-end;
+  }
+}
+
+/* Animations */
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.achievement-card.earned {
+  animation: bounceIn 0.6s ease;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.achievement-card.locked:hover {
+  background: linear-gradient(
+    90deg,
+    #f8f9fa 0px,
+    #e9ecef 40px,
+    #f8f9fa 80px
+  );
+  background-size: 200px;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Level up celebration effect */
+@keyframes levelUp {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1) rotate(5deg); }
+  100% { transform: scale(1); }
+}
+
+.stat-card.level-card:hover {
+  animation: levelUp 0.6s ease;
+}

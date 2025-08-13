@@ -105,6 +105,26 @@
   flex: 1;
 }
 
+.menu-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 20px 10px 20px;
+  padding: 0;
+}
+
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
 .menu-item {
   width: 100%;
   background: none;
@@ -117,6 +137,8 @@
   transition: all 0.2s ease;
   position: relative;
   text-align: left;
+  text-decoration: none;
+  color: inherit;
 }
 
 .menu-item:hover {

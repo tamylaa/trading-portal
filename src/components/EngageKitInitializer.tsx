@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import { useEffect } from 'react';
 
 interface EngageKitConfig {

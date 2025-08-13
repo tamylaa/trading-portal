@@ -14,7 +14,7 @@ if ($LASTEXITCODE -ne 0) {
 
 # Run compilation checks before building
 Write-Host "Running ESLint checks..." -ForegroundColor Yellow
-npx eslint src --ext .js,.jsx,.ts,.tsx --fix
+npx eslint "src/**/*.{js,jsx,ts,tsx}" --fix --max-warnings 20
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ESLint errors detected. Please fix manually." -ForegroundColor Red
     exit 1

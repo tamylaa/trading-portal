@@ -1,10 +1,10 @@
-// src/layouts/MainLayout.tsx - Enhanced with Redux State Management
+// src/layouts/MainLayout.tsx - Enhanced with Professional Sidebar
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/header/header';
-import Sidebar from '../components/sidebar/sidebar';
 import Footer from '../components/footer/footer';
 import ChatButton from '../components/chat/ChatButton';
+import SidebarNavigation from '../components/dashboard/components/SidebarNavigation';
 import { useAuth, useSidebar } from '../store/hooks';
 import './MainLayout.css';
 
@@ -19,8 +19,15 @@ const MainLayout: React.FC = () => {
     return (
         <div className={layoutClass}>
             <Header />
-            {/* 🔐 Sidebar only shows for authenticated users - Enhanced with Redux */}
-            {isAuthenticated && <Sidebar />}
+            {/* 🔐 Professional Sidebar - Unified navigation system */}
+            {isAuthenticated && (
+                <SidebarNavigation 
+                    activeSection="dashboard"
+                    onSectionChange={() => {}} // MainLayout doesn't need to handle section changes
+                    user={{ name: 'Trading User' }} // This will come from auth context
+                    streak={7} // This will come from user data
+                />
+            )}
             <main className="content-wrapper">
                 <Outlet />
             </main>

@@ -1,8 +1,7 @@
 /* Professional Dashboard Styles - Behavioral Psychology UX */
 
 .professional-dashboard {
-  display: flex;
-  height: 100vh;
+  min-height: calc(100vh - var(--header-height, 64px));
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -11,48 +10,30 @@
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
-/* Sidebar Styles */
-.dashboard-sidebar {
-  width: 280px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, width 0.3s ease;
-  z-index: 1000;
-}
-
-.theme-dark .dashboard-sidebar {
-  background: rgba(26, 26, 46, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-closed .dashboard-sidebar {
-  transform: translateX(-100%);
-}
-
-@media (max-width: 768px) {
-  .dashboard-sidebar {
-    position: fixed;
-    height: 100vh;
-    width: 300px;
-  }
-}
-
-/* Main Content */
+/* Main Content Area - Adapts to professional sidebar */
 .dashboard-main {
-  flex: 1;
-  overflow-y: auto;
-  transition: margin-left 0.3s ease;
-  padding: 20px;
+  margin-left: 0;
+  padding: 2rem;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: calc(100vh - var(--header-height, 64px));
 }
 
-.sidebar-open .dashboard-main {
+/* When professional sidebar is open */
+.dashboard-main.sidebar-open {
+  margin-left: 280px; /* Professional sidebar width */
+}
+
+/* When professional sidebar is closed */
+.dashboard-main.sidebar-closed {
   margin-left: 0;
 }
 
-.sidebar-closed .dashboard-main {
-  margin-left: 0;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-main.sidebar-open,
+  .dashboard-main.sidebar-closed {
+    margin-left: 0;
+  }
 }
 
 /* Progress Tracker - Behavioral Feedback */

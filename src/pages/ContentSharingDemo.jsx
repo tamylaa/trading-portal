@@ -194,7 +194,7 @@ function ContentSharingDemo() {
                 <li>POST /upload - Upload files</li>
                 <li>GET /files - List user files</li>
                 <li>GET /public - List public files</li>
-                <li>PUT /access/{id}/public - Toggle public status</li>
+                <li>PUT /access/&#123;id&#125;/public - Toggle public status</li>
               </ul>
             </div>
             <div className="endpoint">
