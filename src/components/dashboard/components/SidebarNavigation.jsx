@@ -10,9 +10,14 @@ const SidebarNavigation = ({
   user, 
   streak 
 }) => {
+  // DEBUG: Check if component is rendering
+  console.log('🔍 SidebarNavigation rendering:', { activeSection, user, streak });
+  
   // Use existing header toggle system
   const { isOpen, toggleSidebar } = useSidebar();
   const isMobile = window.innerWidth <= 768;
+  
+  console.log('🔍 Sidebar state:', { isOpen, isMobile });
   
   // Complete navigation structure combining old sidebar items with new professional design
   const navigationItems = [

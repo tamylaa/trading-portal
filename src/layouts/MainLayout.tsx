@@ -13,6 +13,9 @@ const MainLayout: React.FC = () => {
     const { isAuthenticated, user } = useAuth(); // Get user data
     const { isOpen } = useSidebar(); // Use SidebarContext instead of Redux
 
+    // DEBUG: Check if MainLayout is working
+    console.log('🔍 MainLayout rendering:', { isAuthenticated, user, isOpen });
+
     // Add a collapsed class to the layout when sidebar is closed
     const layoutClass = `app-layout${isOpen ? '' : ' sidebar-collapsed'}`;
 
