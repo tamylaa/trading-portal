@@ -1,5 +1,7 @@
 // src/contexts/AuthContext.js
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../store/index';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authApi } from '../api/auth';
 import { normalizeUserData, prepareProfileDataForAPI, isProfileComplete } from '../utils/userDataNormalizer';
@@ -17,6 +19,7 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   // Check if user is authenticated
   const isAuthenticated = !!currentUser;
@@ -65,6 +68,8 @@ export function AuthProvider({ children }) {
         const normalizedUser = normalizeUserData(user);
         setCurrentUser(normalizedUser);
         setToken(token); // Set the token in state
+        // Also update Redux
+        dispatch(authActions.loginSuccess({ user: normalizedUser, token }));
       } else {
         // Invalid token, clear it
         localStorage.removeItem('authToken');
@@ -106,19 +111,16 @@ export function AuthProvider({ children }) {
       if (success && authToken) {
         localStorage.setItem('authToken', authToken);
         setToken(authToken); // Set token in state
-        
         const normalizedUser = normalizeUserData(user);
         setCurrentUser(normalizedUser);
-        
+        // Also update Redux
+        dispatch(authActions.loginSuccess({ user: normalizedUser, token: authToken }));
         console.log('AuthContext: Successfully logged in via magic link, user:', normalizedUser);
-        
         // Check if user needs to complete profile
         const needsProfile = requiresProfileCompletion || !isProfileComplete(normalizedUser);
-        
         // Redirect based on profile completion
         const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
         const from = location.state?.from?.pathname || redirectTo;
-        
         console.log('AuthContext: Navigating to:', from);
         navigate(from, { replace: true });
         return { success: true, user };
@@ -150,12 +152,11 @@ export function AuthProvider({ children }) {
       if (success && authToken) {
         localStorage.setItem('authToken', authToken);
         setToken(authToken); // Set token in state
-        
         const normalizedUser = normalizeUserData(user);
         setCurrentUser(normalizedUser);
-        
+        // Also update Redux
+        dispatch(authActions.loginSuccess({ user: normalizedUser, token: authToken }));
         console.log('AuthContext: Successfully logged in via session exchange, user:', normalizedUser);
-        
         // Check if user needs to complete profile
         console.log('AuthContext: Checking profile completion for:', {
           name: normalizedUser.name,
@@ -166,11 +167,9 @@ export function AuthProvider({ children }) {
         });
         const needsProfile = !isProfileComplete(normalizedUser);
         console.log('AuthContext: isProfileComplete returned:', !needsProfile, 'needsProfile:', needsProfile);
-        
         // Redirect based on profile completion
         const redirectTo = needsProfile ? '/complete-profile' : '/dashboard';
         const from = location.state?.from?.pathname || redirectTo;
-        
         console.log('AuthContext: Navigating to:', from);
         navigate(from, { replace: true });
         return { success: true, user };
@@ -239,6 +238,8 @@ export function AuthProvider({ children }) {
       setCurrentUser(null);
       setToken(null); // Clear token from state
       localStorage.removeItem('authToken');
+      // Also update Redux
+      dispatch(authActions.logout());
       navigate('/login');
     } catch (err) {
       console.error('Logout failed:', err);
