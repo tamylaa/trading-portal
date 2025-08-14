@@ -35,6 +35,8 @@
     width: var(--sidebar-width-mini);
 }
 
+/* Always set margin-left to expanded sidebar width by default */
+/* Remove margin-left to prevent double offsetting. Only one offset should be applied for sidebar. */
 .content-wrapper {
     outline: 2px solid green !important;
     flex: 1 0 auto;
@@ -47,7 +49,7 @@
     padding-top: var(--header-height) !important;
     padding-right: 0px;
     margin-top: 0 !important;
-    margin-left: var(--sidebar-width-full); /* Professional sidebar width */
+    /* margin-left removed to prevent double offset */
     max-width: 1400px;
     margin-right: 12px;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -55,11 +57,10 @@
     flex-direction: column;
 }
 
-/* Sidebar collapsed state */
-.sidebar.sidebar-collapsed ~ .content-wrapper,
-.sidebar.sidebar-collapsed + .content-wrapper {
-    margin-left: var(--sidebar-width-mini); /* Mini sidebar width when closed */
-}
+/* When sidebar is collapsed, override margin-left for content-wrapper */
+
+
+
 
 .footer {
     flex-shrink: 0;
