@@ -1,5 +1,5 @@
 // src/contexts/AuthContext.js
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { authActions } from '../store/index';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -27,10 +27,41 @@ export function AuthProvider({ children }) {
   // Check if user has completed profile
   const userProfileComplete = currentUser?.profileComplete;
 
+
   // Check for existing session on mount
+  const checkAuthStatus = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setToken(null);
+        setLoading(false);
+        return;
+      }
+
+      const { success, user } = await authApi.getCurrentUser();
+      if (success) {
+        const normalizedUser = normalizeUserData(user);
+        setCurrentUser(normalizedUser);
+        setToken(token); // Set the token in state
+        // Also update Redux
+        dispatch(authActions.loginSuccess({ user: normalizedUser, token }));
+      } else {
+        // Invalid token, clear it
+        localStorage.removeItem('authToken');
+        setToken(null);
+      }
+    } catch (err) {
+      console.error('Auth status check failed:', err);
+      localStorage.removeItem('authToken');
+      setToken(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch]);
+
   useEffect(() => {
     checkAuthStatus();
-  }, []);
+  }, [checkAuthStatus]);
 
   // Handle magic link verification from URL - support both token and session parameters
   useEffect(() => {
