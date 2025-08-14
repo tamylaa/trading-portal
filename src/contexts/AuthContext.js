@@ -85,35 +85,7 @@ export function AuthProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
-  const checkAuthStatus = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        setToken(null);
-        setLoading(false);
-        return;
-      }
 
-      const { success, user } = await authApi.getCurrentUser();
-      if (success) {
-        const normalizedUser = normalizeUserData(user);
-        setCurrentUser(normalizedUser);
-        setToken(token); // Set the token in state
-        // Also update Redux
-        dispatch(authActions.loginSuccess({ user: normalizedUser, token }));
-      } else {
-        // Invalid token, clear it
-        localStorage.removeItem('authToken');
-        setToken(null);
-      }
-    } catch (err) {
-      console.error('Auth status check failed:', err);
-      localStorage.removeItem('authToken');
-      setToken(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const requestMagicLink = async (email, name) => {
     try {
