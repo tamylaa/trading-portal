@@ -15,6 +15,17 @@ const MainLayout: React.FC = () => {
 
     // DEBUG: Check if MainLayout is working
     console.log('🔍 MainLayout rendering:', { isAuthenticated, user, isOpen });
+    
+    // Check if we have auth token in localStorage as fallback
+    const hasToken = localStorage.getItem('auth_token') || localStorage.getItem('token');
+    const shouldShowSidebar = isAuthenticated || hasToken || user;
+    
+    console.log('🔍 Auth check:', { 
+        isAuthenticated, 
+        hasToken: !!hasToken, 
+        hasUser: !!user, 
+        shouldShowSidebar 
+    });
 
     // Add a collapsed class to the layout when sidebar is closed
     const layoutClass = `app-layout${isOpen ? '' : ' sidebar-collapsed'}`;
@@ -23,7 +34,7 @@ const MainLayout: React.FC = () => {
         <div className={layoutClass}>
             <Header />
             {/* 🔐 Professional Sidebar - Unified navigation system */}
-            {isAuthenticated && (
+            {shouldShowSidebar && (
                 <SidebarNavigation 
                     activeSection="dashboard"
                     onSectionChange={() => {}} // MainLayout doesn't need to handle section changes

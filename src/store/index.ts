@@ -1,8 +1,9 @@
 // 🏗️ Professional Redux Store Architecture
 // Modular, Reusable, Scalable State Management
 
-import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { configureStore, createSlice, combineReducers } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
 
 // 🔐 Simple Auth Slice for Demo
 const authSlice = createSlice({
@@ -279,33 +280,12 @@ export const dashboardActions = dashboardSlice.actions;
 export const preferencesActions = preferencesSlice.actions;
 
 // 🔧 Store Configuration with Enhanced DevTools
-export const store = configureStore({
-  reducer: {
-    auth: authSlice.reducer,
-    ui: uiSlice.reducer,
-    dashboard: dashboardSlice.reducer,
-    preferences: preferencesSlice.reducer,
-  },
-  
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        // Ignore these action types for non-serializable data
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-        ignoredPaths: ['auth.sessionExpiry'],
-      },
-    }),
-    
-  devTools: process.env.NODE_ENV !== 'production' && {
-    name: 'Tamyla Trading Portal',
-    trace: true,
-    traceLimit: 25,
-  },
+const rootReducer = combineReducers({
+  auth: authSlice.reducer,
+  ui: uiSlice.reducer,
+  dashboard: dashboardSlice.reducer,
+  preferences: preferencesSlice.reducer,
 });
-
-// 📝 TypeScript Support
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
 
 // 🔄 Store Persistence Configuration
 export const persistConfig = {
@@ -316,4 +296,26 @@ export const persistConfig = {
   blacklist: ['ui'], // Don't persist UI state
 };
 
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types for non-serializable data
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredPaths: ['auth.sessionExpiry'],
+      },
+    }),
+  devTools: process.env.NODE_ENV !== 'production' && {
+    name: 'Tamyla Trading Portal',
+    trace: true,
+    traceLimit: 25,
+  },
+});
+
+// 📝 TypeScript Support
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 export default store;
