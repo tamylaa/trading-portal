@@ -1,3 +1,9 @@
+/* When sidebar is collapsed, add margin-left so content does not hide behind mini sidebar */
+.sidebar.sidebar-collapsed ~ .content-wrapper,
+.sidebar.sidebar-collapsed + .content-wrapper,
+.sidebar-collapsed .content-wrapper {
+    margin-left: var(--sidebar-width-mini) !important;
+}
 :root {
     --sidebar-width-mini: 80px;
     --sidebar-width-full: 280px;
