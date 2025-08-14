@@ -27,20 +27,23 @@ const MainLayout: React.FC = () => {
         shouldShowSidebar 
     });
 
-    // Add a collapsed class to the layout when sidebar is closed
-    const layoutClass = `app-layout${isOpen ? '' : ' sidebar-collapsed'}`;
+    // Add a collapsed class to the layout and sidebar when sidebar is closed
+    const layoutClass = `app-layout`;
+    const sidebarClass = `sidebar${isOpen ? '' : ' sidebar-collapsed'}`;
 
     return (
         <div className={layoutClass}>
             <Header />
-            {/* 🔐 Professional Sidebar - Unified navigation system */}
+            {/* 510 Professional Sidebar - Unified navigation system */}
             {shouldShowSidebar && (
-                <SidebarNavigation 
-                    activeSection="dashboard"
-                    onSectionChange={() => {}} // MainLayout doesn't need to handle section changes
-                    user={user || { name: 'User' }} // Pass actual user data
-                    streak={7} // This could come from user data or localStorage
-                />
+                <div className={sidebarClass}>
+                    <SidebarNavigation 
+                        activeSection="dashboard"
+                        onSectionChange={() => {}} // MainLayout doesn't need to handle section changes
+                        user={user || { name: 'User' }} // Pass actual user data
+                        streak={7} // This could come from user data or localStorage
+                    />
+                </div>
             )}
             <main className="content-wrapper">
                 <Outlet />

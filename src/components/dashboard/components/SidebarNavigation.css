@@ -10,12 +10,10 @@
   z-index: 999;
 }
 
+
 .sidebar-navigation {
-  position: fixed !important;
-  left: 0 !important;
-  top: 64px !important;
-  height: calc(100vh - 64px) !important;
-  width: 280px !important;
+  /* Remove fixed width and position, let parent .sidebar control */
+  height: 100%;
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(20px) !important;
   border-right: 1px solid rgba(0, 0, 0, 0.1) !important;
@@ -26,7 +24,7 @@
 }
 
 .sidebar-navigation.closed {
-  width: 80px; /* Mini sidebar width instead of hiding completely */
+  /* No width here, parent .sidebar controls width */
 }
 
 .sidebar-navigation.closed .sidebar-header .user-info,
