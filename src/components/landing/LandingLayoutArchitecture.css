@@ -1,0 +1,53 @@
+/* 
+====================================
+LANDING PAGE LAYOUT ARCHITECTURE
+====================================
+Clean layout system for landing pages
+Core Issue Fixed: MainLayout now route-aware - never shows sidebar on landing pages
+*/
+
+/* 
+LEVEL 1: Landing Page Container 
+Responsibility: Clean full-width container
+*/
+.landing-page-container {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 
+LEVEL 2: Section Content Layout
+Responsibility: Consistent spacing with viewport edge protection
+*/
+.landing-section-content {
+  /* Viewport edge protection */
+  margin: 0 5rem 2.5rem 5rem;
+  padding: 3rem 5rem 2.5rem 5rem;
+  box-sizing: border-box;
+  
+  /* Prevent content overflow */
+  max-width: calc(100vw - 2rem);
+}
+
+/* 
+RESPONSIVE BREAKPOINTS
+*/
+@media (max-width: 768px) {
+  .landing-section-content {
+    margin: 0 3.75rem 2rem 3.75rem;
+    padding: 2rem 3.75rem 2rem 3.75rem;
+    max-width: calc(100vw - 7.5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-section-content {
+    margin: 0 2.5rem 1.5rem 2.5rem;
+    padding: 1.5rem 2.5rem 1.5rem 2.5rem;
+    max-width: calc(100vw - 5rem);
+  }
+}

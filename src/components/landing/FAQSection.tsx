@@ -28,28 +28,30 @@ const FAQSection: React.FC = () => {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   return (
     <section className="faq-section">
-      <h2 className="faq-title">Frequently Asked Questions</h2>
-      <div className="faq-list">
-        {faqs.map((faq, idx) => (
-          <div className={`faq-item${openIdx === idx ? ' open' : ''}`} key={idx}>
-            <button
-              className="faq-question"
-              onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-              aria-expanded={openIdx === idx}
-              aria-controls={`faq-answer-${idx}`}
-            >
-              {faq.question}
-              <span className="faq-toggle-icon">{openIdx === idx ? '-' : '+'}</span>
-            </button>
-            <div
-              className="faq-answer"
-              id={`faq-answer-${idx}`}
-              style={{ display: openIdx === idx ? 'block' : 'none' }}
-            >
-              {faq.answer}
+      <div className="landing-section-content">
+        <h2 className="faq-title">Frequently Asked Questions</h2>
+        <div className="faq-list">
+          {faqs.map((faq, idx) => (
+            <div className={`faq-item${openIdx === idx ? ' open' : ''}`} key={idx}>
+              <button
+                className="faq-question"
+                onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
+                aria-expanded={openIdx === idx}
+                aria-controls={`faq-answer-${idx}`}
+              >
+                {faq.question}
+                <span className="faq-toggle-icon">{openIdx === idx ? '-' : '+'}</span>
+              </button>
+              <div
+                className="faq-answer"
+                id={`faq-answer-${idx}`}
+                style={{ display: openIdx === idx ? 'block' : 'none' }}
+              >
+                {faq.answer}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

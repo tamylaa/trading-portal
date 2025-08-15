@@ -26,17 +26,19 @@ const features = [
 
 const FeatureHighlightsSection: React.FC = () => (
   <section className="feature-highlights-section">
-    <h2 className="feature-highlights-title">Why Choose Tamyla?</h2>
-    <div className="features-row">
-      {features.map((f, idx) => (
-        <div className="feature-card" key={idx}>
-          <div className="feature-icon">
-            <img src={f.icon} alt={f.title + ' icon'} />
+    <div className="landing-section-content">
+      <h2 className="feature-highlights-title">Why Choose Tamyla?</h2>
+      <div className="features-row">
+        {features.map((f, idx) => (
+          <div className="feature-card" key={idx}>
+            <div className="feature-icon">
+              <img src={f.icon} alt={f.title + ' icon'} />
+            </div>
+            <h3 className="feature-title">{f.title}</h3>
+            <p className="feature-desc">{f.desc}</p>
           </div>
-          <h3 className="feature-title">{f.title}</h3>
-          <p className="feature-desc">{f.desc}</p>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   </section>
 );

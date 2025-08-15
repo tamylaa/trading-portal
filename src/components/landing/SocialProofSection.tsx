@@ -31,8 +31,9 @@ const logos = [
 
 const SocialProofSection: React.FC = () => (
   <section className="social-proof-section">
-    <h2 className="social-proof-title">What Our Users Say</h2>
-    <div className="testimonials-row">
+    <div className="landing-section-content">
+      <h2 className="social-proof-title">What Our Users Say</h2>
+      <div className="testimonials-row">
       {testimonials.map((t, idx) => (
         <div className="testimonial" key={idx}>
           <div className="testimonial-avatar">
@@ -54,6 +55,7 @@ const SocialProofSection: React.FC = () => (
       {logos.map((logo, idx) => (
         <img src={logo} alt={`Client Logo ${idx+1}`} key={logo} />
       ))}
+    </div>
     </div>
   </section>
 );

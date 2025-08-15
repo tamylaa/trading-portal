@@ -1,0 +1,469 @@
+/* Enhanced Trading Dashboard Styles */
+/* Integrates with design system tokens for consistent theming */
+
+.dashboard {
+  background: var(--ds-color-background-primary);
+  color: var(--ds-color-text-primary);
+  border-radius: var(--ds-border-radius-lg);
+  padding: var(--ds-spacing-lg);
+  margin: var(--ds-spacing-md);
+  box-shadow: var(--ds-shadow-lg);
+  font-family: var(--ds-font-family-primary);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--ds-spacing-lg);
+  padding-bottom: var(--ds-spacing-md);
+  border-bottom: 1px solid var(--ds-color-border-light);
+}
+
+.title {
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-color-text-primary);
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-spacing-sm);
+}
+
+.select {
+  padding: var(--ds-spacing-sm) var(--ds-spacing-md);
+  border: 1px solid var(--ds-color-border-medium);
+  border-radius: var(--ds-border-radius-md);
+  background: var(--ds-color-background-secondary);
+  color: var(--ds-color-text-primary);
+  font-size: var(--ds-font-size-sm);
+  cursor: pointer;
+  transition: var(--ds-transition-base);
+}
+
+.select:hover {
+  border-color: var(--ds-color-border-hover);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--ds-color-primary);
+  box-shadow: var(--ds-shadow-focus);
+}
+
+.themeToggle {
+  background: var(--ds-color-background-secondary);
+  border: 1px solid var(--ds-color-border-medium);
+  border-radius: var(--ds-border-radius-md);
+  padding: var(--ds-spacing-sm);
+  cursor: pointer;
+  font-size: var(--ds-font-size-md);
+  transition: var(--ds-transition-base);
+}
+
+.themeToggle:hover {
+  background: var(--ds-color-background-hover);
+  transform: translateY(-1px);
+}
+
+.connectionStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-spacing-xs);
+  padding: var(--ds-spacing-xs) var(--ds-spacing-sm);
+  border-radius: var(--ds-border-radius-sm);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+.connected {
+  background: var(--ds-color-success-light);
+  color: var(--ds-color-success-dark);
+}
+
+.disconnected {
+  background: var(--ds-color-error-light);
+  color: var(--ds-color-error-dark);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--ds-spacing-lg);
+  margin-bottom: var(--ds-spacing-lg);
+}
+
+.card {
+  background: var(--ds-color-background-secondary);
+  border: 1px solid var(--ds-color-border-light);
+  border-radius: var(--ds-border-radius-lg);
+  padding: var(--ds-spacing-lg);
+  box-shadow: var(--ds-shadow-sm);
+  transition: var(--ds-transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--ds-shadow-md);
+  transform: translateY(-2px);
+}
+
+.card h3 {
+  margin: 0 0 var(--ds-spacing-md) 0;
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-color-text-primary);
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ds-spacing-xl);
+  color: var(--ds-color-text-secondary);
+  font-style: italic;
+}
+
+.error {
+  background: var(--ds-color-error-light);
+  color: var(--ds-color-error-dark);
+  padding: var(--ds-spacing-md);
+  border-radius: var(--ds-border-radius-md);
+  border: 1px solid var(--ds-color-error);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clearError {
+  background: transparent;
+  border: none;
+  color: var(--ds-color-error-dark);
+  cursor: pointer;
+  font-size: var(--ds-font-size-lg);
+  font-weight: bold;
+  padding: 0;
+  margin-left: var(--ds-spacing-sm);
+}
+
+.portfolioStats {
+  display: grid;
+  gap: var(--ds-spacing-sm);
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--ds-spacing-sm) 0;
+  border-bottom: 1px solid var(--ds-color-border-light);
+}
+
+.stat:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--ds-color-text-secondary);
+}
+
+.value {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-color-text-primary);
+}
+
+.positive {
+  color: var(--ds-color-success) !important;
+}
+
+.negative {
+  color: var(--ds-color-error) !important;
+}
+
+.symbolSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-spacing-xs);
+  margin-bottom: var(--ds-spacing-md);
+}
+
+.symbolButton {
+  background: var(--ds-color-background-tertiary);
+  border: 1px solid var(--ds-color-border-medium);
+  border-radius: var(--ds-border-radius-md);
+  padding: var(--ds-spacing-xs) var(--ds-spacing-sm);
+  cursor: pointer;
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+  transition: var(--ds-transition-base);
+}
+
+.symbolButton:hover {
+  background: var(--ds-color-background-hover);
+  border-color: var(--ds-color-border-hover);
+}
+
+.symbolButton.active {
+  background: var(--ds-color-primary);
+  color: var(--ds-color-primary-contrast);
+  border-color: var(--ds-color-primary);
+}
+
+.marketInfo {
+  text-align: center;
+}
+
+.priceDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-spacing-xs);
+}
+
+.price {
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--ds-color-text-primary);
+}
+
+.change {
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.realtimeInfo {
+  margin-top: var(--ds-spacing-sm);
+  color: var(--ds-color-text-secondary);
+  font-size: var(--ds-font-size-xs);
+}
+
+.tradingControls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-md);
+}
+
+.tradeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-spacing-xs);
+  padding: var(--ds-spacing-sm);
+  background: var(--ds-color-background-tertiary);
+  border-radius: var(--ds-border-radius-md);
+  font-size: var(--ds-font-size-sm);
+}
+
+.tradeButtons {
+  display: flex;
+  gap: var(--ds-spacing-sm);
+}
+
+.tradeButton {
+  flex: 1;
+  padding: var(--ds-spacing-md);
+  border: none;
+  border-radius: var(--ds-border-radius-md);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  cursor: pointer;
+  transition: var(--ds-transition-base);
+}
+
+.tradeButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.buyButton {
+  background: var(--ds-color-success);
+  color: var(--ds-color-success-contrast);
+}
+
+.buyButton:hover:not(:disabled) {
+  background: var(--ds-color-success-dark);
+  transform: translateY(-1px);
+}
+
+.sellButton {
+  background: var(--ds-color-error);
+  color: var(--ds-color-error-contrast);
+}
+
+.sellButton:hover:not(:disabled) {
+  background: var(--ds-color-error-dark);
+  transform: translateY(-1px);
+}
+
+.lastTrade {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--ds-spacing-sm);
+  background: var(--ds-color-background-tertiary);
+  border-radius: var(--ds-border-radius-md);
+  font-size: var(--ds-font-size-sm);
+}
+
+.status {
+  padding: var(--ds-spacing-xs) var(--ds-spacing-sm);
+  border-radius: var(--ds-border-radius-sm);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  text-transform: uppercase;
+}
+
+.status.pending {
+  background: var(--ds-color-warning-light);
+  color: var(--ds-color-warning-dark);
+}
+
+.status.filled {
+  background: var(--ds-color-success-light);
+  color: var(--ds-color-success-dark);
+}
+
+.status.cancelled {
+  background: var(--ds-color-neutral-light);
+  color: var(--ds-color-neutral-dark);
+}
+
+.status.rejected {
+  background: var(--ds-color-error-light);
+  color: var(--ds-color-error-dark);
+}
+
+.tradesTable {
+  overflow-x: auto;
+}
+
+.tradesTable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ds-font-size-sm);
+}
+
+.tradesTable th {
+  padding: var(--ds-spacing-sm) var(--ds-spacing-md);
+  text-align: left;
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--ds-color-text-secondary);
+  border-bottom: 2px solid var(--ds-color-border-medium);
+}
+
+.tradesTable td {
+  padding: var(--ds-spacing-sm) var(--ds-spacing-md);
+  border-bottom: 1px solid var(--ds-color-border-light);
+}
+
+.tradesTable .buy {
+  color: var(--ds-color-success);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.tradesTable .sell {
+  color: var(--ds-color-error);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.noData {
+  text-align: center;
+  padding: var(--ds-spacing-xl);
+  color: var(--ds-color-text-secondary);
+  font-style: italic;
+}
+
+.advancedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--ds-spacing-lg);
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.featureList li {
+  padding: var(--ds-spacing-xs) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-spacing-sm);
+  font-size: var(--ds-font-size-sm);
+}
+
+.metrics {
+  display: grid;
+  gap: var(--ds-spacing-sm);
+}
+
+.metrics > div {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--ds-spacing-xs) 0;
+  font-size: var(--ds-font-size-sm);
+}
+
+/* Feature disabled state */
+.featureDisabled {
+  text-align: center;
+  padding: var(--ds-spacing-xl);
+  background: var(--ds-color-background-secondary);
+  border: 2px dashed var(--ds-color-border-medium);
+  border-radius: var(--ds-border-radius-lg);
+  color: var(--ds-color-text-secondary);
+}
+
+.featureDisabled h3 {
+  color: var(--ds-color-text-primary);
+  margin-bottom: var(--ds-spacing-md);
+}
+
+.featureDisabled code {
+  background: var(--ds-color-background-tertiary);
+  padding: var(--ds-spacing-xs) var(--ds-spacing-sm);
+  border-radius: var(--ds-border-radius-sm);
+  font-family: var(--ds-font-family-mono);
+  font-size: var(--ds-font-size-sm);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard {
+    margin: var(--ds-spacing-sm);
+    padding: var(--ds-spacing-md);
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: var(--ds-spacing-md);
+    align-items: stretch;
+  }
+  
+  .controls {
+    justify-content: center;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .symbolSelector {
+    justify-content: center;
+  }
+  
+  .tradeButtons {
+    flex-direction: column;
+  }
+  
+  .advancedGrid {
+    grid-template-columns: 1fr;
+  }
+}

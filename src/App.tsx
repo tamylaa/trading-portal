@@ -4,7 +4,6 @@ import MainLayout from './layouts/MainLayout';
 import { AppProvider } from './contexts/AppContext';
 import { SidebarProvider } from './contexts/SidebarContext';
 import { Home, About, Contact, StoryListPage, StoryDetailPage } from './pages';
-import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/auth/Login';
 import Dashboard from './pages/Dashboard';
 import CompleteProfile from './pages/CompleteProfile';
@@ -13,8 +12,7 @@ import Achievements from './pages/Achievements';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import BrevoChatWidget from './components/chat/BrevoChatWidget';
 import EngageKitInitializer from './components/engagekit/EngageKitInitializer';
-
-// 🚀 Redux Integration - Professional State Management
+import { AuthProvider } from './contexts/AuthContext';
 import ReduxProvider from './store/ReduxProvider';
 
 const App = () => {
@@ -72,9 +70,9 @@ const App = () => {
               </Routes>
               <BrevoChatWidget />
               <EngageKitInitializer />
-            </SidebarProvider>
-          </AppProvider>
-        </AuthProvider>
+                          </SidebarProvider>
+            </AppProvider>
+          </AuthProvider>
       </ReduxProvider>
     </BrowserRouter>
   );

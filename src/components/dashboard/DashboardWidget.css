@@ -1,0 +1,58 @@
+/* DashboardWidget - Unified Card/Widget Shell for Dashboard Components */
+.dashboard-widget {
+  background: var(--widget-bg, #fff);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.dashboard-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.dashboard-widget-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--widget-title, #22223b);
+  margin: 0;
+}
+
+.dashboard-widget-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.dashboard-widget-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dark theme support */
+.theme-dark .dashboard-widget {
+  background: var(--widget-bg-dark, #232946);
+  color: #f4f4f4;
+  box-shadow: 0 4px 24px rgba(36,40,60,0.18);
+}
+.theme-dark .dashboard-widget-title {
+  color: #f4f4f4;
+}
+
+@media (max-width: 768px) {
+  .dashboard-widget {
+    padding: 14px;
+    border-radius: 10px;
+  }
+  .dashboard-widget-title {
+    font-size: 1.1rem;
+  }
+}

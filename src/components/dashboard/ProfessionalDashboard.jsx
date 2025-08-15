@@ -4,13 +4,18 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useSidebar } from '../../contexts/SidebarContext';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store';
+import { EnhancedTradingDashboard } from '../enhanced/EnhancedTradingDashboard';
 import './ProfessionalDashboard.css';
 
 // Dashboard Widgets
 import DashboardOverview from './components/DashboardOverview';
 import ProgressTracker from './components/ProgressTracker';
 import QuickActions from './components/QuickActions';
-import { ContentLibrary, Analytics, Achievements } from './components/WidgetComponents';
+
+import { Analytics, Achievements } from './components/WidgetComponents';
+import DashboardWidget from './DashboardWidget';
+import ContentUpload from '../../pages/ContentUpload';
+import { EmailBlasterTest } from '../EmailBlasterTest';
 
 const ProfessionalDashboard = () => {
   const { isAuthenticated } = useAuth();
@@ -80,7 +85,27 @@ const ProfessionalDashboard = () => {
       case 'overview':
         return <DashboardOverview streak={dailyStreak} progress={todayProgress} />;
       case 'content':
-        return <ContentLibrary />;
+        // Example: Wrap ContentUpload in DashboardWidget for unified dashboard style
+        return (
+          <DashboardWidget title="Content Upload">
+            <ContentUpload />
+          </DashboardWidget>
+        );
+      case 'testing':
+        return (
+          <DashboardWidget title="Enhanced Component Testing">
+            <EmailBlasterTest />
+          </DashboardWidget>
+        );
+      case 'trading':
+        return (
+          <DashboardWidget title="Enhanced Trading Dashboard">
+            <EnhancedTradingDashboard 
+              symbols={['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN']}
+              showAdvancedFeatures={true}
+            />
+          </DashboardWidget>
+        );
       case 'analytics':
         return <Analytics />;
       case 'achievements':

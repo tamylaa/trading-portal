@@ -1,23 +1,33 @@
 .hero-section {
+  /* Content styling only - layout handled by architecture */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem 2rem 2.5rem 2rem;
-  /* background: linear-gradient(90deg, #f4f8fb 60%, #eaf1f8 100%), url('/assets/images/hero-bg.jpg') center/cover no-repeat; */
   border-radius: 1.5rem;
   box-shadow: 0 2px 24px rgba(36,40,60,0.07);
-  margin-bottom: 2.5rem;
   min-height: 450px;
   position: relative;
+  background: #fff;
+  
+  /* Use architecture content class for consistent spacing */
+}
+
+/* Hero Section Content Layout */
+.hero-section .landing-section-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .hero-content {
   flex: 1 1 360px;
   min-width: 300px;
   max-width: 550px;
-  margin: 0 auto;
+  text-align: center;
 }
 
 .hero-title {
@@ -81,6 +91,7 @@
   justify-content: center;
   min-width: 220px;
 }
+
 .hero-image img {
   max-width: 350px;
   width: 100%;
@@ -88,15 +99,15 @@
 }
 
 @media (max-width: 900px) {
-  .hero-section {
+  .hero-section .landing-section-content {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 2rem 1rem;
   }
-  .hero-image {
-    margin-top: 2rem;
-    justify-content: center;
+  
+  .hero-content {
+    text-align: center;
+    margin-bottom: 1rem;
   }
 }
 

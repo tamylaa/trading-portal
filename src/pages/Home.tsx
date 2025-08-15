@@ -11,10 +11,11 @@ import FAQSection from '../components/landing/FAQSection';
 import AboutSection from '../components/landing/AboutSection';
 import ContactSection from '../components/landing/ContactSection';
 import './Home.css';
+import '../components/landing/LandingLayoutArchitecture.css';
 
 const Home: React.FC = () => {
     return (
-        <>
+        <div className="landing-page-container">
             <HeroSection />
             <TrustBadgesSection />
             <FeatureHighlightsSection />
@@ -26,7 +27,7 @@ const Home: React.FC = () => {
             <FAQSection />
             <AboutSection />
             <ContactSection />
-        </>
+        </div>
     );
 };
 

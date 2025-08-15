@@ -22,7 +22,6 @@
 
 /* Sidebar container for unified width control */
 .sidebar {
-    outline: 2px solid blue !important;
     height: calc(100vh - var(--header-height));
     width: var(--sidebar-width-full);
     background: var(--color-bg);
@@ -41,10 +40,8 @@
     width: var(--sidebar-width-mini);
 }
 
-/* Always set margin-left to expanded sidebar width by default */
-/* Remove margin-left to prevent double offsetting. Only one offset should be applied for sidebar. */
+/* Content wrapper - different behavior for authenticated vs non-authenticated */
 .content-wrapper {
-    outline: 2px solid green !important;
     flex: 1 0 auto;
     width: 100%;
     min-height: 0;
@@ -54,16 +51,39 @@
     padding: 0;
     padding-top: var(--header-height) !important;
     padding-right: 0px;
+    padding-left: 0px; /* Ensure no left padding */
     margin-top: 0 !important;
-    /* margin-left removed to prevent double offset */
-    max-width: 1400px;
-    margin-right: 12px;
+    margin-left: 0; /* Default: no sidebar offset for landing pages */
+    margin-right: 0; /* Ensure no right margin */
+    max-width: 100%;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4,0,0.2,1);
     display: flex;
     flex-direction: column;
 }
 
-/* When sidebar is collapsed, override margin-left for content-wrapper */
+/* When sidebar is present, offset content */
+.app-layout.has-sidebar .content-wrapper {
+    margin-left: var(--sidebar-width-full);
+    max-width: calc(100% - var(--sidebar-width-full));
+    margin-right: 12px;
+    padding-left: 0; /* Still no padding even with sidebar */
+}
+
+/* When sidebar is collapsed, adjust offset */
+.app-layout.has-sidebar:has(.sidebar.sidebar-collapsed) .content-wrapper,
+.app-layout.has-sidebar .sidebar.sidebar-collapsed ~ .content-wrapper {
+    margin-left: var(--sidebar-width-mini);
+    max-width: calc(100% - var(--sidebar-width-mini));
+}
+
+/* No sidebar state - full width content for landing pages */
+.app-layout.no-sidebar .content-wrapper {
+    margin-left: 0;
+    max-width: 100%;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
 
 
 

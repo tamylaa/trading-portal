@@ -1,0 +1,64 @@
+/* Design Tokens - Landing Page Layout System 
+   Single source of truth for spacing and layout values */
+
+:root {
+  /* Layout spacing tokens */
+  --landing-section-margin: 1rem;
+  --landing-section-spacing: 2.5rem;
+  --landing-section-margin-tablet: 0.5rem;
+  --landing-section-margin-mobile: 0.25rem;
+  
+  /* Responsive breakpoints */
+  --breakpoint-tablet: 768px;
+  --breakpoint-mobile: 480px;
+  
+  /* Layout calculations (derived from base tokens) */
+  --landing-section-width: calc(100% - (var(--landing-section-margin) * 2));
+  --landing-section-width-tablet: calc(100% - (var(--landing-section-margin-tablet) * 2));
+  --landing-section-width-mobile: calc(100% - (var(--landing-section-margin-mobile) * 2));
+  
+  /* Viewport constraints */
+  --landing-max-width: calc(100vw - (var(--landing-section-margin) * 2));
+  --landing-max-width-tablet: calc(100vw - (var(--landing-section-margin-tablet) * 2));
+  --landing-max-width-mobile: calc(100vw - (var(--landing-section-margin-mobile) * 2));
+}
+
+/* Utility classes for consistent spacing */
+.section-margin {
+  margin-left: var(--landing-section-margin);
+  margin-right: var(--landing-section-margin);
+}
+
+.section-spacing {
+  margin-bottom: var(--landing-section-spacing);
+}
+
+.section-width {
+  width: var(--landing-section-width);
+  max-width: var(--landing-max-width);
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .section-margin {
+    margin-left: var(--landing-section-margin-tablet);
+    margin-right: var(--landing-section-margin-tablet);
+  }
+  
+  .section-width {
+    width: var(--landing-section-width-tablet);
+    max-width: var(--landing-max-width-tablet);
+  }
+}
+
+@media (max-width: 480px) {
+  .section-margin {
+    margin-left: var(--landing-section-margin-mobile);
+    margin-right: var(--landing-section-margin-mobile);
+  }
+  
+  .section-width {
+    width: var(--landing-section-width-mobile);
+    max-width: var(--landing-max-width-mobile);
+  }
+}
