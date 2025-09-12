@@ -22,9 +22,10 @@ const Sidebar: React.FC = () => {
     const mainMenuItems = [
         { to: '/', icon: 'home', label: 'Home', end: true },
         { to: '/dashboard', icon: 'chart-line', label: 'Dashboard' },
-        { to: '/content-upload', icon: 'cloud-upload', label: 'Upload Content' },
+        { to: '/content-access', icon: 'search', label: 'Access Content' },
         { to: '/analytics', icon: 'chart-bar', label: 'Analytics' },
-        { to: '/trades', icon: 'exchange-alt', label: 'Trades' }
+        { to: '/trades', icon: 'exchange-alt', label: 'Trades' },
+        { to: '/email-blaster', icon: 'envelope', label: 'Email Blaster' }
     ];
 
     const accountItems = [

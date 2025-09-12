@@ -39,7 +39,6 @@ const runBackgroundDiagnostics = (): DiagnosticLog[] => {
     Promise.all([
         checkAsset('/sidebar/sidebar.html'),
         checkAsset('/footer/footer.html'),
-        checkAsset('/styles.css'),
         checkAsset('/sidebar/sidebar.css'),
         checkAsset('/footer/footer.css')
     ]);

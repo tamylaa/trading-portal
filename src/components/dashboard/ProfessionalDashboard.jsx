@@ -14,7 +14,7 @@ import QuickActions from './components/QuickActions';
 
 import { Analytics, Achievements } from './components/WidgetComponents';
 import DashboardWidget from './DashboardWidget';
-import ContentUpload from '../../pages/ContentUpload';
+import ContentAccess from '../../pages/ContentAccess';
 import { EmailBlasterTest } from '../EmailBlasterTest';
 
 const ProfessionalDashboard = () => {
@@ -88,7 +88,7 @@ const ProfessionalDashboard = () => {
         // Example: Wrap ContentUpload in DashboardWidget for unified dashboard style
         return (
           <DashboardWidget title="Content Upload">
-            <ContentUpload />
+            <ContentAccess />
           </DashboardWidget>
         );
       case 'testing':

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ButtonSuccess } from '@tamyla/ui-components-react';
 import './HeroSection.css';
 
 const HeroSection: React.FC = () => {
@@ -15,7 +16,14 @@ const HeroSection: React.FC = () => {
           <p className="hero-subtitle">
             Secret Formulas for ambitious businesses and professionals to trade smarter, faster, safer and peacefully.
           </p>
-          <button className="hero-cta">Start Free Trial</button>
+                        <ButtonSuccess
+                size="lg"
+                fullWidth={true}
+                className="hero-cta-button"
+                onClick={() => window.location.href = '/stories'}
+              >
+                Get Started Today
+              </ButtonSuccess>
           <div className="hero-microcopy">No credit card required. Cancel anytime.</div>
           <div className="hero-social-proof">
             <span>Trusted by 5,000+ users</span>

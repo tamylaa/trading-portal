@@ -43,25 +43,56 @@
   margin-bottom: 2rem;
 }
 
-.hero-cta {
-  background: #2563eb;
-  color: #fff;
-  font-size: 1.15rem;
-  font-weight: 700;
-  padding: 0.82rem 2.2rem;
-  border: none;
-  border-radius: 2rem;
-  box-shadow: 0 2px 12px rgba(36,40,60,0.10);
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
-  outline: none;
+/* Enhanced button styling for rounded corners */
+.hero-cta-button {
+  /* Use package's design token for consistent rounded corners */
+  border-radius: 0.5rem !important; /* lg radius from design tokens */
+  font-size: 1.75rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
 }
 
-.hero-cta:hover,
-.hero-cta:focus {
-  background: #1746a2;
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(36,40,60,0.16);
+/* Alternative: Use fully rounded corners */
+.hero-cta-button.rounded-full {
+  border-radius: 9999px !important; /* full radius for pill-shaped button */
+}
+
+/* More specific selectors to ensure override */
+.hero-section .hero-cta-button,
+.hero-section button.hero-cta-button {
+  border-radius: 0.5rem !important;
+  font-size: 1.75rem !important;
+  font-weight: 600 !important;
+}
+
+/* Try overriding CSS custom properties if the package uses them */
+.hero-section {
+  --button-font-size: 1.75rem !important;
+  --button-font-weight: 600 !important;
+}
+
+/* Target any styled component class patterns */
+.hero-section [class*="Button"],
+.hero-section [class*="button"] {
+  font-size: 1.75rem !important;
+  font-weight: 600 !important;
+}
+
+.hero-cta-button:hover {
+  color: #ffffff !important;
+}
+
+.hero-cta-button:active {
+  transform: translateY(0) !important;
+}
+
+/* Responsive adjustments for the enhanced button */
+@media (max-width: 768px) {
+  .hero-cta-button {
+    font-size: 1.25rem !important;
+    padding: 1rem 2rem !important;
+    min-height: 3.5rem !important;
+  }
 }
 
 .hero-microcopy {

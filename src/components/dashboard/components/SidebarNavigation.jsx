@@ -41,11 +41,11 @@ const SidebarNavigation = ({
       section: 'main'
     },
     {
-      id: 'content-upload',
-      label: 'Upload Content',
-      icon: '📁',
-      description: 'Manage your files',
-      route: '/content-upload',
+      id: 'content-access',
+      label: 'Access Content',
+      icon: '�',
+      description: 'Search and access content',
+      route: '/content-access',
       badge: null,
       section: 'main'
     },
