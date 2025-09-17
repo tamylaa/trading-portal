@@ -179,7 +179,7 @@ function Validate-Headers {
     $headersPath = Join-Path $PSScriptRoot "public/_headers"
     $expectedHeaders = @"
 /*
-  Content-Security-Policy: default-src 'self' cdnjs.cloudflare.com https://tamyla.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://tamyla.com; connect-src 'self' https://tamyla.com
+  Content-Security-Policy: default-src 'self' cdnjs.cloudflare.com https://tamyla.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' https://tamyla.com; connect-src 'self' https://tamyla.com
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
 "@

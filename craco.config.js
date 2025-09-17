@@ -10,6 +10,9 @@ module.exports = {
       '@utils': path.resolve(__dirname, 'src/utils')
     },
     configure: (webpackConfig) => {
+      // Set CSP-compliant devtool (no eval usage)
+      webpackConfig.devtool = 'cheap-module-source-map';
+      
       // Explicitly set publicPath to root
       webpackConfig.output.publicPath = '/';
       
