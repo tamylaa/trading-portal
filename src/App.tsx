@@ -23,7 +23,7 @@ const App = () => {
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       {/* 🏪 Redux Provider - Enhanced State Management Layer */}
       <ReduxProvider>
-        {/* 🎨 Tamyla Theme Provider - Redux-based Design System Integration */}
+        {/* 🎨 Tamyla Theme Provider - Essential for ui-components-react styling */}
         <TamylaThemeProvider>
           <AuthProvider>
             <AppProvider>
@@ -88,7 +88,7 @@ const App = () => {
             </SidebarProvider>
           </AppProvider>
         </AuthProvider>
-      </TamylaThemeProvider>
+        </TamylaThemeProvider>
     </ReduxProvider>
   </BrowserRouter>
   );

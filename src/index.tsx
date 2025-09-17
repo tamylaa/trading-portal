@@ -1,6 +1,5 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { TamylaThemeProvider } from '@tamyla/ui-components-react';
 import App from './App';
 import './styles/index.css';
 import runBackgroundDiagnostics from './diagnostics/backgroundDiagnostics';
@@ -11,9 +10,7 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <TamylaThemeProvider>
-      <App />
-    </TamylaThemeProvider>
+    <App />
   </React.StrictMode>
 );
 

@@ -1,3 +1,5 @@
+@import '@tamyla/ui-components-react/src/core/design-tokens.css';
+
 * {
     margin: 0;
     padding: 0;
