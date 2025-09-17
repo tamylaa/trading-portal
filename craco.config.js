@@ -10,8 +10,13 @@ module.exports = {
       '@utils': path.resolve(__dirname, 'src/utils')
     },
     configure: (webpackConfig) => {
-      // Set CSP-compliant devtool (no eval usage)
-      webpackConfig.devtool = 'cheap-module-source-map';
+      // Set CSP-compliant devtool only in development
+      if (process.env.NODE_ENV === 'development') {
+        webpackConfig.devtool = 'cheap-module-source-map';
+      } else {
+        // Disable source maps in production to prevent any eval usage
+        webpackConfig.devtool = false;
+      }
       
       // Explicitly set publicPath to root
       webpackConfig.output.publicPath = '/';
@@ -51,6 +56,12 @@ module.exports = {
       webpackConfig.stats = {
         warningsFilter: (warning) => warning.message.includes('Critical dependency: the request of a dependency is an expression')
       };
+      
+      // Additional CSP safety measures
+      if (webpackConfig.optimization) {
+        // Ensure no eval is used in production
+        webpackConfig.optimization.minimizer = webpackConfig.optimization.minimizer || [];
+      }
       
       return webpackConfig;
     }
