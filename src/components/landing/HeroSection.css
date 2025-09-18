@@ -44,12 +44,23 @@
 }
 
 /* Enhanced button styling for rounded corners */
+.hero-cta-container {
+  margin: 2rem 0 1rem 0;
+}
+
 .hero-cta-button {
   /* Use package's design token for consistent rounded corners */
   border-radius: 0.5rem !important; /* lg radius from design tokens */
   font-size: 1.75rem !important;
   font-weight: 600 !important;
   line-height: 1.2 !important;
+  position: relative !important;
+}
+
+/* Prevent pseudo-elements that might cause duplicate text */
+.hero-cta-button::before,
+.hero-cta-button::after {
+  display: none !important;
 }
 
 /* Alternative: Use fully rounded corners */

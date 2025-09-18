@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { ButtonSuccess, TamylaThemeProvider } from '@tamyla/ui-components-react';
 import './HeroSection.css';
 
@@ -8,10 +8,6 @@ const HeroSection: React.FC = () => {
     background: `linear-gradient(90deg, #f4f8fb 60%, #eaf1f8 100%), url('${process.env.PUBLIC_URL}/assets/images/hero-bg.jpg') center/cover no-repeat`,
   };
 
-  // Prevent duplicate button creation
-  const buttonRef = useRef<HTMLDivElement>(null);
-  const [buttonKey] = React.useState(() => `btn-${Date.now()}-${Math.random()}`);
-
   return (
     <section className="hero-section" style={heroSectionStyle}>
       <div className="landing-section-content">
@@ -20,7 +16,7 @@ const HeroSection: React.FC = () => {
           <p className="hero-subtitle">
             Secret Formulas for ambitious businesses and professionals to trade smarter, faster, safer and peacefully.
           </p>
-          <div ref={buttonRef} key={buttonKey}>
+          <div className="hero-cta-container">
             <TamylaThemeProvider>
               <ButtonSuccess
                 size="lg"
