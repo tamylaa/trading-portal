@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { ButtonSuccess, TamylaThemeProvider } from '@tamyla/ui-components-react';
-import UIComponentErrorBoundary from '../UIComponentErrorBoundary';
 import './HeroSection.css';
 
 const HeroSection: React.FC = () => {
@@ -22,38 +21,16 @@ const HeroSection: React.FC = () => {
             Secret Formulas for ambitious businesses and professionals to trade smarter, faster, safer and peacefully.
           </p>
           <div ref={buttonRef} key={buttonKey}>
-            <UIComponentErrorBoundary 
-              fallback={
-                <button 
-                  className="hero-cta-button fallback-button"
-                  onClick={() => window.location.href = '/stories'}
-                  style={{
-                    padding: '16px 32px',
-                    backgroundColor: '#22c55e',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    width: '100%'
-                  }}
-                >
-                  Get Started Today (Fallback)
-                </button>
-              }
-            >
-              <TamylaThemeProvider>
-                <ButtonSuccess
-                  size="lg"
-                  fullWidth={true}
-                  className="hero-cta-button"
-                  onClick={() => window.location.href = '/stories'}
-                >
-                  Get Started Today
-                </ButtonSuccess>
-              </TamylaThemeProvider>
-            </UIComponentErrorBoundary>
+            <TamylaThemeProvider>
+              <ButtonSuccess
+                size="lg"
+                fullWidth={true}
+                className="hero-cta-button"
+                onClick={() => window.location.href = '/stories'}
+              >
+                Get Started Today
+              </ButtonSuccess>
+            </TamylaThemeProvider>
           </div>
           <div className="hero-microcopy">No credit card required. Cancel anytime.</div>
           <div className="hero-social-proof">

@@ -73,27 +73,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="%PUBLIC_URL%/assets/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/assets/apple-touch-icon.png">
-    
-    <!-- DIRECT TEST SCRIPT - Should show immediately if GitHub Actions works -->
-    <script>
-        console.log('🔴 DIRECT HTML TEST: GitHub Actions deployed this change - 2025-09-18 16:00');
-        
-        // Create visible indicator immediately
-        document.addEventListener('DOMContentLoaded', function() {
-            const testDiv = document.createElement('div');
-            testDiv.style.cssText = 'position:fixed;top:0;left:0;background:red;color:white;padding:10px;z-index:999999;font-size:14px;';
-            testDiv.innerHTML = '🔴 GITHUB ACTIONS WORKING - Remove this if you see it';
-            document.body.appendChild(testDiv);
-            
-            // Test eval
-            try {
-                eval('console.log("✅ eval works in direct HTML script")');
-                testDiv.innerHTML += '<br>✅ eval() allowed';
-            } catch (e) {
-                testDiv.innerHTML += '<br>❌ eval() blocked: ' + e.message;
-            }
-        });
-    </script>
 </head>
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

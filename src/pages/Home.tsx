@@ -1,9 +1,4 @@
 import React from 'react';
-import BasicDebug from '../components/BasicDebug';
-import TamylaUIDebugger from '../components/TamylaUIDebugger';
-import CompatibilityTest from '../components/CompatibilityTest';
-import ErrorLogger from '../components/ErrorLogger';
-import AlternativeUILoader from '../components/AlternativeUILoader';
 import HeroSection from '../components/landing/HeroSection';
 import TrustBadgesSection from '../components/landing/TrustBadgesSection';
 import FeatureHighlightsSection from '../components/landing/FeatureHighlightsSection';
@@ -21,11 +16,6 @@ import '../components/landing/LandingLayoutArchitecture.css';
 const Home: React.FC = () => {
     return (
         <div className="landing-page-container">
-            <BasicDebug />
-            <ErrorLogger />
-            <TamylaUIDebugger />
-            <CompatibilityTest />
-            <AlternativeUILoader />
             <HeroSection />
             <TrustBadgesSection />
             <FeatureHighlightsSection />
