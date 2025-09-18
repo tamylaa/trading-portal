@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="
-      default-src 'self' https:;
+      default-src 'self' https: http://localhost:* http://127.0.0.1:*;
       connect-src 'self' 
         http://127.0.0.1:8787 
         http://localhost:3000
@@ -16,14 +16,14 @@
         https://*.brevo.com 
         https://*.brevo.tech
         https://*.tamylatrading.workers.dev;
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' https:;
-      style-src 'self' 'unsafe-inline' https:;
-      img-src 'self' data: https:;
-      font-src 'self' data: https:;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https: http://localhost:* http://127.0.0.1:*;
+      style-src 'self' 'unsafe-inline' https: http://localhost:* http://127.0.0.1:*;
+      img-src 'self' data: https: http://localhost:* http://127.0.0.1:*;
+      font-src 'self' data: https: http://localhost:* http://127.0.0.1:*;
       object-src 'none';
       base-uri 'self';
       form-action 'self';
-      upgrade-insecure-requests;
+      frame-ancestors 'none';
     ">
     <meta name="description" content="Tamyla Trading Ventures LLP - Global trading solutions and services for businesses worldwide. Expert solutions for international trade.">
     <meta name="keywords" content="global trade, international trade, trading services, import export, business solutions">
