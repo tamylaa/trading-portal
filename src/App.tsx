@@ -1,22 +1,31 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import { AppProvider } from './contexts/AppContext';
 import { SidebarProvider } from './contexts/SidebarContext';
-import { Home, About, Contact, StoryListPage, StoryDetailPage, EmailBlasterPage } from './pages';
+// Import only critical pages directly (avoiding barrel export that includes heavy dependencies)
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import Login from './components/auth/Login';
 import Dashboard from './pages/Dashboard';
 import CompleteProfile from './pages/CompleteProfile';
-import ContentAccess from './pages/ContentAccess';
-import Achievements from './pages/Achievements';
-import UIDemoPage from './pages/UIDemoPage';
-import ReactComponentsDemoPage from './pages/ReactComponentsDemoPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import BrevoChatWidget from './components/chat/BrevoChatWidget';
 import EngageKitInitializer from './components/engagekit/EngageKitInitializer';
 import { AuthProvider } from './contexts/AuthContext';
 import ReduxProvider from './store/ReduxProvider';
 import { TamylaThemeProvider } from '@tamyla/ui-components-react';
+
+// Lazy load heavy pages with PDF functionality and syntax highlighting
+const StoryListPage = React.lazy(() => import('./pages/StoryListPage'));
+const StoryDetailPage = React.lazy(() => import('./pages/StoryDetailPage'));
+const EmailBlasterPage = React.lazy(() => import('./pages/EmailBlasterPage'));
+const ContentAccess = React.lazy(() => import('./pages/ContentAccess'));
+const Achievements = React.lazy(() => import('./pages/Achievements'));
+const UIDemoPage = React.lazy(() => import('./pages/UIDemoPage'));
+const ReactComponentsDemoPage = React.lazy(() => import('./pages/ReactComponentsDemoPage'));
+// GuidePage removed as it's not used in routes
 
 const App = () => {
   return (
@@ -33,18 +42,36 @@ const App = () => {
                   <Route index element={<Home />} />
                   <Route path="about" element={<About />} />
                   <Route path="contact" element={<Contact />} />
-                  <Route path="stories" element={<StoryListPage />} />
-                  <Route path="stories/:id" element={<StoryDetailPage />} />
+                  <Route path="stories" element={
+                    <Suspense fallback={<div>Loading stories...</div>}>
+                      <StoryListPage />
+                    </Suspense>
+                  } />
+                  <Route path="stories/:id" element={
+                    <Suspense fallback={<div>Loading story...</div>}>
+                      <StoryDetailPage />
+                    </Suspense>
+                  } />
                   <Route path="login" element={<Login />} />
-                  <Route path="ui-demo" element={<UIDemoPage />} />
-                  <Route path="react-demo" element={<ReactComponentsDemoPage />} />
+                  <Route path="ui-demo" element={
+                    <Suspense fallback={<div>Loading UI demo...</div>}>
+                      <UIDemoPage />
+                    </Suspense>
+                  } />
+                  <Route path="react-demo" element={
+                    <Suspense fallback={<div>Loading React demo...</div>}>
+                      <ReactComponentsDemoPage />
+                    </Suspense>
+                  } />
 
                    {/* Protected Routes */}
                 <Route
                   path="email-blaster"
                   element={
                     <ProtectedRoute>
-                      <EmailBlasterPage />
+                      <Suspense fallback={<div>Loading email blaster...</div>}>
+                        <EmailBlasterPage />
+                      </Suspense>
                     </ProtectedRoute>
                   }
                 />
@@ -68,7 +95,9 @@ const App = () => {
                     path="content-access"
                     element={
                       <ProtectedRoute>
-                        <ContentAccess />
+                        <Suspense fallback={<div>Loading content access...</div>}>
+                          <ContentAccess />
+                        </Suspense>
                       </ProtectedRoute>
                     }
                   />
@@ -76,7 +105,9 @@ const App = () => {
                     path="achievements"
                     element={
                       <ProtectedRoute>
-                        <Achievements />
+                        <Suspense fallback={<div>Loading achievements...</div>}>
+                          <Achievements />
+                        </Suspense>
                       </ProtectedRoute>
                     }
                   />
