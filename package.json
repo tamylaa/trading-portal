@@ -5,7 +5,7 @@
   "homepage": "https://tamyla.com",
   "scripts": {
     "start": "craco start",
-    "build": "set PUBLIC_URL=/&& craco build",
+    "build": "set PUBLIC_URL=/&& set CI=false&& craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "build-check": "powershell -ExecutionPolicy Bypass -File build-check.ps1"
