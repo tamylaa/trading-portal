@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktrading_portal=self.webpackChunktrading_portal||[]).push([[917],{4917:(a,e,r)=>{r.r(e),r.d(e,{default:()=>d});r(5043);var s=r(5755),t=r(579);const d=()=>(0,t.jsx)("div",{style:{padding:"2rem"},children:(0,t.jsx)(s.A,{})})}}]);
