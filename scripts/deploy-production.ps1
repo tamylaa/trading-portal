@@ -1,4 +1,4 @@
-# 🚀 Production Deployment Pipeline
+# Production Deployment Pipeline
 # Comprehensive pre-production checks, regression testing, and deployment automation
 
 param(
@@ -7,14 +7,14 @@ param(
     [string]$CommitMessage = "Deploy: Enhanced Redux implementation with professional dashboard features"
 )
 
-# 🎨 Color functions for better output
-function Write-Success { param($msg) Write-Host "✅ $msg" -ForegroundColor Green }
-function Write-Error { param($msg) Write-Host "❌ $msg" -ForegroundColor Red }
-function Write-Warning { param($msg) Write-Host "⚠️  $msg" -ForegroundColor Yellow }
-function Write-Info { param($msg) Write-Host "ℹ️  $msg" -ForegroundColor Cyan }
-function Write-Step { param($msg) Write-Host "`n🔄 $msg" -ForegroundColor Blue }
+# Color functions for better output
+function Write-Success { param($msg) Write-Host "[SUCCESS] $msg" -ForegroundColor Green }
+function Write-Error { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red }
+function Write-Warning { param($msg) Write-Host "[WARNING] $msg" -ForegroundColor Yellow }
+function Write-Info { param($msg) Write-Host "[INFO] $msg" -ForegroundColor Cyan }
+function Write-Step { param($msg) Write-Host "`n[STEP] $msg" -ForegroundColor Blue }
 
-# 📊 Track results
+# Track results
 $results = @()
 $startTime = Get-Date
 
@@ -28,7 +28,7 @@ function Add-Result {
     }
 }
 
-Write-Host "`n🚀 Production Deployment Pipeline Started" -ForegroundColor Magenta
+Write-Host "`nProduction Deployment Pipeline Started" -ForegroundColor Magenta
 Write-Host "=" * 60 -ForegroundColor Gray
 
 # 🔍 Step 1: Environment Validation
@@ -312,7 +312,7 @@ $results | ForEach-Object {
     $status = $_.Status.PadRight(8)
     Write-Host "$status | $($_.Step)" -ForegroundColor $color
     if ($_.Details) {
-        Write-Host "         └─ $($_.Details)" -ForegroundColor Gray
+        Write-Host "         +- $($_.Details)" -ForegroundColor Gray
     }
 }
 
