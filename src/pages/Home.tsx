@@ -3,6 +3,7 @@ import BasicDebug from '../components/BasicDebug';
 import TamylaUIDebugger from '../components/TamylaUIDebugger';
 import CompatibilityTest from '../components/CompatibilityTest';
 import ErrorLogger from '../components/ErrorLogger';
+import AlternativeUILoader from '../components/AlternativeUILoader';
 import HeroSection from '../components/landing/HeroSection';
 import TrustBadgesSection from '../components/landing/TrustBadgesSection';
 import FeatureHighlightsSection from '../components/landing/FeatureHighlightsSection';
@@ -24,6 +25,7 @@ const Home: React.FC = () => {
             <ErrorLogger />
             <TamylaUIDebugger />
             <CompatibilityTest />
+            <AlternativeUILoader />
             <HeroSection />
             <TrustBadgesSection />
             <FeatureHighlightsSection />
