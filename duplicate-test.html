@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Duplicate Rendering Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .pass { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .fail { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background-color: #e2e3e5; border: 1px solid #d6d8db; color: #383d41; }
+        iframe { width: 100%; height: 300px; border: 1px solid #ccc; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Duplicate Rendering Test</h1>
+    
+    <div class="info test-result">
+        <strong>Test Objective:</strong> Verify that "Get Started Today" button appears only once in both development and production environments.
+    </div>
+
+    <h2>📋 Test Instructions:</h2>
+    <ol>
+        <li>Look at both environments below</li>
+        <li>Count the "Get Started Today" buttons in each</li>
+        <li>Check browser console for any CSP violations</li>
+        <li>Verify ButtonSuccess component renders correctly</li>
+    </ol>
+
+    <h2>🔧 Development Environment (port 3000):</h2>
+    <iframe src="http://localhost:3000" title="Development Environment"></iframe>
+    
+    <h2>🚀 Production Environment (port 3001):</h2>
+    <iframe src="http://localhost:3001" title="Production Environment"></iframe>
+
+    <h2>✅ Expected Results:</h2>
+    <ul>
+        <li>✅ Each environment should show exactly ONE "Get Started Today" button</li>
+        <li>✅ No CSP violations in browser console</li>
+        <li>✅ Button should be clickable and styled correctly</li>
+        <li>✅ No JavaScript errors in console</li>
+    </ul>
+
+    <script>
+        // Auto-refresh test every 30 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 30000);
+        
+        console.log('🧪 Duplicate Rendering Test Started');
+        console.log('⏰ Auto-refresh in 30 seconds');
+    </script>
+</body>
+</html>

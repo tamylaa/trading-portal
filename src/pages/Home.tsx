@@ -1,4 +1,5 @@
 import React from 'react';
+import TamylaUIDebugger from '../components/TamylaUIDebugger';
 import HeroSection from '../components/landing/HeroSection';
 import TrustBadgesSection from '../components/landing/TrustBadgesSection';
 import FeatureHighlightsSection from '../components/landing/FeatureHighlightsSection';
@@ -16,6 +17,7 @@ import '../components/landing/LandingLayoutArchitecture.css';
 const Home: React.FC = () => {
     return (
         <div className="landing-page-container">
+            <TamylaUIDebugger />
             <HeroSection />
             <TrustBadgesSection />
             <FeatureHighlightsSection />
