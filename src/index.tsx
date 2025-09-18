@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/index.css';
 import runBackgroundDiagnostics from './diagnostics/backgroundDiagnostics';
+import './github-actions-test';
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Failed to find the root element');
