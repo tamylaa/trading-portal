@@ -1,4 +1,5 @@
 import React from 'react';
+import BasicDebug from '../components/BasicDebug';
 import TamylaUIDebugger from '../components/TamylaUIDebugger';
 import CompatibilityTest from '../components/CompatibilityTest';
 import ErrorLogger from '../components/ErrorLogger';
@@ -19,6 +20,7 @@ import '../components/landing/LandingLayoutArchitecture.css';
 const Home: React.FC = () => {
     return (
         <div className="landing-page-container">
+            <BasicDebug />
             <ErrorLogger />
             <TamylaUIDebugger />
             <CompatibilityTest />
