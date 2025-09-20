@@ -5,6 +5,91 @@ import { configureStore, createSlice, combineReducers } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 
+// 📝 Type Definitions
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+  profileComplete?: boolean;
+}
+
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  timestamp: string;
+  autoClose?: boolean;
+  duration?: number;
+}
+
+interface Modal {
+  isOpen: boolean;
+  data?: any;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+}
+
+interface PreferencesState {
+  display: {
+    theme: string;
+    language: string;
+    timezone: string;
+  };
+  trading: {
+    defaultOrderType: string;
+    confirmOrders: boolean;
+  };
+  workspace: {
+    favoriteInstruments: string[];
+  };
+  loading: boolean;
+  errors: Record<string, any>;
+  isModified: boolean;
+  lastSyncTime: string | null;
+}
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
+}
+
+interface UIState {
+  sidebar: {
+    isOpen: boolean;
+    isMobile: boolean;
+    activeSection: string;
+    pinnedItems: string[];
+  };
+  theme: {
+    mode: 'light' | 'dark';
+    primaryColor: string;
+    fontSize: 'sm' | 'md' | 'lg';
+    animations: boolean;
+  };
+  notifications: Notification[];
+  modals: Record<string, Modal>;
+  loading: {
+    global: boolean;
+    components: Record<string, boolean>;
+  };
+  search: {
+    query: string;
+    isSearching: boolean;
+    results: any[];
+    filters: Record<string, any>;
+  };
+  viewport: {
+    width: number;
+    height: number;
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+  };
+}
+
 // 🔐 Simple Auth Slice for Demo
 const authSlice = createSlice({
   name: 'auth',
@@ -14,7 +99,7 @@ const authSlice = createSlice({
     isAuthenticated: false,
     loading: false,
     error: null,
-  },
+  } as AuthState,
   reducers: {
     loginStart: (state) => {
       state.loading = true;
@@ -48,25 +133,25 @@ const uiSlice = createSlice({
       isOpen: true,
       isMobile: false,
       activeSection: 'dashboard',
-      pinnedItems: [],
+      pinnedItems: [] as string[],
     },
     theme: {
-      mode: 'light',
+      mode: 'light' as const,
       primaryColor: '#007bff',
-      fontSize: 'md',
+      fontSize: 'md' as const,
       animations: true,
     },
-    notifications: [],
-    modals: {},
+    notifications: [] as Notification[],
+    modals: {} as Record<string, Modal>,
     loading: {
       global: false,
-      components: {},
+      components: {} as Record<string, boolean>,
     },
     search: {
       query: '',
       isSearching: false,
-      results: [],
-      filters: {},
+      results: [] as any[],
+      filters: {} as Record<string, any>,
     },
     viewport: {
       width: typeof window !== 'undefined' ? window.innerWidth : 1200,
@@ -75,7 +160,7 @@ const uiSlice = createSlice({
       isTablet: typeof window !== 'undefined' ? window.innerWidth >= 768 && window.innerWidth < 1024 : false,
       isDesktop: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
     },
-  },
+  } as UIState,
   reducers: {
     toggleSidebar: (state) => {
       state.sidebar.isOpen = !state.sidebar.isOpen;
@@ -237,10 +322,10 @@ const preferencesSlice = createSlice({
       favoriteInstruments: ['AAPL', 'GOOGL', 'TSLA'],
     },
     loading: false,
-    errors: {},
+    errors: {} as Record<string, any>,
     isModified: false,
-    lastSyncTime: null,
-  },
+    lastSyncTime: null as string | null,
+  } as PreferencesState,
   reducers: {
     updateDisplayPreferences: (state, action) => {
       Object.assign(state.display, action.payload);

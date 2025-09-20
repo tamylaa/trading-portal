@@ -105,7 +105,7 @@ const StoryDetailPage: React.FC = () => {
         <header>
           <h1>{story.title}</h1>
           <div className="story-meta">
-            <time dateTime={story.createdAt}>{formatDate(story.createdAt)}</time>
+            <time dateTime={story.createdAt}>{story.createdAt ? formatDate(story.createdAt) : 'Unknown date'}</time>
             {story.tags && (
               <span className="story-tags">
                 {story.tags.map(tag => (

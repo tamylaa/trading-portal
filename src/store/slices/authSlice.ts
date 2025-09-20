@@ -228,7 +228,7 @@ export const authSlice = createSlice({
         state.loading.verification = false;
         state.isAuthenticated = true;
         state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.user = action.payload.user as User;
         state.sessionExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
         
         // Store token in localStorage for persistence
@@ -247,7 +247,7 @@ export const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading.profile = false;
-        state.user = action.payload;
+        state.user = action.payload as User;
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading.profile = false;
@@ -262,7 +262,7 @@ export const authSlice = createSlice({
       .addCase(getCurrentUser.fulfilled, (state, action) => {
         state.loading.verification = false;
         state.isAuthenticated = true;
-        state.user = action.payload;
+        state.user = action.payload as User;
         state.token = localStorage.getItem('authToken');
       })
       .addCase(getCurrentUser.rejected, (state) => {

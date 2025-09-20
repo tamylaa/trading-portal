@@ -118,7 +118,7 @@ export class EnhancedApiClient {
       
       return response;
     } catch (error) {
-      if (attempt < this.config.retries && error.name !== 'AbortError') {
+      if (attempt < this.config.retries && error instanceof Error && error.name !== 'AbortError') {
         // Wait before retry
         await new Promise(resolve => setTimeout(resolve, this.config.retryDelay * attempt));
         return this.enhancedFetch(url, options, attempt + 1);
@@ -162,8 +162,8 @@ export class EnhancedApiClient {
       return apiResponse;
     } catch (error) {
       const apiError: ApiError = {
-        message: error.message || 'Unknown API error',
-        status: error.status || 500,
+        message: error instanceof Error ? error.message : 'Unknown API error',
+        status: (error as any)?.status || 500,
         timestamp: new Date().toISOString(),
       };
       

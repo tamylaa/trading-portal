@@ -12,6 +12,10 @@ export const useEnhancedAppSelector: TypedUseSelectorHook<EnhancedRootState> = u
 
 // Feature-flag aware hooks that fall back to legacy implementation
 export const useEnhancedTradingPreferences = () => {
+  // Always call hooks first
+  const dispatch = useEnhancedAppDispatch();
+  const tradingState = useEnhancedAppSelector(state => state.enhancedTradingPreferences);
+
   // If enhanced features are disabled, return null or legacy data
   if (!FEATURE_FLAGS.useEnhancedStateManagement) {
     return {
@@ -21,9 +25,6 @@ export const useEnhancedTradingPreferences = () => {
       actions: {},
     };
   }
-
-  const dispatch = useEnhancedAppDispatch();
-  const tradingState = useEnhancedAppSelector(state => state.enhancedTradingPreferences);
   
   return {
     preferences: tradingState.preferences,
@@ -46,6 +47,10 @@ export const useEnhancedTradingPreferences = () => {
 };
 
 export const useEnhancedDisplayPreferences = () => {
+  // Always call hooks first
+  const dispatch = useEnhancedAppDispatch();
+  const displayState = useEnhancedAppSelector(state => state.enhancedDisplayPreferences);
+
   // If enhanced features are disabled, return null or legacy data
   if (!FEATURE_FLAGS.useEnhancedStateManagement) {
     return {
@@ -55,9 +60,6 @@ export const useEnhancedDisplayPreferences = () => {
       actions: {},
     };
   }
-
-  const dispatch = useEnhancedAppDispatch();
-  const displayState = useEnhancedAppSelector(state => state.enhancedDisplayPreferences);
   
   return {
     preferences: displayState.preferences,

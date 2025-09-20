@@ -2,7 +2,7 @@
 // This file provides type definitions and enhanced functionality
 // while keeping the original AuthContext.js fully functional
 
-import React, { createContext, useContext } from 'react';
+import { createContext, useContext } from 'react';
 
 // Type definitions for existing AuthContext
 export interface User {

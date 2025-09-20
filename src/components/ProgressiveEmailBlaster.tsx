@@ -48,12 +48,12 @@ export const ProgressiveEmailBlaster: React.FC<ProgressiveEmailBlasterProps> = (
     // Load enhanced version when feature is enabled
     const EnhancedEmailBlaster = React.lazy(() => 
       import('./enhanced/email/EnhancedEmailBlaster').then(module => ({
-        default: module.EnhancedEmailBlaster
+        default: module.EnhancedEmailBlaster as React.ComponentType<any>
       })).catch(() => {
         // Fallback to original if enhanced version fails to load
         console.warn('Enhanced EmailBlaster failed to load, using original');
         return import('./content/EmailBlaster').then(module => ({
-          default: module.EmailBlaster
+          default: module.EmailBlaster as React.ComponentType<any>
         }));
       })
     );

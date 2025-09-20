@@ -1,8 +1,8 @@
 // 🌉 Auth Bridge - Smooth Transition from Context to Redux
 // Maintains compatibility while adding Redux functionality
 
-import React, { useEffect } from 'react';
-import { useAppDispatch, useAppSelector, useAuth as useReduxAuth } from '../../store/hooks';
+import React from 'react';
+import { useAppDispatch, useAuth as useReduxAuth } from '../../store/hooks';
 
 // Types for existing AuthContext compatibility
 interface LegacyAuthContextType {
