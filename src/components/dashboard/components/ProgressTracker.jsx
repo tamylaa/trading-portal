@@ -24,14 +24,6 @@ const ProgressTracker = ({ progress, streak, goals }) => {
   
   return (
     <div className="progress-tracker">
-      <div className="progress-header">
-        <h2>Today's Progress</h2>
-        <div className="streak-display">
-          <span className="streak-emoji">🔥</span>
-          <span className="streak-text">{streak} day streak</span>
-        </div>
-      </div>
-      
       <div className="motivation-message">
         {getMotivationalMessage()}
       </div>

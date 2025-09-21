@@ -145,15 +145,21 @@ const ProfessionalDashboard = () => {
         {/* Main Content Area - Uses professional sidebar from MainLayout */}
         <main className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Top Progress Bar - Behavioral feedback */}
-        <DashboardWidget title="Today's Progress">
+        <DashboardWidget 
+          title="Today's Progress"
+          actions={
+            <div className="streak-display">
+              <span className="streak-emoji">🔥</span>
+              <span className="streak-text">{dailyStreak} day streak</span>
+            </div>
+          }
+        >
           <ProgressTracker
             progress={todayProgress}
             streak={dailyStreak}
             goals={['Upload content', 'Check analytics', 'Update profile']}
           />
-        </DashboardWidget>
-
-        {/* Quick Actions - Immediate value */}
+        </DashboardWidget>        {/* Quick Actions - Immediate value */}
         <DashboardWidget title="Quick Actions">
           <QuickActions
             onAction={(action) => {

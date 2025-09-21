@@ -64,7 +64,6 @@ const QuickActions = ({ onAction }) => {
 
   return (
     <div className="quick-actions">
-      <h3 className="quick-actions-title">Quick Actions</h3>
       <div className="actions-grid">
         {actions.map((action) => (
           <button
