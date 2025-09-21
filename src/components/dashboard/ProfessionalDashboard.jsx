@@ -84,35 +84,50 @@ const ProfessionalDashboard = () => {
   const renderActiveWidget = () => {
     switch (activeWidget) {
       case 'overview':
-        return <DashboardOverview streak={dailyStreak} progress={todayProgress} />;
-      case 'content':
-        // Example: Wrap ContentUpload in DashboardWidget for unified dashboard style
         return (
-          <DashboardWidget title="Content Upload">
+          <DashboardWidget title="Dashboard Overview">
+            <DashboardOverview streak={dailyStreak} progress={todayProgress} />
+          </DashboardWidget>
+        );
+      case 'content':
+        return (
+          <DashboardWidget title="Content Management">
             <ContentAccess />
           </DashboardWidget>
         );
       case 'testing':
         return (
-          <DashboardWidget title="Enhanced Component Testing">
+          <DashboardWidget title="Component Testing">
             <EmailBlasterTest />
           </DashboardWidget>
         );
       case 'trading':
         return (
-          <DashboardWidget title="Enhanced Trading Dashboard">
-            <EnhancedTradingDashboard 
+          <DashboardWidget title="Trading Dashboard">
+            <EnhancedTradingDashboard
               symbols={['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN']}
               showAdvancedFeatures={true}
             />
           </DashboardWidget>
         );
       case 'analytics':
-        return <Analytics />;
+        return (
+          <DashboardWidget title="Analytics & Insights">
+            <Analytics />
+          </DashboardWidget>
+        );
       case 'achievements':
-        return <Achievements streak={dailyStreak} />;
+        return (
+          <DashboardWidget title="Achievements & Streaks">
+            <Achievements streak={dailyStreak} />
+          </DashboardWidget>
+        );
       default:
-        return <DashboardOverview streak={dailyStreak} progress={todayProgress} />;
+        return (
+          <DashboardWidget title="Dashboard Overview">
+            <DashboardOverview streak={dailyStreak} progress={todayProgress} />
+          </DashboardWidget>
+        );
     }
   };
 
@@ -130,21 +145,23 @@ const ProfessionalDashboard = () => {
         {/* Main Content Area - Uses professional sidebar from MainLayout */}
         <main className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Top Progress Bar - Behavioral feedback */}
-        <ProgressTracker 
-          progress={todayProgress}
-          streak={dailyStreak}
-          goals={['Upload content', 'Check analytics', 'Update profile']}
-        />
-        
+        <DashboardWidget title="Today's Progress">
+          <ProgressTracker
+            progress={todayProgress}
+            streak={dailyStreak}
+            goals={['Upload content', 'Check analytics', 'Update profile']}
+          />
+        </DashboardWidget>
+
         {/* Quick Actions - Immediate value */}
-        <QuickActions 
-          onAction={(action) => {
-            setTodayProgress(prev => Math.min(100, prev + 10));
-            handleWidgetChange(action);
-          }}
-        />
-        
-        {/* Dynamic Widget Content */}
+        <DashboardWidget title="Quick Actions">
+          <QuickActions
+            onAction={(action) => {
+              setTodayProgress(prev => Math.min(100, prev + 10));
+              handleWidgetChange(action);
+            }}
+          />
+        </DashboardWidget>        {/* Dynamic Widget Content */}
         <div className="dashboard-widget-container">
           {renderActiveWidget()}
         </div>

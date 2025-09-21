@@ -1,7 +1,8 @@
-/* Quick Actions Styles */
+/* Quick Actions Styles - Now wrapped in DashboardWidget */
 
 .quick-actions {
-  margin-bottom: 30px;
+  /* Remove custom margins - handled by DashboardWidget */
+  margin-bottom: 0;
 }
 
 .quick-actions-title {
