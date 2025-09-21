@@ -2,6 +2,28 @@
 /* This file imports all design tokens and provides the foundation for enhanced components */
 /* Import this file in enhanced components to get access to all design system tokens */
 
+/*
+ * ===== PAGE LAYOUT PATTERN =====
+ *
+ * All pages must use the PageLayout component for consistent layout:
+ *
+ * import PageLayout from '../components/common/PageLayout';
+ *
+ * const MyPage = () => (
+ *   <PageLayout title="Title" subtitle="Subtitle">
+ *     <PageContent />
+ *   </PageLayout>
+ * );
+ *
+ * This ensures:
+ * - Consistent viewport and spacing
+ * - Proper responsive behavior
+ * - Integration with MainLayout sidebar
+ * - Support for external UI packages
+ *
+ * See docs/PAGE_LAYOUT_GUIDELINES.md for complete documentation.
+ */
+
 /* ===== DESIGN TOKENS ===== */
 @import './tokens/colors.css';
 @import './tokens/typography.css';

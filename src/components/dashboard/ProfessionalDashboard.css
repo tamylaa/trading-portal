@@ -1,21 +1,22 @@
 /* Professional Dashboard Styles - Behavioral Psychology UX */
 
 .professional-dashboard {
-  min-height: calc(100vh - var(--header-height, 64px));
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  width: 100%;
+  background: transparent; /* Let MainLayout handle background */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .theme-dark .professional-dashboard {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: transparent; /* Consistent with light theme */
 }
 
 /* Main Content Area - Adapts to professional sidebar */
 .dashboard-main {
-  margin-left: 0;
-  padding: 2rem;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: calc(100vh - var(--header-height, 64px));
+  width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* When professional sidebar is open */

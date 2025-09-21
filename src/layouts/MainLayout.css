@@ -150,3 +150,30 @@ body, html, #root {
     padding: 0;
     box-sizing: border-box;
 }
+
+/* ===== COMMON PAGE LAYOUT ===== */
+/* Consistent layout for all pages within MainLayout */
+
+.page-container {
+    min-height: calc(100vh - var(--header-height) - 80px); /* Account for header and footer */
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: transparent; /* Let MainLayout handle background */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive adjustments for page container */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 1rem;
+        min-height: calc(100vh - var(--header-height) - 60px);
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container {
+        padding: 0.75rem;
+    }
+}

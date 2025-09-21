@@ -5,6 +5,7 @@ import { useSidebar } from '../../contexts/SidebarContext';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store';
 import { EnhancedTradingDashboard } from '../enhanced/EnhancedTradingDashboard';
+import PageLayout from '../common/PageLayout';
 import './ProfessionalDashboard.css';
 
 // Dashboard Widgets
@@ -124,9 +125,10 @@ const ProfessionalDashboard = () => {
   }
 
   return (
-    <div className={`professional-dashboard theme-${theme.mode}`}>
-      {/* Main Content Area - Uses professional sidebar from MainLayout */}
-      <main className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+    <PageLayout title="Dashboard" subtitle="Welcome back to your trading portal">
+      <div className={`professional-dashboard theme-${theme.mode}`}>
+        {/* Main Content Area - Uses professional sidebar from MainLayout */}
+        <main className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Top Progress Bar - Behavioral feedback */}
         <ProgressTracker 
           progress={todayProgress}
@@ -155,7 +157,8 @@ const ProfessionalDashboard = () => {
           </div>
         )}
       </main>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 
