@@ -16,6 +16,8 @@ import EngageKitInitializer from './components/engagekit/EngageKitInitializer';
 import { AuthProvider } from './contexts/AuthContext';
 import ReduxProvider from './store/ReduxProvider';
 import { TamylaThemeProvider } from '@tamyla/ui-components-react';
+// ===== LAYOUT INHERITANCE SYSTEM =====
+import { ViewportProvider, LayoutProvider } from './contexts/LayoutContext';
 
 // Lazy load heavy pages with PDF functionality and syntax highlighting
 const StoryListPage = React.lazy(() => import('./pages/StoryListPage'));
@@ -25,6 +27,7 @@ const ContentAccess = React.lazy(() => import('./pages/ContentAccess'));
 const Achievements = React.lazy(() => import('./pages/Achievements'));
 const UIDemoPage = React.lazy(() => import('./pages/UIDemoPage'));
 const ReactComponentsDemoPage = React.lazy(() => import('./pages/ReactComponentsDemoPage'));
+const LayoutInheritanceTest = React.lazy(() => import('./pages/LayoutInheritanceTest'));
 // GuidePage removed as it's not used in routes
 
 const App = () => {
@@ -34,9 +37,12 @@ const App = () => {
       <ReduxProvider>
         {/* 🎨 Tamyla Theme Provider - Essential for ui-components-react styling */}
         <TamylaThemeProvider>
-          <AuthProvider>
-            <AppProvider>
-              <SidebarProvider>
+          {/* 📐 Layout Inheritance System - Academic Approach */}
+          <ViewportProvider>
+            <LayoutProvider>
+              <AuthProvider>
+                <AppProvider>
+                  <SidebarProvider>
               <Routes>
                 <Route path="/" element={<MainLayout />}>
                   <Route index element={<Home />} />
@@ -61,6 +67,11 @@ const App = () => {
                   <Route path="react-demo" element={
                     <Suspense fallback={<div>Loading React demo...</div>}>
                       <ReactComponentsDemoPage />
+                    </Suspense>
+                  } />
+                  <Route path="layout-test" element={
+                    <Suspense fallback={<div>Loading layout test...</div>}>
+                      <LayoutInheritanceTest />
                     </Suspense>
                   } />
 
@@ -119,6 +130,8 @@ const App = () => {
             </SidebarProvider>
           </AppProvider>
         </AuthProvider>
+        </LayoutProvider>
+      </ViewportProvider>
         </TamylaThemeProvider>
     </ReduxProvider>
   </BrowserRouter>

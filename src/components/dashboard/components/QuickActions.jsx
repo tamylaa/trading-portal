@@ -29,14 +29,6 @@ const QuickActions = ({ onAction }) => {
       reward: '+20 XP'
     },
     {
-      id: 'trading',
-      title: 'Enhanced Trading',
-      description: 'Real-time trading dashboard',
-      icon: '📈',
-      color: '#667eea',
-      reward: '+20 XP'
-    },
-    {
       id: 'analytics',
       title: 'View Analytics',
       description: 'Check your performance',

@@ -1,4 +1,9 @@
 @import '@tamyla/ui-components-react/src/core/design-tokens.css';
+@import './styles/layout-inheritance.css';
+
+/* ===== LAYOUT INHERITANCE SYSTEM ===== */
+/* Academic approach: CSS Custom Properties + React Context */
+/* See docs/LAYOUT_INHERITANCE_ACADEMIC.md for complete documentation */
 
 * {
     margin: 0;

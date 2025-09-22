@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonSuccess, TamylaThemeProvider } from '@tamyla/ui-components-react';
+import { ButtonSuccess } from '@tamyla/ui-components-react';
 import './HeroSection.css';
 
 const HeroSection: React.FC = () => {
@@ -17,16 +17,14 @@ const HeroSection: React.FC = () => {
             Secret Formulas for ambitious businesses and professionals to trade smarter, faster, safer and peacefully.
           </p>
           <div className="hero-cta-container">
-            <TamylaThemeProvider>
-              <ButtonSuccess
-                size="lg"
-                fullWidth={true}
-                className="hero-cta-button"
-                onClick={() => window.location.href = '/stories'}
-              >
-                Get Started Today
-              </ButtonSuccess>
-            </TamylaThemeProvider>
+            <ButtonSuccess
+              size="lg"
+              fullWidth={true}
+              className="hero-cta-button"
+              onClick={() => window.location.href = '/stories'}
+            >
+              Get Started Today
+            </ButtonSuccess>
           </div>
           <div className="hero-microcopy">No credit card required. Cancel anytime.</div>
           <div className="hero-social-proof">
