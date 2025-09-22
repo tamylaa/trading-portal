@@ -36,7 +36,7 @@ const MainLayout: React.FC = () => {
     });
 
     // Add a collapsed class to the layout and sidebar when sidebar is closed
-    const layoutClass = `app-layout ${shouldShowSidebar ? 'has-sidebar' : 'no-sidebar'}`;
+    const layoutClass = `app-layout ${shouldShowSidebar ? 'has-sidebar' : 'no-sidebar'} ${shouldShowSidebar && !isOpen ? 'sidebar-collapsed' : ''}`;
     const sidebarClass = `sidebar${isOpen ? '' : ' sidebar-collapsed'}`;
 
     return (

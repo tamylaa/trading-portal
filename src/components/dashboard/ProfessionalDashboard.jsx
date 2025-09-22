@@ -1,7 +1,6 @@
 // Professional Dashboard with Behavioral Psychology UX
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useSidebar } from '../../contexts/SidebarContext';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { uiActions } from '../../store';
 import { EnhancedTradingDashboard } from '../enhanced/EnhancedTradingDashboard';
@@ -22,8 +21,7 @@ const ProfessionalDashboard = () => {
   const { isAuthenticated } = useAuth();
   const dispatch = useAppDispatch();
   
-  // Enhanced sidebar integration
-  const { isOpen: sidebarOpen } = useSidebar();
+  // Enhanced sidebar integration - removed local sidebar state handling
   const theme = useAppSelector(state => state.ui.theme);
   
   // Local state for dashboard widgets
@@ -142,8 +140,8 @@ const ProfessionalDashboard = () => {
   return (
     <PageLayout title="Dashboard" subtitle="Welcome back to your trading portal">
       <div className={`professional-dashboard theme-${theme.mode}`}>
-        {/* Main Content Area - Uses professional sidebar from MainLayout */}
-        <main className={`dashboard-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        {/* Main Content Area - Sidebar positioning handled by MainLayout */}
+        <main className="dashboard-main">
         {/* Top Progress Bar - Behavioral feedback */}
         <DashboardWidget 
           title="Today's Progress"

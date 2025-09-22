@@ -8,6 +8,7 @@
   --spacing-unit: 1rem;
   --border-radius: 0;
   --header-height: 64px;
-  --sidebar-width-mini: 72px;
-  --sidebar-width-full: 240px;
+  /* Sidebar dimensions - match MainLayout values for consistency */
+  --sidebar-width-mini: 80px;
+  --sidebar-width-full: 280px;
 }

@@ -19,15 +19,7 @@
   gap: 20px;
 }
 
-/* When professional sidebar is open */
-.dashboard-main.sidebar-open {
-  margin-left: 280px; /* Professional sidebar width */
-}
-
-/* When professional sidebar is closed */
-.dashboard-main.sidebar-closed {
-  margin-left: 0;
-}
+/* Sidebar positioning is handled by MainLayout - no additional margins needed here */
 
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -116,32 +116,33 @@ interface LayoutProviderProps {
   config?: Partial<LayoutConfig>;
 }
 
+// Academic default layout configuration - moved outside component for useMemo optimization
+const defaultConfig: LayoutConfig = {
+  spacing: {
+    container: 'var(--spacing-container)',
+    section: 'var(--spacing-section)',
+    component: 'var(--spacing-component-md)'
+  },
+  grid: {
+    columns: 12,
+    gap: 'var(--spacing-grid-gap-md)',
+    maxWidth: 'var(--container-xl)'
+  },
+  typography: {
+    scale: 1.2 // Major third scale
+  },
+  theme: 'auto',
+  constraints: {
+    maxWidth: 'var(--container-2xl)',
+    minWidth: '320px',
+    contentWidth: 'var(--container-lg)'
+  }
+};
+
 export const LayoutProvider: React.FC<LayoutProviderProps> = ({
   children,
   config = {}
 }) => {
-  // Academic default layout configuration
-  const defaultConfig: LayoutConfig = {
-    spacing: {
-      container: 'var(--spacing-container)',
-      section: 'var(--spacing-section)',
-      component: 'var(--spacing-component-md)'
-    },
-    grid: {
-      columns: 12,
-      gap: 'var(--spacing-grid-gap-md)',
-      maxWidth: 'var(--container-xl)'
-    },
-    typography: {
-      scale: 1.2 // Major third scale
-    },
-    theme: 'auto',
-    constraints: {
-      maxWidth: 'var(--container-2xl)',
-      minWidth: '320px',
-      contentWidth: 'var(--container-lg)'
-    }
-  };
 
   // Memoize the layout configuration to prevent unnecessary re-renders
   const layoutConfig = useMemo(() => ({ ...defaultConfig, ...config }), [config]);
