@@ -27,7 +27,6 @@ const ContentAccess = React.lazy(() => import('./pages/ContentAccess'));
 const Achievements = React.lazy(() => import('./pages/Achievements'));
 const UIDemoPage = React.lazy(() => import('./pages/UIDemoPage'));
 const ReactComponentsDemoPage = React.lazy(() => import('./pages/ReactComponentsDemoPage'));
-const LayoutInheritanceTest = React.lazy(() => import('./pages/LayoutInheritanceTest'));
 // GuidePage removed as it's not used in routes
 
 const App = () => {
@@ -67,11 +66,6 @@ const App = () => {
                   <Route path="react-demo" element={
                     <Suspense fallback={<div>Loading React demo...</div>}>
                       <ReactComponentsDemoPage />
-                    </Suspense>
-                  } />
-                  <Route path="layout-test" element={
-                    <Suspense fallback={<div>Loading layout test...</div>}>
-                      <LayoutInheritanceTest />
                     </Suspense>
                   } />
 
