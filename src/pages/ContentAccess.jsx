@@ -1,4 +1,4 @@
-// Content Access Page - Search and access content with integrated search application
+// Content Access Page - Tabbed interface for content search, upload, and management
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -6,18 +6,34 @@ import {
   SearchResultsList,
   RecentSearchesList,
   SearchStatusIndicator,
-  createDefaultSearchStatuses
+  createDefaultSearchStatuses,
+  Button,
+  Card
 } from '@tamyla/ui-components-react';
 // import '@tamyla/ui-components-react/dist/styles.css'; // TODO: Fix CSS import path
 import PageLayout from '../components/common/PageLayout';
+import ContentManager from '../components/content/ContentManager';
 import './ContentAccess/ContentAccess.css';const ContentAccess = () => {
   const { user, token } = useAuth();
+  
+  // Tab state
+  const [activeTab, setActiveTab] = useState('search');
+  
+  // Search states
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
+  
   // Temporary fix for theme hydration timing issue
   const [isThemeReady, setIsThemeReady] = useState(false);
+
+  // Tab configuration
+  const tabs = [
+    { id: 'search', label: 'Search Content', icon: '🔍' },
+    { id: 'upload', label: 'Upload & Manage', icon: '📁' },
+    { id: 'gallery', label: 'Gallery', icon: '🖼️' }
+  ];
 
   useEffect(() => {
     loadRecentSearches();
@@ -121,58 +137,135 @@ import './ContentAccess/ContentAccess.css';const ContentAccess = () => {
   // Create search status using package helper
   const searchStatuses = useMemo(() => createDefaultSearchStatuses(), []);
 
+  // Tab content renderer
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'search':
+        return (
+          <div className="search-tab-content">
+            {/* Search Interface */}
+            <div className="search-interface-container">
+              {!isThemeReady ? (
+                <div className="search-loading-placeholder">
+                  <div className="loading-spinner"></div>
+                  <p>Loading search interface...</p>
+                </div>
+              ) : (
+                <SearchInterface
+                  placeholder="Search for content..."
+                  onSearch={handleSearch}
+                  showFilters={true}
+                  filters={searchFilters}
+                />
+              )}
+              {isSearching && (
+                <div className="search-loading">
+                  <p>Searching for "{searchQuery}"...</p>
+                </div>
+              )}
+            </div>
+
+            {/* Search Results - Using Package Component */}
+            <SearchResultsList
+              results={searchResults}
+              onResultClick={handleResultClick}
+              loading={isSearching}
+              emptyMessage="No content found. Try adjusting your search terms."
+            />
+
+            {/* Recent Searches - Using Package Component */}
+            <RecentSearchesList
+              searches={recentSearches}
+              onSearchClick={handleRecentSearchClick}
+              maxItems={5}
+              title="🔄 Recent Searches"
+              emptyMessage="No recent searches yet"
+            />
+
+            {/* Search Status - Using Package Component */}
+            <SearchStatusIndicator
+              statuses={searchStatuses}
+              title="🔗 Content Search Integration"
+            />
+          </div>
+        );
+      
+      case 'upload':
+        return (
+          <div className="upload-tab-content">
+            <ContentManager
+              apiBase="/api/content"
+              showUpload={true}
+              showGallery={false}
+              showSearch={true}
+              showSharing={true}
+              maxFileSize={25 * 1024 * 1024}
+              onContentUploaded={(content) => {
+                console.log('Content uploaded:', content);
+              }}
+              onError={(error) => {
+                console.error('Content manager error:', error);
+              }}
+              className="tabbed-content-manager"
+            />
+          </div>
+        );
+      
+      case 'gallery':
+        return (
+          <div className="gallery-tab-content">
+            <ContentManager
+              apiBase="/api/content"
+              showUpload={false}
+              showGallery={true}
+              showSearch={true}
+              showSharing={true}
+              maxFileSize={25 * 1024 * 1024}
+              onContentUploaded={(content) => {
+                console.log('Content uploaded:', content);
+              }}
+              onError={(error) => {
+                console.error('Content manager error:', error);
+              }}
+              className="tabbed-content-manager"
+            />
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   return (
-    <PageLayout title="Content Access" subtitle="Search and access your content with our integrated search application">
+    <PageLayout title="Content Access" subtitle="Search, upload, and manage your content with our integrated content management system">
       <div className="content-access-page">
-      <div className="access-header">
-        <h1>🔍 Content Access</h1>
-        <p>Search and access your content with our integrated search application</p>
-      </div>
+        <div className="access-header">
+          <h1>� Content Hub</h1>
+          <p>Search, upload, and manage your content with our integrated content management system</p>
+        </div>
 
-      {/* Search Interface */}
-      <div className="search-interface-container">
-        {!isThemeReady ? (
-          <div className="search-loading-placeholder">
-            <div className="loading-spinner"></div>
-            <p>Loading search interface...</p>
+        {/* Tab Navigation */}
+        <Card className="tabs-container">
+          <div className="tab-navigation">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? "default" : "outline"}
+                onClick={() => setActiveTab(tab.id)}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+              >
+                <span className="tab-icon">{tab.icon}</span>
+                {tab.label}
+              </Button>
+            ))}
           </div>
-        ) : (
-          <SearchInterface
-            placeholder="Search for content..."
-            onSearch={handleSearch}
-            showFilters={true}
-            filters={searchFilters}
-          />
-        )}
-        {isSearching && (
-          <div className="search-loading">
-            <p>Searching for "{searchQuery}"...</p>
-          </div>
-        )}
-      </div>
+        </Card>
 
-      {/* Search Results - Using Package Component */}
-      <SearchResultsList
-        results={searchResults}
-        onResultClick={handleResultClick}
-        loading={isSearching}
-        emptyMessage="No content found. Try adjusting your search terms."
-      />
-
-      {/* Recent Searches - Using Package Component */}
-      <RecentSearchesList
-        searches={recentSearches}
-        onSearchClick={handleRecentSearchClick}
-        maxItems={5}
-        title="🔄 Recent Searches"
-        emptyMessage="No recent searches yet"
-      />
-
-      {/* Search Status - Using Package Component */}
-      <SearchStatusIndicator
-        statuses={searchStatuses}
-        title="🔗 Content Search Integration"
-      />
+        {/* Tab Content */}
+        <div className="tab-content">
+          {renderTabContent()}
+        </div>
       </div>
     </PageLayout>
   );

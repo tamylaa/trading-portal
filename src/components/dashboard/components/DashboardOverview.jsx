@@ -1,6 +1,6 @@
 // Dashboard Overview - Main widget with key metrics
 import React from 'react';
-import { ContentManager } from '../../content/ContentManager';
+import { Link } from 'react-router-dom';
 import './DashboardOverview.css';
 
 const DashboardOverview = ({ streak, progress }) => {
@@ -98,26 +98,27 @@ const DashboardOverview = ({ streak, progress }) => {
       </div>
 
       <div className="content-section">
-        <h2>Content Library</h2>
+        <h2>Content Hub</h2>
         <p className="section-description">
-          Upload and manage your content files. Upload images, documents, and media for use in your campaigns and communications.
+          Access your comprehensive content management system. Search, upload, and manage your content files in one centralized location.
         </p>
         
-        <div className="content-manager-container">
-          <ContentManager
-            apiBase="https://content.tamyla.com"
-            showUpload={true}
-            showGallery={true}
-            showSearch={true}
-            maxFileSize={25 * 1024 * 1024}
-            onContentUploaded={(content) => {
-              console.log('Content uploaded:', content);
-            }}
-            onError={(error) => {
-              console.error('Content manager error:', error);
-            }}
-            className="dashboard-content-manager"
-          />
+        <div className="content-hub-actions">
+          <Link to="/content-access" className="content-hub-link">
+            <div className="content-hub-card">
+              <div className="content-hub-icon">📁</div>
+              <div className="content-hub-info">
+                <h3>Open Content Hub</h3>
+                <p>Search, upload, and manage all your content</p>
+                <div className="content-hub-features">
+                  <span className="feature-badge">🔍 Search</span>
+                  <span className="feature-badge">📤 Upload</span>
+                  <span className="feature-badge">🖼️ Gallery</span>
+                </div>
+              </div>
+              <div className="content-hub-arrow">→</div>
+            </div>
+          </Link>
         </div>
       </div>
 
