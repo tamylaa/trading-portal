@@ -8,6 +8,10 @@ import {
   SearchStatusIndicator,
   createDefaultSearchStatuses 
 } from '@tamyla/ui-components-react';
+import { ContentSearchService } from './services/contentSearchService';
+import { healthService } from './services/healthService';
+import { validateCurrentAuthToken } from './services/jwtService';
+import MEILISEARCH_CONFIG from './config/meilisearch';
 import './ContentAccess.css';
 
 const ContentAccess = () => {
@@ -16,11 +20,45 @@ const ContentAccess = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
+  const [serviceStatus, setServiceStatus] = useState('unknown');
+  const [authStatus, setAuthStatus] = useState({ isValid: false, needsLogin: false });
   // Temporary fix for theme hydration timing issue
   const [isThemeReady, setIsThemeReady] = useState(false);
 
+  // Initialize the search service with the user's token
+  const searchService = useMemo(() => {
+    return new ContentSearchService(undefined, token); // Use config default URL
+  }, [token]);
+
+  // Log configuration in development
+  useEffect(() => {
+    if (MEILISEARCH_CONFIG.enableDebugLogging) {
+      console.log('ContentAccess configuration:', {
+        environment: MEILISEARCH_CONFIG.ENVIRONMENT,
+        gatewayUrl: MEILISEARCH_CONFIG.gatewayUrl,
+        enableMockFallback: MEILISEARCH_CONFIG.enableMockFallback,
+        enableHealthChecks: MEILISEARCH_CONFIG.enableHealthChecks
+      });
+    }
+  }, []);
+
+  // Validate JWT token whenever it changes
+  useEffect(() => {
+    const validation = validateCurrentAuthToken(token);
+    setAuthStatus(validation);
+    
+    if (MEILISEARCH_CONFIG.enableDebugLogging) {
+      console.log('JWT validation result:', validation);
+    }
+    
+    if (validation.needsLogin) {
+      console.warn('JWT token is invalid or expired. User may need to re-authenticate.');
+    }
+  }, [token]);
+
   useEffect(() => {
     loadRecentSearches();
+    checkServiceHealth();
     
     // TEMPORARY FIX: Wait for theme hydration
     // This demonstrates the issue - the package should handle this internally
@@ -32,18 +70,30 @@ const ContentAccess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array is correct for one-time initialization
 
+  const checkServiceHealth = async () => {
+    try {
+      const healthStatus = await healthService.checkHealth();
+      setServiceStatus(healthStatus.gateway === 'online' ? 'online' : 'offline');
+      
+      // Log the health status for debugging
+      console.log('Service Health Status:', healthStatus);
+      
+      if (healthStatus.meilisearch === 'offline') {
+        console.warn('MeiliSearch service is currently unavailable. Using fallback data.');
+      }
+    } catch (error) {
+      console.warn('Failed to check service health:', error);
+      setServiceStatus('offline');
+    }
+  };
+
   const loadRecentSearches = async () => {
     try {
-      const response = await fetch('/api/content/recent-searches', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        const searches = await response.json();
-        setRecentSearches(searches.slice(0, 5)); // Show last 5 searches
+      // Use localStorage for recent searches since the gateway doesn't handle this yet
+      const stored = localStorage.getItem('tamyla-recent-searches');
+      if (stored) {
+        const searches = JSON.parse(stored);
+        setRecentSearches(searches.slice(0, 5));
       }
     } catch (error) {
       console.error('Failed to load recent searches:', error);
@@ -58,30 +108,26 @@ const ContentAccess = () => {
     setIsSearching(true);
     
     try {
-      const response = await fetch('/api/content/search', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ query: query.trim(), userId: user?.id })
+      const response = await searchService.search({
+        query: query.trim(),
+        userId: user?.id,
+        limit: 20
       });
       
-      if (response.ok) {
-        const results = await response.json();
-        setSearchResults(results);
-        // Save to recent searches
-        setRecentSearches(prev => [query, ...prev.filter(s => s !== query)].slice(0, 5));
-      } else {
-        setSearchResults([]);
-      }
+      setSearchResults(response.results || []);
+      
+      // Save to recent searches in localStorage
+      const newRecentSearches = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
+      setRecentSearches(newRecentSearches);
+      localStorage.setItem('tamyla-recent-searches', JSON.stringify(newRecentSearches));
+      
     } catch (error) {
       console.error('Search failed:', error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
-  }, [token, user?.id]); // 🎯 Stable dependencies
+  }, [searchService, user?.id, recentSearches]); // 🎯 Updated dependencies
 
   // 🔧 FIX: Memoize handleResultClick to prevent unnecessary re-renders
   const handleResultClick = useCallback((result) => {

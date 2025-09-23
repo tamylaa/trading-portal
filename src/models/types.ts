@@ -9,3 +9,12 @@ export interface ApiResponse<T> {
   status: number;
   message: string;
 }
+
+// Re-export search types for consistent import paths
+export type {
+  SearchDocument,
+  TradingPortalSearchDocument,
+  SearchRequest,
+  SearchResponse,
+  MeiliSearchService
+} from '../types/search';

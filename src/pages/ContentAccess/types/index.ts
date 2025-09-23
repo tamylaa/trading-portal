@@ -1,15 +1,25 @@
 // Domain Types
 export interface SearchResult {
   id: string;
-  name: string;
-  type: 'image' | 'video' | 'document' | 'audio';
-  url: string;
-  date: string;
-  size: number;
+  title: string;
+  summary: string;
+  filename: string;
+  mimeType: string;
+  uploadedAt: string;
+  _formatted?: {
+    title: string;
+    summary: string;
+  };
+  score?: number;
+  // Legacy compatibility fields
+  name?: string; // Maps to title
+  type?: string; // Derived from mimeType
+  url?: string; // Can be constructed from id
+  date?: string; // Maps to uploadedAt
+  size?: number; // Not provided by MeiliSearch
   thumbnail?: string;
-  description?: string;
-  tags: string[];
-  score: number;
+  description?: string; // Maps to summary
+  tags?: string[]; // Not provided by MeiliSearch
 }
 
 export interface RecentSearch {
@@ -34,13 +44,50 @@ export interface SearchRequest {
   filters?: Record<string, any>;
   limit?: number;
   offset?: number;
+  sort?: string[];
 }
 
 export interface SearchResponse {
   results: SearchResult[];
   total: number;
-  page: number;
+  query: string;
   hasMore: boolean;
+  facets?: Record<string, any>;
+  processingTimeMs?: number;
+  // Legacy compatibility
+  page?: number;
+}
+
+// MeiliSearch Gateway Types
+export interface MeiliSearchResult {
+  id: string;
+  title: string;
+  summary: string;
+  filename: string;
+  mimeType: string;
+  uploadedAt: string;
+  _formatted?: {
+    title: string;
+    summary: string;
+  };
+}
+
+export interface MeiliSearchResponse {
+  hits: MeiliSearchResult[];
+  query: string;
+  processingTimeMs: number;
+  limit: number;
+  offset: number;
+  estimatedTotalHits: number;
+  facetDistribution?: Record<string, any>;
+}
+
+// Service Health Types
+export interface ServiceHealth {
+  gateway: 'online' | 'offline' | 'unknown';
+  meilisearch: 'online' | 'offline' | 'unknown';
+  timestamp?: string;
+  error?: string;
 }
 
 // Hook Configuration Types
