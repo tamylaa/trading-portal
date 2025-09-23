@@ -4,6 +4,7 @@
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { useEffect, useCallback } from 'react';
 import type { RootState, AppDispatch } from './index';
+import { syncWithUITheme } from './slices/themeSlice';
 
 // 📝 Typed Hooks for Better Developer Experience
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -145,6 +146,11 @@ export const useTheme = () => {
   const displayPrefs = useAppSelector(state => state.preferences.display);
   const dispatch = useAppDispatch();
   
+  // 🔄 Sync theme slice with ui.theme changes
+  useEffect(() => {
+    dispatch(syncWithUITheme(theme));
+  }, [theme, dispatch]);
+  
   return {
     // Current theme state
     mode: theme.mode,
@@ -159,15 +165,18 @@ export const useTheme = () => {
     // Theme actions
     setMode: useCallback((mode: 'light' | 'dark' | 'auto') => {
       dispatch({ type: 'ui/setThemeMode', payload: mode });
+      dispatch({ type: 'theme/setThemeMode', payload: mode });
       dispatch({ type: 'preferences/setTheme', payload: mode });
     }, [dispatch]),
     
     setPrimaryColor: useCallback((color: string) => {
       dispatch({ type: 'ui/setPrimaryColor', payload: color });
+      dispatch({ type: 'theme/setPrimaryColor', payload: color });
     }, [dispatch]),
     
     setFontSize: useCallback((size: 'sm' | 'md' | 'lg') => {
       dispatch({ type: 'ui/setFontSize', payload: size });
+      dispatch({ type: 'theme/setFontSize', payload: size });
     }, [dispatch]),
     
     toggleAnimations: useCallback(() => {

@@ -5,6 +5,9 @@ import { configureStore, createSlice, combineReducers } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 
+// Import slices
+import themeSlice from './slices/themeSlice';
+
 // 📝 Type Definitions
 interface User {
   id: string;
@@ -370,6 +373,7 @@ const rootReducer = combineReducers({
   ui: uiSlice.reducer,
   dashboard: dashboardSlice.reducer,
   preferences: preferencesSlice.reducer,
+  theme: themeSlice, // 🎨 Dedicated theme slice for package compatibility
 });
 
 // 🔄 Store Persistence Configuration
