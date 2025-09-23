@@ -10,7 +10,7 @@ import './ContentManager.css';
  * Enhanced with sharing and email blast capabilities
  */
 export function ContentManager({
-  apiBase = '/api/content',
+  apiBase = 'https://content.tamyla.com',
   selectionMode = false,
   showUpload = true,
   showGallery = true,

@@ -194,7 +194,7 @@ import './ContentAccess/ContentAccess.css';const ContentAccess = () => {
         return (
           <div className="upload-tab-content">
             <ContentManager
-              apiBase="/api/content"
+              apiBase="https://content.tamyla.com"
               showUpload={true}
               showGallery={false}
               showSearch={true}
@@ -215,7 +215,7 @@ import './ContentAccess/ContentAccess.css';const ContentAccess = () => {
         return (
           <div className="gallery-tab-content">
             <ContentManager
-              apiBase="/api/content"
+              apiBase="https://content.tamyla.com"
               showUpload={false}
               showGallery={true}
               showSearch={true}
