@@ -13,6 +13,7 @@ class TamylaContentManager extends HTMLElement {
     this.isLoading = false;
     this.searchQuery = '';
     this.currentFilter = 'all';
+    this.currentView = 'session'; // Default to session view for performance
   }
   
   // Property getters and setters for React integration
@@ -107,6 +108,51 @@ class TamylaContentManager extends HTMLElement {
           padding: 2rem;
         }
         
+        .cm-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          padding: 0.75rem 1rem;
+          background: #f8fafc;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+        }
+        
+        .cm-view-toggle {
+          display: flex;
+          gap: 0.5rem;
+        }
+        
+        .cm-toggle-btn {
+          padding: 0.5rem 1rem;
+          border: 1px solid #e2e8f0;
+          background: white;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #64748b;
+          transition: all 0.2s;
+        }
+        
+        .cm-toggle-btn:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+        }
+        
+        .cm-toggle-btn.active {
+          background: #3b82f6;
+          color: white;
+          border-color: #3b82f6;
+        }
+        
+        .cm-status {
+          font-size: 0.875rem;
+          color: #64748b;
+          font-style: italic;
+        }
+        
         .hidden {
           display: none;
         }
@@ -124,6 +170,14 @@ class TamylaContentManager extends HTMLElement {
             <p>Support: Images, Videos, PDFs, Documents (Max 25MB)</p>
           </div>
           <input type="file" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx" id="fileInput" style="display: none;">
+        </div>
+        
+        <div class="cm-header">
+          <div class="cm-view-toggle">
+            <button id="sessionViewBtn" class="cm-toggle-btn active">📂 Current Session</button>
+            <button id="allFilesBtn" class="cm-toggle-btn">📁 All Files</button>
+          </div>
+          <div class="cm-status" id="statusText">Showing files from current session for optimal performance</div>
         </div>
         
         <div class="cm-gallery">
@@ -164,6 +218,18 @@ class TamylaContentManager extends HTMLElement {
     
     fileInput.addEventListener('change', (e) => {
       this.handleFiles(e.target.files);
+    });
+    
+    // Toggle button event listeners
+    const sessionViewBtn = this.shadowRoot.getElementById('sessionViewBtn');
+    const allFilesBtn = this.shadowRoot.getElementById('allFilesBtn');
+    
+    sessionViewBtn.addEventListener('click', () => {
+      this.switchView('session');
+    });
+    
+    allFilesBtn.addEventListener('click', () => {
+      this.switchView('all');
     });
   }
   
@@ -229,42 +295,46 @@ class TamylaContentManager extends HTMLElement {
   }
   
   async loadContent() {
-    console.log('🔗 Load API URL:', this.apiBase + '/files');
+    console.log('🔗 Load API URL (Session):', this.apiBase + '/files/session');
     console.log('🔑 Auth Token for load:', this.authToken ? `${this.authToken.substring(0, 20)}...` : 'NO TOKEN');
     this.showLoading(true);
     
     try {
       const headers = this.authToken ? { 'Authorization': 'Bearer ' + this.authToken } : {};
-      const response = await fetch(this.apiBase + '/files', { headers });
+      // Use session-based endpoint for instant feedback on recent uploads
+      const response = await fetch(this.apiBase + '/files/session', { headers });
       
-      console.log('📄 Load response status:', response.status);
+      console.log('📄 Session load response status:', response.status);
       
       if (response.ok) {
         const result = await response.json();
-        console.log('📄 Load response:', result);
+        console.log('📄 Session load response:', result);
         
         if (result.success || result.files) {
           // Support both 'files' and 'content' keys for compatibility
           this.content = result.files || result.content || [];
-          console.log(`📊 Loaded ${this.content.length} files from API`);
+          console.log(`📊 Loaded ${this.content.length} session files from API`);
           
           // Debug: Check the structure of individual items
           if (this.content.length > 0) {
-            console.log('🔍 Sample file item structure:', JSON.stringify(this.content[0], null, 2));
+            console.log('🔍 Sample session file item structure:', JSON.stringify(this.content[0], null, 2));
             console.log('🔍 File size field:', this.content[0].file_size, typeof this.content[0].file_size);
             console.log('🔍 Created at field:', this.content[0].created_at);
+            console.log('✨ Session upload optimization active - showing only current session files');
+          } else {
+            console.log('📂 No files in current session - upload files to see them appear instantly');
           }
           
           this.renderGallery();
         } else {
-          console.log('❌ Load failed - no success or files in response');
+          console.log('❌ Session load failed - no success or files in response');
         }
       } else {
         const errorText = await response.text();
-        console.log('❌ Load failed:', response.status, errorText);
+        console.log('❌ Session load failed:', response.status, errorText);
       }
     } catch (error) {
-      console.error('Load content error:', error.message);
+      console.error('Load session content error:', error.message);
     } finally {
       this.showLoading(false);
     }
@@ -274,11 +344,21 @@ class TamylaContentManager extends HTMLElement {
     const grid = this.shadowRoot.getElementById('contentGrid');
     
     if (this.content.length === 0) {
+      const emptyMessage = this.currentView === 'session' 
+        ? {
+            title: 'No files in current session',
+            message: 'Upload files to see them appear instantly here. This view shows only your current session uploads for optimal performance.'
+          }
+        : {
+            title: 'No files found',
+            message: 'Upload your first file to get started, or switch to session view to see recently uploaded files.'
+          };
+          
       grid.innerHTML = `
         <div class="cm-empty-state">
           <div style="font-size: 4rem; margin-bottom: 1rem;">📁</div>
-          <h4>No content yet</h4>
-          <p>Upload your first file to get started</p>
+          <h4>${emptyMessage.title}</h4>
+          <p>${emptyMessage.message}</p>
         </div>
       `;
       return;
@@ -337,6 +417,72 @@ class TamylaContentManager extends HTMLElement {
         </div>
       `;
     }).join('');
+  }
+  
+  async switchView(viewType) {
+    const sessionBtn = this.shadowRoot.getElementById('sessionViewBtn');
+    const allFilesBtn = this.shadowRoot.getElementById('allFilesBtn');
+    const statusText = this.shadowRoot.getElementById('statusText');
+    
+    // Update current view state
+    this.currentView = viewType;
+    
+    // Update button states
+    if (viewType === 'session') {
+      sessionBtn.classList.add('active');
+      allFilesBtn.classList.remove('active');
+      statusText.textContent = 'Showing files from current session for optimal performance';
+      await this.loadContent(); // Load session files
+    } else if (viewType === 'all') {
+      allFilesBtn.classList.add('active');
+      sessionBtn.classList.remove('active');
+      statusText.textContent = 'Showing all user files (may be slower with many files)';
+      await this.loadAllFiles(); // Load all files
+    }
+  }
+  
+  async loadAllFiles() {
+    console.log('🔗 Load All Files API URL:', this.apiBase + '/files');
+    console.log('🔑 Auth Token for load all:', this.authToken ? `${this.authToken.substring(0, 20)}...` : 'NO TOKEN');
+    this.showLoading(true);
+    
+    try {
+      const headers = this.authToken ? { 'Authorization': 'Bearer ' + this.authToken } : {};
+      // Use original /files endpoint to load all files
+      const response = await fetch(this.apiBase + '/files', { headers });
+      
+      console.log('📄 All files load response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('📄 All files load response:', result);
+        
+        if (result.success || result.files) {
+          // Support both 'files' and 'content' keys for compatibility
+          this.content = result.files || result.content || [];
+          console.log(`📊 Loaded ${this.content.length} total files from API`);
+          
+          // Debug: Check the structure of individual items
+          if (this.content.length > 0) {
+            console.log('🔍 Sample all files item structure:', JSON.stringify(this.content[0], null, 2));
+            console.log('⚠️ Performance warning: Loading all files - consider using session view for better performance');
+          } else {
+            console.log('📂 No files found in user account');
+          }
+          
+          this.renderGallery();
+        } else {
+          console.log('❌ All files load failed - no success or files in response');
+        }
+      } else {
+        const errorText = await response.text();
+        console.log('❌ All files load failed:', response.status, errorText);
+      }
+    } catch (error) {
+      console.error('Load all files content error:', error.message);
+    } finally {
+      this.showLoading(false);
+    }
   }
   
   formatFileSize(bytes) {
