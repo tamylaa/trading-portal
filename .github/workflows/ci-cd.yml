@@ -53,7 +53,7 @@ jobs:
   deploy-staging:
     needs: build-and-test
     if: github.ref == 'refs/heads/staging'
-    runs-on: windows-latest
+    runs-on: ubuntu-latest  # Ubuntu for consistency with production
     environment: staging
     
     steps:
@@ -80,7 +80,7 @@ jobs:
   deploy-production:
     needs: build-and-test
     if: github.ref == 'refs/heads/main'
-    runs-on: windows-latest
+    runs-on: ubuntu-latest  # Ubuntu for deployment (rsync support)
     environment: production
     
     steps:
@@ -112,11 +112,11 @@ jobs:
   post-deployment-check:
     needs: [deploy-production]
     if: github.ref == 'refs/heads/main'
-    runs-on: windows-latest
+    runs-on: ubuntu-latest  # Ubuntu for consistency
     
     steps:
       - name: Wait for Deployment
-        run: Start-Sleep -Seconds 30
+        run: sleep 30
 
       - name: Health Check
         run: |
@@ -124,6 +124,6 @@ jobs:
           # Add health check commands here
           # Examples:
           # - Check if site responds with 200
-          # - Verify critical functionality
+          # - Verify critical functionality  
           # - Check performance metrics
           echo "✅ Health check completed"
