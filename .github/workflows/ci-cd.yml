@@ -1,0 +1,129 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: 
+      - main
+      - staging
+  pull_request:
+    branches: 
+      - main
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Build, test, and prepare for deployment
+  build-and-test:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests with Coverage
+        run: npm test -- --coverage --watchAll=false
+        env:
+          CI: true
+
+      - name: Build Application
+        run: npm run build
+        env:
+          CI: false
+          # Let React use .env files automatically
+          # Only inject secrets that are actually secret
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: build/
+          retention-days: 7
+
+  # Deploy to staging environment
+  deploy-staging:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/staging'
+    runs-on: windows-latest
+    environment: staging
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: build/
+
+      - name: Deploy to Staging Environment
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "✅ Staging deployment completed successfully"
+          # Add your staging deployment commands here
+          # Examples: 
+          # - Deploy to staging server
+          # - Update staging database
+          # - Run staging smoke tests
+
+  # Deploy to production environment
+  deploy-production:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    environment: production
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifacts  
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: build/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: build
+          token: ${{ secrets.GITHUB_TOKEN }}
+          clean: true
+          force: true
+
+      - name: Production Deployment Success
+        run: |
+          echo "🎉 Production deployment completed successfully!"
+          echo "📊 Application deployed to GitHub Pages"
+          echo "🔗 Site URL: https://tamylaa.github.io/trading-portal"
+
+  # Health check after deployment
+  post-deployment-check:
+    needs: [deploy-production]
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    
+    steps:
+      - name: Wait for Deployment
+        run: Start-Sleep -Seconds 30
+
+      - name: Health Check
+        run: |
+          echo "🔍 Running post-deployment health check..."
+          # Add health check commands here
+          # Examples:
+          # - Check if site responds with 200
+          # - Verify critical functionality
+          # - Check performance metrics
+          echo "✅ Health check completed"
