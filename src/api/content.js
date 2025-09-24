@@ -109,21 +109,123 @@ export const contentApi = {
   },
 
   /**
-   * Get user's files
-   * @returns {Promise<{success: boolean, files: Array}>}
+   * Get user's files with enhanced pagination and filtering
+   * @param {Object} options - Query options
+   * @param {number} options.page - Page number (default: 1)
+   * @param {number} options.limit - Items per page (default: 20, max: 100)
+   * @param {string} options.period - Time period filter ('all', 'today', 'week', 'month')
+   * @param {string} options.category - Category filter ('all' or specific category)
+   * @param {string} options.search - Search term for filename/category
+   * @param {string} options.sort - Sort order ('recent', 'oldest', 'name', 'size')
+   * @returns {Promise<{success: boolean, files: Array, pagination: Object}>}
    */
-  getUserFiles: async () => {
+  getUserFiles: async (options = {}) => {
     try {
-      const response = await contentClient.get('/files');
+      const params = new URLSearchParams();
+      
+      // Add pagination parameters
+      if (options.page) params.set('page', options.page.toString());
+      if (options.limit) params.set('limit', Math.min(options.limit, 100).toString());
+      
+      // Add filtering parameters
+      if (options.period && options.period !== 'all') params.set('period', options.period);
+      if (options.category && options.category !== 'all') params.set('category', options.category);
+      if (options.search) params.set('search', options.search);
+      if (options.sort && options.sort !== 'recent') params.set('sort', options.sort);
+
+      const queryString = params.toString();
+      const url = queryString ? `/files?${queryString}` : '/files';
+      
+      console.log('Fetching user files with enhanced options:', url);
+      
+      const response = await contentClient.get(url);
+      
       return {
         success: true,
-        files: response.data.files || []
+        files: response.data.files || [],
+        pagination: response.data.pagination || {
+          page: 1,
+          limit: 20,
+          total: response.data.files?.length || 0,
+          hasNext: false,
+          hasPrev: false
+        },
+        sessionCount: response.data.sessionCount || 0,
+        historicalCount: response.data.historicalCount || 0,
+        // Backward compatibility
+        count: response.data.count || response.data.files?.length || 0
       };
     } catch (error) {
+      console.error('getUserFiles error:', error);
       return {
         success: false,
         files: [],
+        pagination: { page: 1, limit: 20, total: 0, hasNext: false, hasPrev: false },
         message: error.response?.data?.message || 'Failed to fetch user files'
+      };
+    }
+  },
+
+  /**
+   * Get user's recent session uploads (instant feedback)
+   * @returns {Promise<{success: boolean, files: Array, count: number}>}
+   */
+  getSessionFiles: async () => {
+    try {
+      console.log('Fetching session files for instant feedback');
+      
+      const response = await contentClient.get('/files/session');
+      
+      return {
+        success: true,
+        files: response.data.files || [],
+        count: response.data.count || 0,
+        message: response.data.message || 'Session files retrieved successfully'
+      };
+    } catch (error) {
+      console.error('getSessionFiles error:', error);
+      return {
+        success: false,
+        files: [],
+        count: 0,
+        message: error.response?.data?.message || 'Failed to fetch session files'
+      };
+    }
+  },
+
+  /**
+   * Get user's file statistics
+   * @returns {Promise<{success: boolean, stats: Object}>}
+   */
+  getFileStats: async () => {
+    try {
+      console.log('Fetching file statistics');
+      
+      const response = await contentClient.get('/files/stats');
+      
+      return {
+        success: true,
+        stats: response.data.stats || {
+          sessionUploads: 0,
+          totalFiles: 0,
+          totalSize: 0,
+          categories: {},
+          recentActivity: []
+        },
+        message: response.data.message || 'File statistics retrieved successfully'
+      };
+    } catch (error) {
+      console.error('getFileStats error:', error);
+      return {
+        success: false,
+        stats: {
+          sessionUploads: 0,
+          totalFiles: 0,
+          totalSize: 0,
+          categories: {},
+          recentActivity: []
+        },
+        message: error.response?.data?.message || 'Failed to fetch file statistics'
       };
     }
   },
