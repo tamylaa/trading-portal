@@ -13,6 +13,13 @@ node_modules/
 /build
 /dist
 
+# Caches
+node_modules/.cache/
+.cache/
+.cache-loader/
+# Temporary
+tmp/
+
 # Testing
 /coverage
 /.coverage
