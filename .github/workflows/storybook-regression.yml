@@ -1,0 +1,26 @@
+name: Storybook Visual & A11y Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test-storybook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Build Storybook
+        run: npm run build-storybook
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Serve Storybook and run Playwright tests
+        run: |
+          npx http-server storybook-static -p 6006 -c-1 &
+          npx playwright test tests/playwright --reporter=github
