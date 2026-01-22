@@ -7,7 +7,8 @@
 
 import { ApiClient } from '@tamyla/shared/api';
 import { EventBus } from '@tamyla/shared/events';
-import { ConfigManager } from '@tamyla/shared/config';
+// Shared exports changed name to ConfigurationManager; alias for compatibility
+import { ConfigurationManager as ConfigManager } from '@tamyla/shared/config';
 import { AuthService } from '@tamyla/shared/auth';
 import { ErrorHandler, Logger } from '@tamyla/shared/utils';
 
@@ -351,6 +352,10 @@ export class ContentHubService {
     this.authService.logout();
   }
 }
+
+// Backwards-compatible singleton instance used by legacy components
+export const contentService = new ContentHubService();
+export default contentService;
 
 // Factory function for easy instantiation
 export const createContentHubService = (config = {}) => {
