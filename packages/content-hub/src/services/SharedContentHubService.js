@@ -361,5 +361,3 @@ export default contentService;
 export const createContentHubService = (config = {}) => {
   return new ContentHubService(config);
 };
-
-export default ContentHubService;
