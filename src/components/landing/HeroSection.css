@@ -5,11 +5,12 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-radius: 1.5rem;
-  box-shadow: 0 2px 24px rgba(36,40,60,0.07);
+  border-radius: var(--landing-section-radius);
+  box-shadow: var(--elevation-2);
   min-height: 450px;
   position: relative;
-  background: #fff;
+  background: var(--color-surface);
+  font-family: var(--font-family-sans);
   
   /* Use architecture content class for consistent spacing */
 }
@@ -31,15 +32,15 @@
 }
 
 .hero-title {
-  font-size: 2.7rem;
+  font-size: var(--font-size-h1);
   font-weight: 800;
-  color: #1a3b5d;
+  color: var(--color-heading);
   margin-bottom: 1.1rem;
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
-  color: #3d5875;
+  font-size: var(--font-size-lead);
+  color: var(--color-text-muted);
   margin-bottom: 2rem;
 }
 
@@ -50,8 +51,8 @@
 
 .hero-cta-button {
   /* Use package's design token for consistent rounded corners */
-  border-radius: 0.5rem !important; /* lg radius from design tokens */
-  font-size: 1.75rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: var(--font-size-lg) !important;
   font-weight: 600 !important;
   line-height: 1.2 !important;
   position: relative !important;
@@ -107,8 +108,8 @@
 }
 
 .hero-microcopy {
-  font-size: 0.97rem;
-  color: #3d5875;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
   margin: 0.5rem 0 1.1rem 0;
 }
 
@@ -118,11 +119,11 @@
   justify-content: center;
   gap: 1.2rem;
   font-size: 1.03rem;
-  color: #2563eb;
+  color: var(--color-primary);
   margin-bottom: 0.7rem;
 }
 .hero-badges img {
-  height: 32px;
+  height: var(--badge-height);
   margin-right: 0.5rem;
 }
 

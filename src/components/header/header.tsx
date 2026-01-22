@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSidebar } from '../../contexts/SidebarContext';
+import { useTranslation } from 'react-i18next';
 import './header.css';
 
 const Header: React.FC = () => {
     const { isOpen, toggleSidebar } = useSidebar();
+    const { t } = useTranslation();
 
     return (
         <header className="site-header">
@@ -29,7 +31,7 @@ const Header: React.FC = () => {
                     </Link>
                 </div>
                 <div className="header-center">
-                    <span className="header-tagline">Gateway to Global Trading</span>
+                    <span className="header-tagline">{t('header.tagline')}</span>
                 </div>
                 <nav className="header-nav">
                     <Link
@@ -38,7 +40,7 @@ const Header: React.FC = () => {
                         aria-label="Login"
                     >
                         <span role="img" aria-label="lock" style={{marginRight: '0.5em'}}>🔒</span>
-                        <span>Login</span>
+                        <span>{t('header.login')}</span>
                     </Link>
                     <Link
                         to="/stories/github-cloudflare"
@@ -46,7 +48,7 @@ const Header: React.FC = () => {
                         aria-label="Featured Story"
                     >
                         <span role="img" aria-label="book" style={{marginRight: '0.5em'}}>📖</span>
-                        <span>Story</span>
+                        <span>{t('header.story')}</span>
                     </Link>
                     <Link
                         to="/stories"
@@ -54,7 +56,7 @@ const Header: React.FC = () => {
                         aria-label="All Stories & Build Journeys"
                     >
                         <span role="img" aria-label="sparkles" style={{marginRight: '0.5em'}}>✨</span>
-                        <span>All Stories</span>
+                        <span>{t('header.allStories')}</span>
                     </Link>
                 </nav>
             </div>
