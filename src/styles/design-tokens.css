@@ -21,6 +21,9 @@
   --color-accent-2: #f4f8fb;
   --color-surface: #f8fafd;
   --color-surface-alt: #f6faff;
+  --color-on-primary: #ffffff;
+  --color-warning: #d97706;
+  --color-warning-bg: #fffbe6;
   
   /* Layout calculations (derived from base tokens) */
   --landing-section-width: calc(100% - (var(--landing-section-margin) * 2));
