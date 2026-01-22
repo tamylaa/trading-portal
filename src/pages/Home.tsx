@@ -4,12 +4,12 @@ import TrustBadgesSection from '../components/landing/TrustBadges';
 import FeatureHighlightsSection from '../components/landing/FeatureHighlights';
 import HowItWorksSection from '../components/landing/HowItWorks';
 import SocialProofSection from '../components/landing/SocialProof';
-import ScarcityBannerSection from '../components/landing/ScarcityBannerSection';
-import ReciprocitySection from '../components/landing/ReciprocitySection';
-import FOMOSection from '../components/landing/FOMOSection';
-import FAQSection from '../components/landing/FAQSection';
-import AboutSection from '../components/landing/AboutSection';
-import ContactSection from '../components/landing/ContactSection';
+import ScarcityBannerSection from '../components/landing/ScarcityBanner';
+import ReciprocitySection from '../components/landing/Reciprocity';
+import FOMOSection from '../components/landing/FOMO';
+import FAQSection from '../components/landing/FAQ';
+import AboutSection from '../components/landing/About';
+import ContactSection from '../components/landing/Contact';
 import './Home.css';
 import '../components/landing/LandingLayoutArchitecture.css';
 

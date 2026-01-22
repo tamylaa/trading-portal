@@ -1,5 +1,5 @@
 import React from 'react';
-import FOMOSection from '../FOMOSection';
+import FOMOSection from './FOMOSection';
 
 export default {
   title: 'Landing/FOMO',

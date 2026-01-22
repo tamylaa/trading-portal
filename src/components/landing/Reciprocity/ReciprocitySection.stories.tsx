@@ -1,5 +1,5 @@
 import React from 'react';
-import ReciprocitySection from '../ReciprocitySection';
+import ReciprocitySection from './ReciprocitySection';
 
 export default {
   title: 'Landing/Reciprocity',

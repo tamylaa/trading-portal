@@ -1,5 +1,5 @@
 import React from 'react';
-import ScarcityBannerSection from '../ScarcityBannerSection';
+import ScarcityBannerSection from './ScarcityBannerSection';
 
 export default {
   title: 'Landing/ScarcityBanner',
