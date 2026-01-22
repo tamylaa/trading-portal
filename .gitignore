@@ -20,6 +20,9 @@ node_modules/.cache/
 # Temporary
 tmp/
 
+# Backups
+*.bak
+
 # Testing
 /coverage
 /.coverage
