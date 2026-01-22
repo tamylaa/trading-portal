@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { emailApi } from '../../api/email';
+import { emailApi } from '../../../api/email';
 import './ContactSection.css';
 
 const initialForm = { name: '', email: '', message: '' };
