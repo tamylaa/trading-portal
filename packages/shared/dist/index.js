@@ -16,8 +16,8 @@ export * from './events';
 // API
 export * from './api';
 
-// Types (re-export for JavaScript users)
-export * from './types';
+// Note: types are provided via TypeScript declarations; avoid runtime re-export of types-only module
+// (keeps JS runtime free from importing TS declaration-only files)
 
 // Utils
 export * from './utils';
