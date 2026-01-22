@@ -1,0 +1,50 @@
+{
+  "name": "@tamyla/contact-hub",
+  "version": "1.0.0",
+  "description": "Contact Hub - Customer relationship and contact management",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./config-api": "./dist/config-api.js"
+  },
+  "scripts": {
+    "build": "babel src --out-dir dist --copy-files",
+    "dev": "babel src --out-dir dist --copy-files --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "axios": "^1.6.0",
+    "@tamyla/shared": "file:../shared",
+    "@tamyla/ui-components-react": "^1.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0"
+  },
+  "peerDependencies": {
+    "react-dom": "^18.2.0"
+  },
+  "keywords": [
+    "contact",
+    "crm",
+    "customer",
+    "relationship",
+    "management",
+    "hub"
+  ],
+  "author": "Tamyla",
+  "license": "MIT"
+}
