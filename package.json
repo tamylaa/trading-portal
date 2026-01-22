@@ -8,11 +8,15 @@
     "build": "set PUBLIC_URL=/&& set CI=false&& craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "build-check": "powershell -ExecutionPolicy Bypass -File build-check.ps1"
+    "build-check": "powershell -ExecutionPolicy Bypass -File build-check.ps1",
+    "optimize:images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
     "@reduxjs/toolkit": "^2.8.2",
+    "@tamyla/campaign-hub": "file:./packages/campaign-hub",
+    "@tamyla/content-hub": "file:./packages/content-hub",
+    "@tamyla/shared": "file:./packages/shared",
     "@tamyla/ui-components": "^1.1.3",
     "@tamyla/ui-components-react": "^6.0.6",
     "@types/axios": "^0.9.36",
