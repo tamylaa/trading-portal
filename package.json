@@ -9,7 +9,7 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "build-check": "powershell -ExecutionPolicy Bypass -File build-check.ps1",
-    "optimize:images": "node scripts/optimize-images.js"
+    "optimize:images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
