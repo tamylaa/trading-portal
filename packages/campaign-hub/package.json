@@ -1,0 +1,45 @@
+{
+  "name": "@tamyla/campaign-hub",
+  "version": "1.0.0",
+  "description": "Campaign Hub - Email campaign management and contact handling",
+  "main": "index.js",
+  "module": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./components": "./components/index.js",
+    "./api": "./api/index.js"
+  },
+  "files": [
+    "components",
+    "api",
+    "config",
+    "styles",
+    "index.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"Campaign Hub is a runtime package\" && exit 0"
+  },
+  "keywords": [
+    "campaign-management",
+    "email-campaigns",
+    "contact-management",
+    "react",
+    "tamyla"
+  ],
+  "author": "Tamyla",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "@tamyla/shared": "file:../shared",
+    "@tamyla/content-hub": "file:../content-hub"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

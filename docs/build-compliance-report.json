@@ -1,0 +1,550 @@
+{
+  "timestamp": "2025-09-25T08:27:46.001Z",
+  "mode": "development",
+  "totalBuildTime": 34,
+  "compliance": {
+    "totalHubs": 1,
+    "compliantHubs": 0,
+    "totalViolations": 74,
+    "hubResults": [
+      {
+        "hubName": "content-hub",
+        "violations": {
+          "critical": [],
+          "high": [
+            {
+              "file": "hooks\\useContentSearch.js",
+              "line": 40,
+              "code": "abortControllerRef.current = new AbortController();",
+              "message": "Use @tamyla/shared/api (ApiClient) built-in cancellation",
+              "severity": "high"
+            },
+            {
+              "file": "services\\contentSearchService.ts",
+              "line": 44,
+              "code": "const response = await fetch(url, {",
+              "message": "Use @tamyla/shared/api (ApiClient) methods instead of raw fetch()",
+              "severity": "high"
+            },
+            {
+              "file": "services\\contentSearchService.ts",
+              "line": 39,
+              "code": "const controller = new AbortController();",
+              "message": "Use @tamyla/shared/api (ApiClient) built-in cancellation",
+              "severity": "high"
+            },
+            {
+              "file": "services\\healthService.ts",
+              "line": 31,
+              "code": "const response = await fetch(`${this.baseUrl}/health`, {",
+              "message": "Use @tamyla/shared/api (ApiClient) methods instead of raw fetch()",
+              "severity": "high"
+            },
+            {
+              "file": "services\\healthService.ts",
+              "line": 27,
+              "code": "const controller = new AbortController();",
+              "message": "Use @tamyla/shared/api (ApiClient) built-in cancellation",
+              "severity": "high"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 135,
+              "code": "const response = await fetch(url, {",
+              "message": "Use @tamyla/shared/api (ApiClient) methods instead of raw fetch()",
+              "severity": "high"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 126,
+              "code": "const controller = new AbortController();",
+              "message": "Use @tamyla/shared/api (ApiClient) built-in cancellation",
+              "severity": "high"
+            }
+          ],
+          "medium": [
+            {
+              "file": "api\\content.js",
+              "line": 42,
+              "code": "// Use shared Logger instead of console.error",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "api\\content.js",
+              "line": 143,
+              "code": "console.log('Fetching user files with enhanced options:', url);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "api\\content.js",
+              "line": 163,
+              "code": "console.error('getUserFiles error:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "api\\content.js",
+              "line": 179,
+              "code": "console.log('Fetching session files for instant feedback');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "api\\content.js",
+              "line": 190,
+              "code": "console.error('getSessionFiles error:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "api\\content.js",
+              "line": 206,
+              "code": "console.log('Fetching file statistics');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "api\\content.js",
+              "line": 222,
+              "code": "console.error('getFileStats error:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "api\\email.js",
+              "line": 48,
+              "code": "console.error('Email Service Error:', {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentAccess.jsx",
+              "line": 112,
+              "code": "console.log('Combined Service Health Status:', combinedStatus);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentAccess.jsx",
+              "line": 115,
+              "code": "console.warn('Failed to check service health:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentAccess.jsx",
+              "line": 152,
+              "code": "console.error('Search failed:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentAccess.jsx",
+              "line": 172,
+              "code": "console.error('Error accessing file:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentAccess.jsx",
+              "line": 194,
+              "code": "console.error('Error downloading file:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 41,
+              "code": "console.log('ContentManager auth data:', {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 54,
+              "code": "console.log('✅ Content Manager already loaded');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 62,
+              "code": "script.onload = () => console.log('✅ Content Manager web component loaded');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 64,
+              "code": "console.error('❌ Failed to load content manager component:', err);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 80,
+              "code": "console.log('Content uploaded event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 85,
+              "code": "console.log('Auth required event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 90,
+              "code": "console.error('Content manager error:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 95,
+              "code": "console.log('Search changed:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 100,
+              "code": "console.log('Filter changed:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 105,
+              "code": "console.log('Selection changed:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 135,
+              "code": "console.log('🔧 React setting component properties:', { apiBase, selectionMode, showUpload, showGallery, showSearch, maxFileSize });",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 145,
+              "code": "console.log('🔑 React setting auth data:', {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentManager.jsx",
+              "line": 153,
+              "code": "console.log('🔑 React auth data missing:', {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentSharing.jsx",
+              "line": 96,
+              "code": "console.error('Error making files public:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "components\\ContentSharing.jsx",
+              "line": 157,
+              "code": "console.error('Error sending emails:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "config\\meilisearch.ts",
+              "line": 29,
+              "code": "console.warn(`Unknown environment: ${env}, defaulting to development`);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\contentSearchService.ts",
+              "line": 22,
+              "code": "console.log('ContentSearchService initialized:', {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\contentSearchService.ts",
+              "line": 62,
+              "code": "console.error('Request failed:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\contentSearchService.ts",
+              "line": 92,
+              "code": "console.warn('Search service unavailable, using mock data:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\healthService.ts",
+              "line": 52,
+              "code": "console.log('Health check result:', result);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\healthService.ts",
+              "line": 60,
+              "code": "console.error('Health check failed:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\healthService.ts",
+              "line": 85,
+              "code": "console.log('MeiliSearch still unavailable, retrying in 5 seconds...');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\jwtService.ts",
+              "line": 37,
+              "code": "console.log('Decoded JWT claims:', decoded);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\jwtService.ts",
+              "line": 43,
+              "code": "console.error('Failed to decode JWT token:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "services\\jwtService.ts",
+              "line": 171,
+              "code": "console.warn('Created test JWT token (development only):', {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 81,
+              "code": "console.log('Web component disabled in configuration');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 86,
+              "code": "console.log('✅ Content Manager already loaded');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 93,
+              "code": "script.onload = () => console.log('✅ Content Manager web component loaded');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 95,
+              "code": "console.error('❌ Failed to load content manager component:', err);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 114,
+              "code": "console.log('Content uploaded event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 123,
+              "code": "console.log('Auth required event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 132,
+              "code": "console.log('Error event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 141,
+              "code": "console.log('Search changed event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 150,
+              "code": "console.log('Filter changed event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHub.jsx",
+              "line": 159,
+              "code": "console.log('Selection changed event:', event.detail);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\ContentHubDemo.jsx",
+              "line": 80,
+              "code": "onFileUploaded={(file) => console.log('File uploaded:', file)}",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\HyperContentHub.jsx",
+              "line": 147,
+              "code": "console.error('Gallery fetch failed:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\HyperContentHub.jsx",
+              "line": 154,
+              "code": "console.log('Share functionality - to be implemented with shared ApiClient', { fileId, permissions });",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\HyperContentHub.jsx",
+              "line": 160,
+              "code": "console.log('Get shared items - to be implemented with shared ApiClient');",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\layouts\\index.jsx",
+              "line": 137,
+              "code": "console.error('Search failed:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\layouts\\index.jsx",
+              "line": 183,
+              "code": "console.error('Upload failed:', error);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 49,
+              "code": "console.log('EnhancedServiceAdapter initialized:', {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 64,
+              "code": "if (this.config.debugMode) console.log('Cache hit:', cacheKey);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 131,
+              "code": "console.log(`Retry attempt ${attempt} for ${endpoint}`);",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 320,
+              "code": "console.error('Service error:', error, {",
+              "message": "Use @tamyla/shared/utils (Logger) instead of console.*",
+              "severity": "medium"
+            }
+          ],
+          "low": [
+            {
+              "file": "api\\content.js",
+              "line": 348,
+              "code": "throw new Error(error.response?.data?.message || 'Failed to download file');",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "components\\ContentSharing.jsx",
+              "line": 93,
+              "code": "throw new Error('Failed to make files public');",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "components\\ContentSharing.jsx",
+              "line": 153,
+              "code": "throw new Error('All emails failed to send');",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "services\\contentSearchService.ts",
+              "line": 53,
+              "code": "throw new Error(`API Error: ${response.status} - ${response.statusText}`);",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "services\\jwtService.ts",
+              "line": 30,
+              "code": "throw new Error('Invalid JWT format');",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "services\\jwtService.ts",
+              "line": 140,
+              "code": "throw new Error('Test tokens cannot be created in production');",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 74,
+              "code": "throw new Error('Service temporarily unavailable (circuit breaker open)');",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "src\\services\\EnhancedServiceAdapter.ts",
+              "line": 144,
+              "code": "throw new Error(`HTTP ${response.status}: ${response.statusText}`);",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            },
+            {
+              "file": "src\\services\\SharedContentHubService.js",
+              "line": 240,
+              "code": "throw new Error(`File ${file.name} exceeds maximum size of ${maxSize} bytes`);",
+              "message": "Consider using @tamyla/shared/utils (ErrorHandler) for error creation",
+              "severity": "low"
+            }
+          ]
+        },
+        "total": 74,
+        "compliant": false
+      }
+    ]
+  },
+  "builds": {
+    "attempted": 0,
+    "successful": 0,
+    "failed": 0,
+    "results": []
+  }
+}

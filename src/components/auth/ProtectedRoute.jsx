@@ -1,7 +1,7 @@
 // src/components/auth/ProtectedRoute.jsx
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import LoadingSpinner from '../common/LoadingSpinner';
+import { LoadingSpinner } from '@tamyla/content-hub';
 
 const ProtectedRoute = ({ children, requireProfile = false }) => {
   const { currentUser, loading } = useAuth();

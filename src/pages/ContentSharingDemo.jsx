@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ContentManager, ContentSharing, EmailBlaster } from '../components/content';
+import { ContentManager, ContentSharing } from '@tamyla/content-hub';
+import { EmailBlaster } from '@tamyla/campaign-hub';
 import { useAuth } from '../contexts/AuthContext';
 import './ContentSharingDemo.css';
 
@@ -10,7 +11,7 @@ import './ContentSharingDemo.css';
  * including file sharing via email and bulk campaign features
  */
 function ContentSharingDemo() {
-  const { currentUser } = useAuth();
+  const { currentUser, token } = useAuth();
   const [notification, setNotification] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
@@ -141,6 +142,8 @@ function ContentSharingDemo() {
           showSearch={true}
           showSharing={true}
           showEmailBlaster={true}
+          authToken={token}
+          currentUser={currentUser}
           onContentUploaded={handleContentUploaded}
           onContentShared={handleContentShared}
           onCampaignSent={handleCampaignSent}
@@ -156,20 +159,19 @@ function ContentSharingDemo() {
         
         <div className="code-example">
           <h3>Basic Usage</h3>
-          <pre>{`import { ContentManager } from '../components/content';
+          <pre>{`import { ContentManager } from '@tamyla/content-hub';
 
 <ContentManager
   selectionMode={true}
   showSharing={true}
-  showEmailBlaster={true}
   onContentShared={(result) => console.log('Content shared:', result)}
-  onCampaignSent={(result) => console.log('Campaign sent:', result)}
 />`}</pre>
         </div>
 
         <div className="code-example">
           <h3>Standalone Components</h3>
-          <pre>{`import { ContentSharing, EmailBlaster } from '../components/content';
+          <pre>{`import { ContentSharing } from '@tamyla/content-hub';
+import { EmailBlaster } from '@tamyla/campaign-hub';
 
 // Content sharing with selected files
 <ContentSharing
