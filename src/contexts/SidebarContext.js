@@ -1,2 +1,1 @@
-export * from './SidebarContext';
-export { default } from './SidebarContext';
+module.exports = require('./SidebarContext');

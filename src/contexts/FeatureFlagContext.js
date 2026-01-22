@@ -1,2 +1,1 @@
-export * from './FeatureFlagContext';
-export { default } from './FeatureFlagContext';
+module.exports = require('./FeatureFlagContext');
