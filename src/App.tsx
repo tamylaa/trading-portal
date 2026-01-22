@@ -13,17 +13,37 @@ import CompleteProfile from './pages/CompleteProfile';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import BrevoChatWidget from './components/chat/BrevoChatWidget';
 import EngageKitInitializer from './components/engagekit/EngageKitInitializer';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ReduxProvider from './store/ReduxProvider';
 import { TamylaThemeProvider } from '@tamyla/ui-components-react';
-// ===== LAYOUT INHERITANCE SYSTEM =====
-import { ViewportProvider, LayoutProvider } from './contexts/LayoutContext';
+import { FeatureFlagProvider } from './contexts/FeatureFlagContext';
+import { ContentAccess } from '@tamyla/content-hub';
+
+// ContentAccess wrapper to provide auth props
+const ContentAccessWrapper = () => {
+  const { currentUser, token } = useAuth();
+  return (
+    // @ts-ignore - ContentAccess props are defined in the component
+    <ContentAccess
+      authToken={token}
+      currentUser={currentUser}
+      apiBase="https://content.tamyla.com"
+      enableDebugLogging={process.env.NODE_ENV === 'development'}
+      onFileViewed={(result) => console.log('File viewed:', result)}
+      onFileDownloaded={(result) => console.log('File downloaded:', result)}
+      onSearchPerformed={(query, count) => console.log('Search performed:', query, count)}
+      onError={(error) => console.error('ContentAccess error:', error)}
+    />
+  );
+};
 
 // Lazy load heavy pages with PDF functionality and syntax highlighting
 const StoryListPage = React.lazy(() => import('./pages/StoryListPage'));
 const StoryDetailPage = React.lazy(() => import('./pages/StoryDetailPage'));
 const EmailBlasterPage = React.lazy(() => import('./pages/EmailBlasterPage'));
-const ContentAccess = React.lazy(() => import('./pages/ContentAccess'));
+// const ContentAccess = React.lazy(() => import('@tamyla/content-hub').then(module => ({ default: module.ContentAccess })));
+
+// Temporary direct import for testing
 const Achievements = React.lazy(() => import('./pages/Achievements'));
 const UIDemoPage = React.lazy(() => import('./pages/UIDemoPage'));
 const ReactComponentsDemoPage = React.lazy(() => import('./pages/ReactComponentsDemoPage'));
@@ -37,11 +57,12 @@ const App = () => {
         {/* 🎨 Tamyla Theme Provider - Essential for ui-components-react styling */}
         <TamylaThemeProvider>
           {/* 📐 Layout Inheritance System - Academic Approach */}
-          <ViewportProvider>
-            <LayoutProvider>
-              <AuthProvider>
-                <AppProvider>
-                  <SidebarProvider>
+          {/* <ViewportProvider>
+            <LayoutProvider> */}
+              <FeatureFlagProvider>
+                <AuthProvider>
+                  <AppProvider>
+                    <SidebarProvider>
               <Routes>
                 <Route path="/" element={<MainLayout />}>
                   <Route index element={<Home />} />
@@ -100,9 +121,7 @@ const App = () => {
                     path="content-access"
                     element={
                       <ProtectedRoute>
-                        <Suspense fallback={<div>Loading content access...</div>}>
-                          <ContentAccess />
-                        </Suspense>
+                        <ContentAccessWrapper />
                       </ProtectedRoute>
                     }
                   />
@@ -124,8 +143,9 @@ const App = () => {
             </SidebarProvider>
           </AppProvider>
         </AuthProvider>
-        </LayoutProvider>
-      </ViewportProvider>
+        </FeatureFlagProvider>
+        {/* </LayoutProvider>
+      </ViewportProvider> */}
         </TamylaThemeProvider>
     </ReduxProvider>
   </BrowserRouter>

@@ -44,3 +44,15 @@ This file lists TODO / FIXME occurrences found in the codebase, triaged into sug
 ---
 
 If you'd like I can convert these triaged items into real GitHub issues (requires a PAT with repo scope) or create internal JIRA/tickets — tell me your preference and I'll proceed.
+
+---
+
+## Status (created issues & progress)
+
+- Created issues: #1, #2, #3, #4, #5, #6 (see repository issues) — all labelled `triaged` and assigned to milestone **repo-cleanup**.
+- PR: Draft PR #7 ("feat(i18n): scaffold i18n and extract top-level UI strings") created and linked to issue #5 — includes i18n scaffold and Hero/Header integration.
+- New tasks added: Issue #8 (component reorg) and Issue #9 (Storybook + stories) added to the **repo-cleanup** milestone.
+
+---
+
+> Next steps: implement work in small PRs, attach each PR to the relevant issue, and close issues on merge.

@@ -12,6 +12,16 @@
   --breakpoint-tablet: 768px;
   --breakpoint-mobile: 480px;
   
+  /* Color tokens (seed palette) */
+  --color-primary: #2563eb;
+  --color-primary-dark: #1746a2;
+  --color-heading: #1a3b5d;
+  --color-text-muted: #3d5875;
+  --color-accent-1: #eaf1f8;
+  --color-accent-2: #f4f8fb;
+  --color-surface: #f8fafd;
+  --color-surface-alt: #f6faff;
+  
   /* Layout calculations (derived from base tokens) */
   --landing-section-width: calc(100% - (var(--landing-section-margin) * 2));
   --landing-section-width-tablet: calc(100% - (var(--landing-section-margin-tablet) * 2));
