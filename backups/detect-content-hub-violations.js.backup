@@ -1,0 +1,198 @@
+#!/usr/bin/env node
+
+/**
+ * CONTENT-HUB DUPLICATION VIOLATIONS DETECTOR
+ * 
+ * Identifies all 102 infrastructure duplication violations in content-hub
+ * and provides specific fixes using @tamyla/shared
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+console.log('🔍 CONTENT-HUB DUPLICATION VIOLATIONS ANALYSIS\n');
+
+const contentHubPath = path.join(__dirname, '..', 'packages', 'content-hub');
+
+// Patterns that violate shared infrastructure usage
+const violationPatterns = [
+  {
+    pattern: 'console.log',
+    replacement: 'this.logger.info',
+    shared: '@tamyla/shared/utils (Logger)',
+    severity: 'MEDIUM'
+  },
+  {
+    pattern: 'console.error',
+    replacement: 'this.logger.error', 
+    shared: '@tamyla/shared/utils (Logger)',
+    severity: 'MEDIUM'
+  },
+  {
+    pattern: 'console.warn',
+    replacement: 'this.logger.warn',
+    shared: '@tamyla/shared/utils (Logger)', 
+    severity: 'MEDIUM'
+  },
+  {
+    pattern: 'fetch(',
+    replacement: 'this.apiClient.get/post',
+    shared: '@tamyla/shared/api (ApiClient)',
+    severity: 'HIGH'
+  },
+  {
+    pattern: 'axios.create',
+    replacement: 'new ApiClient()',
+    shared: '@tamyla/shared/api (ApiClient)',
+    severity: 'CRITICAL'
+  },
+  {
+    pattern: 'new EventEmitter',
+    replacement: 'new EventBus()',
+    shared: '@tamyla/shared/events (EventBus)',
+    severity: 'CRITICAL'
+  },
+  {
+    pattern: 'localStorage.getItem',
+    replacement: 'this.authService.getToken()',
+    shared: '@tamyla/shared/auth (AuthService)',
+    severity: 'HIGH'
+  },
+  {
+    pattern: 'localStorage.setItem',
+    replacement: 'this.authService.setToken()',
+    shared: '@tamyla/shared/auth (AuthService)',
+    severity: 'HIGH'
+  },
+  {
+    pattern: 'sessionStorage.',
+    replacement: 'this.authService storage',
+    shared: '@tamyla/shared/auth (AuthService)',
+    severity: 'HIGH'
+  },
+  {
+    pattern: 'XMLHttpRequest',
+    replacement: 'this.apiClient',
+    shared: '@tamyla/shared/api (ApiClient)',
+    severity: 'CRITICAL'
+  },
+  {
+    pattern: 'new Error(',
+    replacement: 'this.errorHandler.createError()',
+    shared: '@tamyla/shared/utils (ErrorHandler)',
+    severity: 'LOW'
+  },
+  {
+    pattern: 'try {',
+    context: 'Manual error handling',
+    replacement: 'Use this.errorHandler.handle()',
+    shared: '@tamyla/shared/utils (ErrorHandler)',
+    severity: 'LOW'
+  }
+];
+
+// Scan all JavaScript/TypeScript files in content-hub
+function scanDirectory(dir, violations = []) {
+  if (!fs.existsSync(dir)) return violations;
+  
+  const files = fs.readdirSync(dir);
+  
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    
+    if (stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules') {
+      scanDirectory(filePath, violations);
+    } else if (file.match(/\.(js|jsx|ts|tsx)$/)) {
+      scanFile(filePath, violations);
+    }
+  });
+  
+  return violations;
+}
+
+function scanFile(filePath, violations) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const lines = content.split('\n');
+  
+  lines.forEach((line, index) => {
+    violationPatterns.forEach(pattern => {
+      if (line.includes(pattern.pattern)) {
+        violations.push({
+          file: path.relative(contentHubPath, filePath),
+          line: index + 1,
+          code: line.trim(),
+          pattern: pattern.pattern,
+          replacement: pattern.replacement,
+          shared: pattern.shared,
+          severity: pattern.severity
+        });
+      }
+    });
+  });
+}
+
+// Scan content-hub for violations
+const violations = scanDirectory(contentHubPath);
+
+console.log(`🚨 FOUND ${violations.length} INFRASTRUCTURE VIOLATIONS:\n`);
+
+// Group by severity
+const critical = violations.filter(v => v.severity === 'CRITICAL');
+const high = violations.filter(v => v.severity === 'HIGH');
+const medium = violations.filter(v => v.severity === 'MEDIUM');
+const low = violations.filter(v => v.severity === 'LOW');
+
+console.log(`🔴 CRITICAL (${critical.length}): Must use shared infrastructure`);
+critical.forEach(v => {
+  console.log(`   📁 ${v.file}:${v.line}`);
+  console.log(`   ❌ ${v.code}`);
+  console.log(`   ✅ Replace with: ${v.replacement} (${v.shared})\n`);
+});
+
+console.log(`🟠 HIGH (${high.length}): Should use shared infrastructure`);
+high.forEach(v => {
+  console.log(`   📁 ${v.file}:${v.line}`);
+  console.log(`   ❌ ${v.code}`);
+  console.log(`   ✅ Replace with: ${v.replacement} (${v.shared})\n`);
+});
+
+console.log(`🟡 MEDIUM (${medium.length}): Console logging violations`);
+console.log(`   Replace ALL console.* with shared Logger\n`);
+
+console.log(`🔵 LOW (${low.length}): Error handling improvements`);
+console.log(`   Use shared ErrorHandler for consistency\n`);
+
+// Generate fix report
+console.log('📋 PRIORITY FIX ORDER:\n');
+console.log('1. 🔴 CRITICAL: Replace HTTP clients with shared ApiClient');
+console.log('2. 🔴 CRITICAL: Replace event systems with shared EventBus');
+console.log('3. 🟠 HIGH: Replace storage access with shared AuthService');
+console.log('4. 🟠 HIGH: Replace fetch() with shared ApiClient methods');
+console.log('5. 🟡 MEDIUM: Replace console.* with shared Logger');
+console.log('6. 🔵 LOW: Enhance error handling with shared ErrorHandler');
+
+console.log('\n🎯 EXPECTED RESULT:');
+console.log(`   Current: ${violations.length} violations`);
+console.log('   Target: 0 violations');
+console.log('   Compliance: 100% shared infrastructure usage');
+
+// Export for automated fixing
+const fixReport = {
+  totalViolations: violations.length,
+  critical: critical.length,
+  high: high.length,
+  medium: medium.length,
+  low: low.length,
+  violations: violations
+};
+
+fs.writeFileSync(
+  path.join(__dirname, '..', 'CONTENT_HUB_VIOLATIONS_REPORT.json'),
+  JSON.stringify(fixReport, null, 2)
+);
+
+console.log('\n📄 Detailed report saved to: CONTENT_HUB_VIOLATIONS_REPORT.json');
+console.log('🚀 Ready to implement fixes using shared infrastructure!');
+
+module.exports = { violations, fixReport };

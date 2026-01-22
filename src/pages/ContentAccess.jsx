@@ -12,7 +12,7 @@ import {
 } from '@tamyla/ui-components-react';
 // import '@tamyla/ui-components-react/dist/styles.css'; // TODO: Fix CSS import path
 import PageLayout from '../components/common/PageLayout';
-import ContentManager from '../components/content/ContentManager';
+import { ContentManager } from '@tamyla/content-hub';
 import './ContentAccess/ContentAccess.css';const ContentAccess = () => {
   const { user, token } = useAuth();
   
@@ -200,6 +200,8 @@ import './ContentAccess/ContentAccess.css';const ContentAccess = () => {
               showSearch={true}
               showSharing={true}
               maxFileSize={25 * 1024 * 1024}
+              authToken={token}
+              currentUser={user}
               onContentUploaded={(content) => {
                 console.log('Content uploaded:', content);
               }}
@@ -221,6 +223,8 @@ import './ContentAccess/ContentAccess.css';const ContentAccess = () => {
               showSearch={true}
               showSharing={true}
               maxFileSize={25 * 1024 * 1024}
+              authToken={token}
+              currentUser={user}
               onContentUploaded={(content) => {
                 console.log('Content uploaded:', content);
               }}

@@ -52,7 +52,7 @@ export const ProgressiveEmailBlaster: React.FC<ProgressiveEmailBlasterProps> = (
       })).catch(() => {
         // Fallback to original if enhanced version fails to load
         console.warn('Enhanced EmailBlaster failed to load, using original');
-        return import('./content/EmailBlaster').then(module => ({
+        return import('@tamyla/campaign-hub').then(module => ({
           default: module.EmailBlaster as React.ComponentType<any>
         }));
       })
@@ -66,12 +66,12 @@ export const ProgressiveEmailBlaster: React.FC<ProgressiveEmailBlasterProps> = (
   }
   
   // Default: use original EmailBlaster (guaranteed to work)
-  const { EmailBlaster } = require('./content/EmailBlaster');
+  const { EmailBlaster } = require('@tamyla/campaign-hub');
   return <EmailBlaster {...props} />;
 };
 
 // TODO: Re-export original for direct imports (when module exists)
-// export { EmailBlaster } from './content/EmailBlaster';
+// export { EmailBlaster } from '@tamyla/campaign-hub';
 
 // Default export for drop-in replacement
 export default ProgressiveEmailBlaster;

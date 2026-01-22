@@ -1,0 +1,475 @@
+#!/usr/bin/env node
+
+/**
+ * HUB DEVELOPMENT AUTOMATION SCRIPT
+ * 
+ * Ensures all hubs follow content-hub pattern and use shared infrastructure
+ * Run before developing any new hub to establish proper foundations
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+console.log('🏗️ HUB DEVELOPMENT GOVERNANCE VALIDATOR\n');
+
+// Hub development standards based on content-hub pattern
+const hubStandards = {
+  requiredDependencies: ['@tamyla/shared'],
+  requiredDirectories: ['src', 'src/services', 'src/layouts', 'src/components', 'api', 'config'],
+  requiredFiles: [
+    'package.json',
+    'index.js', 
+    'src/services/Shared{HubName}Service.js',
+    'src/Hyper{HubName}.jsx',
+    'src/layouts/index.js'
+  ],
+  mandatorySharedImports: [
+    'EventBus',
+    'ApiClient', 
+    'AuthService',
+    'ConfigManager',
+    'ErrorHandler',
+    'Logger'
+  ],
+  forbiddenPatterns: [
+    'axios.create',           // Must use shared ApiClient
+    'new EventEmitter',       // Must use shared EventBus
+    'localStorage.getItem',   // Must use shared AuthService
+    'console.log',            // Must use shared Logger
+    'fetch(',                 // Must use shared ApiClient
+    'XMLHttpRequest'          // Must use shared ApiClient
+  ]
+};
+
+// Validate existing hubs (run by default or with --validate)
+function runValidation() {
+  const hubsDirectory = path.join(__dirname, '..', 'packages');
+
+  if (fs.existsSync(hubsDirectory)) {
+    const hubs = fs.readdirSync(hubsDirectory).filter(dir => 
+      dir.endsWith('-hub') && fs.statSync(path.join(hubsDirectory, dir)).isDirectory()
+    );
+
+    console.log(`📋 VALIDATING ${hubs.length} HUB PACKAGES:\n`);
+
+    hubs.forEach((hub, index) => {
+      console.log(`${index + 1}. ${hub}`);
+      validateHub(hub, hubsDirectory);
+      console.log('');
+    });
+
+    // Summary
+    console.log('🎯 VALIDATION COMPLETE!');
+    console.log('📊 All hubs should achieve 80%+ compliance');
+    console.log('⚡ Focus on using @tamyla/shared infrastructure');
+    console.log('🏗️ Follow content-hub architecture patterns');
+  } else {
+    console.log('❌ Packages directory not found');
+  }
+}
+
+function validateHub(hubName, hubsDirectory) {
+  const hubPath = path.join(hubsDirectory, hubName);
+  const packageJsonPath = path.join(hubPath, 'package.json');
+  
+  let score = 0;
+  const maxScore = 10;
+  
+  // Check package.json exists and has shared dependency
+  if (fs.existsSync(packageJsonPath)) {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    
+    if (packageJson.dependencies?.['@tamyla/shared']) {
+      console.log('   ✅ Uses @tamyla/shared dependency');
+      score += 2;
+    } else {
+      console.log('   ❌ Missing @tamyla/shared dependency');
+    }
+    
+    if (packageJson.name === `@tamyla/${hubName}`) {
+      console.log('   ✅ Correct package naming');
+      score += 1;
+    } else {
+      console.log('   ❌ Incorrect package naming');
+    }
+  } else {
+    console.log('   ❌ Missing package.json');
+  }
+  
+  // Check directory structure
+  const requiredDirs = ['src', 'src/services', 'api', 'config'];
+  requiredDirs.forEach(dir => {
+    if (fs.existsSync(path.join(hubPath, dir))) {
+      score += 0.5;
+    }
+  });
+  
+  // Check for shared service implementation
+  const serviceFiles = findFiles(path.join(hubPath, 'src'), /Shared.*Service\.js$/);
+  if (serviceFiles.length > 0) {
+    console.log('   ✅ Has SharedXxxService implementation');
+    score += 2;
+  } else {
+    console.log('   ❌ Missing SharedXxxService implementation');
+  }
+  
+  // Check for main hub component
+  const hubFiles = findFiles(path.join(hubPath, 'src'), /Hyper.*\.jsx$/);
+  if (hubFiles.length > 0) {
+    console.log('   ✅ Has HyperXxxHub component');
+    score += 2;
+  } else {
+    console.log('   ❌ Missing HyperXxxHub component');
+  }
+  
+  // Check for forbidden patterns (duplication)
+  const codeFiles = findFiles(hubPath, /\.(js|jsx|ts|tsx)$/);
+  let violations = 0;
+  
+  codeFiles.forEach(file => {
+    const content = fs.readFileSync(file, 'utf8');
+    hubStandards.forbiddenPatterns.forEach(pattern => {
+      if (content.includes(pattern)) {
+        violations++;
+      }
+    });
+  });
+  
+  if (violations === 0) {
+    console.log('   ✅ No infrastructure duplication detected');
+    score += 2;
+  } else {
+    console.log(`   ❌ ${violations} infrastructure duplication violations`);
+  }
+  
+  // Final score
+  const percentage = Math.round((score / maxScore) * 100);
+  console.log(`   📊 Compliance Score: ${score}/${maxScore} (${percentage}%)`);
+  
+  if (percentage >= 80) {
+    console.log('   🎉 EXCELLENT - Follows hub standards');
+  } else if (percentage >= 60) {
+    console.log('   ⚠️  NEEDS IMPROVEMENT - Some standards missing');
+  } else {
+    console.log('   🚨 CRITICAL - Major standards violations');
+  }
+}
+
+function findFiles(dir, pattern) {
+  if (!fs.existsSync(dir)) return [];
+  
+  let results = [];
+  const files = fs.readdirSync(dir);
+  
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    
+    if (stat.isDirectory()) {
+      results = results.concat(findFiles(filePath, pattern));
+    } else if (pattern.test(file)) {
+      results.push(filePath);
+    }
+  });
+  
+  return results;
+}
+
+// Generate new hub template
+function generateHubTemplate(hubName) {
+  console.log(`\n🚀 GENERATING ${hubName.toUpperCase()} TEMPLATE\n`);
+  
+  const capitalizedName = hubName.charAt(0).toUpperCase() + hubName.slice(1);
+  const hubPath = path.join(hubsDirectory, `${hubName}-hub`);
+  
+  // Package.json template
+  const packageJson = {
+    name: `@tamyla/${hubName}-hub`,
+    version: "1.0.0",
+    description: `${capitalizedName} Hub - Following content-hub architecture pattern`,
+    main: "index.js",
+    module: "index.js",
+    dependencies: {
+      "@tamyla/shared": "file:../shared",
+      "react": "^18.0.0"
+    }
+  };
+  
+  // Service template
+  const serviceTemplate = `/**
+ * Shared ${capitalizedName} Service
+ * 
+ * Following content-hub pattern - uses @tamyla/shared infrastructure
+ */
+
+import { ApiClient, EventBus, AuthService, ConfigManager, ErrorHandler, Logger } from '@tamyla/shared';
+
+const DEFAULT_${hubName.toUpperCase()}_CONFIG = {
+  api: {
+    baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001',
+    timeout: 10000,
+    retries: 3
+  },
+  ${hubName}: {
+    // ${hubName}-specific configuration
+    primaryAction: { enabled: true, timeout: 5000 },
+    secondaryAction: { enabled: true, cacheEnabled: true }
+  }
+};
+
+export class Shared${capitalizedName}Service {
+  constructor(config = {}) {
+    // ✅ MANDATORY: Use shared infrastructure
+    this.config = new ConfigManager({ ...DEFAULT_${hubName.toUpperCase()}_CONFIG, ...config });
+    this.eventBus = new EventBus();
+    this.apiClient = new ApiClient(this.config);
+    this.authService = new AuthService(this.config);
+    this.errorHandler = new ErrorHandler(this.config);
+    this.logger = new Logger('${capitalizedName}Service');
+    
+    this.setupApiInterceptors();
+    this.setupEventMiddleware();
+  }
+
+  setupApiInterceptors() {
+    this.apiClient.addRequestInterceptor((config) => {
+      config.headers['X-Hub-Domain'] = '${hubName.toUpperCase()}';
+      return config;
+    });
+
+    this.apiClient.addResponseInterceptor(
+      (response) => response,
+      (error) => {
+        const handledError = this.errorHandler.handle(error);
+        this.eventBus.emit('${hubName}:error', { error: handledError });
+        return Promise.reject(handledError);
+      }
+    );
+  }
+
+  setupEventMiddleware() {
+    this.eventBus.addMiddleware((event, next) => {
+      this.logger.debug('${capitalizedName} event', { type: event.type, data: event.data });
+      return next();
+    });
+  }
+
+  // Primary business method
+  async primaryAction(params) {
+    this.eventBus.emit('${hubName}:primaryAction:started', { params });
+    
+    try {
+      const response = await this.apiClient.post('/api/${hubName}/primary', params);
+      const result = response.data;
+      
+      this.eventBus.emit('${hubName}:primaryAction:completed', { params, result });
+      return result;
+    } catch (error) {
+      const handledError = this.errorHandler.handle(error, { params });
+      this.eventBus.emit('${hubName}:primaryAction:failed', { params, error: handledError });
+      throw handledError;
+    }
+  }
+
+  // Event bus access
+  on(eventType, handler, options = {}) {
+    return this.eventBus.on(eventType, handler, options);
+  }
+
+  emit(eventType, data) {
+    return this.eventBus.emit(eventType, data);
+  }
+}
+
+export const create${capitalizedName}Service = (config = {}) => {
+  return new Shared${capitalizedName}Service(config);
+};
+
+export default Shared${capitalizedName}Service;`;
+
+  // Component template
+  const componentTemplate = `/**
+ * Hyper ${capitalizedName} Hub
+ * 
+ * Following content-hub architecture pattern for consistency
+ */
+
+import React, { useState, useRef, useMemo } from 'react';
+import { Shared${capitalizedName}Service } from './services/Shared${capitalizedName}Service';
+import './styles/${capitalizedName}Hub.css';
+
+export const ${capitalizedName}Hub = ({
+  // ✅ REQUIRED: Core capabilities (following content-hub pattern)
+  capabilities = ['primaryAction', 'secondaryAction'],
+  
+  // ✅ REQUIRED: UI/UX options  
+  layout = 'tabbed',
+  theme = 'auto',
+  defaultView = 'primaryAction',
+  
+  // ✅ REQUIRED: Service integration
+  serviceAdapter,
+  
+  // ✅ REQUIRED: Styling & theming
+  customTheme = {},
+  brandColors = {},
+  
+  // ✅ REQUIRED: State & data flow
+  initialState = {},
+  onStateChange,
+  
+  // ✅ REQUIRED: Authentication integration
+  authToken,
+  currentUser,
+  
+  // Hub-specific callbacks
+  onPrimaryAction,
+  onSecondaryAction,
+  onError,
+  
+  ...props
+}) => {
+  
+  // Internal state management
+  const [activeView, setActiveView] = useState(defaultView);
+  const [${hubName}Data, set${capitalizedName}Data] = useState([]);
+  
+  // ✅ REQUIRED: Use shared services (following content-hub pattern)
+  const services = useShared${capitalizedName}Services(serviceAdapter, {
+    authToken,
+    currentUser,
+    config: { ...initialState }
+  });
+  
+  // ✅ REQUIRED: Theme resolution (following content-hub pattern)
+  const resolvedTheme = useThemeResolver({ theme, customTheme, brandColors });
+  
+  return (
+    <${capitalizedName}HubContainer theme={resolvedTheme} {...props}>
+      <${capitalizedName}HubUI
+        layout={layout}
+        activeView={activeView}
+        onViewChange={setActiveView}
+        capabilities={capabilities}
+        services={services}
+        data={${hubName}Data}
+        onPrimaryAction={onPrimaryAction}
+        onSecondaryAction={onSecondaryAction}
+        onError={onError}
+      />
+    </${capitalizedName}HubContainer>
+  );
+};
+
+// ✅ REQUIRED: Shared services hook (following content-hub pattern)
+const useShared${capitalizedName}Services = (customAdapter, config) => {
+  const ${hubName}Service = useRef(null);
+  
+  if (!${hubName}Service.current) {
+    ${hubName}Service.current = new Shared${capitalizedName}Service(config);
+    
+    if (config.authToken) {
+      ${hubName}Service.current.setToken(config.authToken);
+    }
+  }
+  
+  return useMemo(() => {
+    if (customAdapter) {
+      return customAdapter;
+    }
+    
+    return {
+      primaryAction: (params) => ${hubName}Service.current.primaryAction(params),
+      secondaryAction: (params) => ${hubName}Service.current.secondaryAction(params),
+      
+      // Event integration
+      on: (eventType, handler, options) => ${hubName}Service.current.on(eventType, handler, options),
+      emit: (eventType, data) => ${hubName}Service.current.emit(eventType, data),
+      
+      // Health check
+      checkHealth: () => ${hubName}Service.current.checkHealth()
+    };
+  }, [customAdapter, config.authToken]);
+};
+
+// ✅ REQUIRED: Theme resolver hook (following content-hub pattern)
+const useThemeResolver = ({ theme, customTheme, brandColors }) => {
+  const baseThemes = {
+    light: { background: '#ffffff', surface: '#f5f5f5', primary: '#0066cc' },
+    dark: { background: '#1a1a1a', surface: '#2d2d2d', primary: '#4da6ff' }
+  };
+  
+  const selectedTheme = theme === 'auto' 
+    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : theme;
+    
+  return { ...baseThemes[selectedTheme], ...brandColors, ...customTheme };
+};
+
+// UI Components (implement based on hub needs)
+const ${capitalizedName}HubContainer = ({ children, theme, ...props }) => (
+  <div className="${hubName}-hub-container" style={theme} {...props}>
+    {children}
+  </div>
+);
+
+const ${capitalizedName}HubUI = ({ layout, activeView, capabilities, services, ...props }) => {
+  switch(layout) {
+    case 'tabbed':
+      return <TabbedLayout {...props} />;
+    case 'sidebar':
+      return <SidebarLayout {...props} />;
+    default:
+      return <SingleViewLayout {...props} />;
+  }
+};
+
+// Placeholder layouts (implement based on content-hub layouts)
+const TabbedLayout = (props) => <div>Tabbed Layout - TODO: Implement</div>;
+const SidebarLayout = (props) => <div>Sidebar Layout - TODO: Implement</div>;
+const SingleViewLayout = (props) => <div>Single View Layout - TODO: Implement</div>;
+
+export default ${capitalizedName}Hub;`;
+
+  console.log(`📁 Creating hub structure at: ${hubPath}`);
+  console.log('📝 Generated templates:');
+  console.log('   ✅ package.json with @tamyla/shared dependency');
+  console.log('   ✅ Shared{HubName}Service.js using shared infrastructure');
+  console.log('   ✅ Hyper{HubName}.jsx following content-hub pattern');
+  console.log('   ✅ Proper directory structure');
+  
+  return {
+    packageJson,
+    serviceTemplate,
+    componentTemplate,
+    hubPath
+  };
+}
+
+// CLI interface
+const args = process.argv.slice(2);
+
+if (args.includes('--validate') || args.length === 0) {
+  runValidation();
+} else if (args.includes('--template')) {
+  const hubName = args[args.indexOf('--template') + 1];
+  if (hubName) {
+    generateHubTemplate(hubName);
+  } else {
+    console.log('Usage: node hub-governance.js --template <hub-name>');
+  }
+} else {
+  console.log('\n🎯 GOVERNANCE SUMMARY:');
+  console.log('📊 Use --validate to check existing hubs');
+  console.log('🚀 Use --template <name> to generate new hub template');
+  console.log('📋 All hubs must follow content-hub architecture pattern');
+  console.log('⚡ All hubs must use @tamyla/shared infrastructure');
+  console.log('🔄 All hubs must support service adapters and configuration');
+  console.log('✅ This ensures highly repeatable and modular system!');
+}
+
+module.exports = {
+  hubStandards,
+  validateHub,
+  generateHubTemplate
+};
