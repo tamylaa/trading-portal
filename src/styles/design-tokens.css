@@ -31,8 +31,35 @@
   --landing-max-width: calc(100vw - (var(--landing-section-margin) * 2));
   --landing-max-width-tablet: calc(100vw - (var(--landing-section-margin-tablet) * 2));
   --landing-max-width-mobile: calc(100vw - (var(--landing-section-margin-mobile) * 2));
-}
 
+  /* Typography */
+  --font-family-sans: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --font-size-h1: 2.7rem;
+  --font-size-lead: 1.25rem;
+  --font-size-lg: 1.35rem;
+  --font-size-md: 1rem;
+  --font-size-sm: 0.97rem;
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 1.1rem;
+  --radius-lg: 1.5rem;
+
+  /* Elevation (shadows) */
+  --elevation-1: 0 1px 6px rgba(36,40,60,0.05);
+  --elevation-2: 0 2px 24px rgba(36,40,60,0.07);
+  --elevation-3: 0 4px 18px rgba(36,40,60,0.11);
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-medium: 180ms;
+  --motion-slow: 300ms;
+
+  /* Component tokens */
+  --badge-height: 32px;
+  --feature-card-max-width: 270px;
+  --landing-section-radius: var(--radius-lg);
+}
 /* Utility classes for consistent spacing */
 .section-margin {
   margin-left: var(--landing-section-margin);
