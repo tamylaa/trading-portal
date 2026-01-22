@@ -22,9 +22,15 @@ export * from './types';
 // Utils
 export * from './utils';
 
-// Convenience re-exports
-export { default as config } from './config';
-export { default as auth } from './auth';
-export { default as events } from './events';
-export { default as api } from './api';
-export { default as utils } from './utils';
+// Convenience shims for default-like imports (provide module object)
+import * as configModule from './config';
+import * as authModule from './auth';
+import * as eventsModule from './events';
+import * as apiModule from './api';
+import * as utilsModule from './utils';
+
+export const config = configModule;
+export const auth = authModule;
+export const events = eventsModule;
+export const api = apiModule;
+export const utils = utilsModule;
