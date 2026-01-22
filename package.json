@@ -12,7 +12,7 @@
     "optimize:images": "node scripts/optimize-images.mjs",
     "check:assets": "node scripts/check-large-assets.mjs",
     "storybook": "sb dev -p 6006 -s public",
-    "build-storybook": "sb build -s public",
+    "build-storybook": "sb build",
     "storybook:serve": "npx http-server storybook-static -p 6006 -c-1",
     "test:storybook:playwright": "npm run storybook:serve & npx playwright test tests/playwright --reporter=list"
   },
