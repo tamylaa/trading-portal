@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-async function runAxe(page) {
+async function runAxe(page: Page): Promise<any> {
   await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') });
   const results = await page.evaluate(async () => {
     // @ts-ignore
@@ -19,8 +19,11 @@ for (const p of pages) {
     await page.goto(`http://localhost:3000${p.path}`);
     const results = await runAxe(page);
     // Filter out known non-actionable violations injected by dev tooling
-    const ignoredRuleIds = ['frame-title', 'meta-viewport'];
-    const actionable = (results.violations || []).filter(v => !ignoredRuleIds.includes(v.id));
+    const ignoredRuleIds: string[] = ['frame-title', 'meta-viewport'];
+    const actionable = (results.violations || []).filter((v: any) => {
+      // ensure v.id exists and is a string before checking against ignoredRuleIds
+      return typeof v.id === 'string' && !ignoredRuleIds.includes(v.id);
+    });
     if (actionable.length > 0) {
       console.error('Accessibility violations:', JSON.stringify(actionable, null, 2));
     }
