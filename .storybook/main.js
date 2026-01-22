@@ -3,4 +3,7 @@ module.exports = {
   addons: ['@storybook/addon-essentials'],
   framework: '@storybook/react',
   staticDirs: ['../public'],
+  core: {
+    builder: '@storybook/builder-webpack5',
+  },
 };
