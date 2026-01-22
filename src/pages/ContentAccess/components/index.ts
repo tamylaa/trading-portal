@@ -1,3 +1,6 @@
-export { default as SearchResults } from './SearchResults';
-export { default as RecentSearches } from './RecentSearches';
-export { default as SearchStatus } from './SearchStatus';
+// Re-export search components from content-hub for backward compatibility
+export { 
+  SearchResults, 
+  RecentSearches, 
+  SearchStatus 
+} from '@tamyla/content-hub';

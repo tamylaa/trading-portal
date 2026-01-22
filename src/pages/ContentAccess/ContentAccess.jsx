@@ -1,29 +1,52 @@
-// Content Access Page - Search and access content with integrated search application
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+// Content Access Page - Now using the unified Content Hub package
+import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  SearchInterface,
-  SearchResultsList,
-  RecentSearchesList,
-  SearchStatusIndicator,
-  createDefaultSearchStatuses 
-} from '@tamyla/ui-components-react';
-import { ContentSearchService } from './services/contentSearchService';
-import { healthService } from './services/healthService';
-import { validateCurrentAuthToken } from './services/jwtService';
-import MEILISEARCH_CONFIG from './config/meilisearch';
-import './ContentAccess.css';
+import { ContentAccess as ContentHubAccess, DOMAIN_CONFIGS } from '@tamyla/content-hub';
 
 const ContentAccess = () => {
   const { user, token } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [serviceStatus, setServiceStatus] = useState('unknown');
-  const [authStatus, setAuthStatus] = useState({ isValid: false, needsLogin: false });
-  // Temporary fix for theme hydration timing issue
-  const [isThemeReady, setIsThemeReady] = useState(false);
+
+  // Trading-specific configuration using Content Hub's domain configs
+  const tradingFilters = [
+    // Add any additional trading-specific filters beyond the domain config
+  ];
+
+  return (
+    <div className="content-access-page">
+      <div className="access-header">
+        <h1>🔍 Content Access</h1>
+        <p>Search and access your content with our integrated search application</p>
+      </div>
+
+      {/* Use the unified Content Hub component with trading configuration */}
+      <ContentHubAccess
+        authToken={token}
+        currentUser={user}
+        domainConfig="TRADING"  // Use trading domain configuration
+        customFilters={tradingFilters}
+        enableDebugLogging={process.env.NODE_ENV === 'development'}
+        placeholder="Search for trading documents, contracts, certificates..."
+        showRecentSearches={true}
+        showFilters={true}
+        maxRecentSearches={5}
+        onFileViewed={(result) => {
+          console.log('File viewed:', result.filename);
+        }}
+        onFileDownloaded={(result) => {
+          console.log('File downloaded:', result.filename);
+        }}
+        onSearchPerformed={(query, results) => {
+          console.log('Search performed:', query, results.length, 'results');
+        }}
+        onError={(error) => {
+          console.error('Content Access error:', error);
+        }}
+      />
+    </div>
+  );
+};
+
+export default ContentAccess;
 
   // Initialize the search service with the user's token
   const searchService = useMemo(() => {
@@ -73,13 +96,31 @@ const ContentAccess = () => {
   const checkServiceHealth = async () => {
     try {
       const healthStatus = await healthService.checkHealth();
-      setServiceStatus(healthStatus.gateway === 'online' ? 'online' : 'offline');
+      
+      // Also check Content Hub health
+      const contentHubHealth = await contentApi.checkHealth();
+      
+      // Combine health statuses
+      const combinedStatus = {
+        ...healthStatus,
+        contentHub: contentHubHealth.success ? 'online' : 'offline',
+        details: {
+          ...healthStatus.details,
+          contentHubMessage: contentHubHealth.message || 'Content Hub status unknown'
+        }
+      };
+      
+      setServiceStatus(combinedStatus.gateway === 'online' && combinedStatus.contentHub === 'online' ? 'online' : 'offline');
       
       // Log the health status for debugging
-      console.log('Service Health Status:', healthStatus);
+      console.log('Combined Service Health Status:', combinedStatus);
       
-      if (healthStatus.meilisearch === 'offline') {
+      if (combinedStatus.meilisearch === 'offline') {
         console.warn('MeiliSearch service is currently unavailable. Using fallback data.');
+      }
+      
+      if (combinedStatus.contentHub === 'offline') {
+        console.warn('Content Hub service is currently unavailable. File operations may be limited.');
       }
     } catch (error) {
       console.warn('Failed to check service health:', error);
@@ -130,10 +171,47 @@ const ContentAccess = () => {
   }, [searchService, user?.id, recentSearches]); // 🎯 Updated dependencies
 
   // 🔧 FIX: Memoize handleResultClick to prevent unnecessary re-renders
-  const handleResultClick = useCallback((result) => {
-    // Handle clicking on a search result
-    window.open(result.url, '_blank');
+  const handleResultClick = useCallback(async (result) => {
+    try {
+      // Use Content Hub API to generate signed URL for file access
+      const signedUrlResponse = await contentApi.generateSignedUrl(result.id, 3600); // 1 hour expiry
+      
+      if (signedUrlResponse.success) {
+        window.open(signedUrlResponse.signedUrl, '_blank');
+      } else {
+        console.error('Failed to generate signed URL:', signedUrlResponse.message);
+        // Fallback: try to construct URL from file ID
+        const fallbackUrl = `${process.env.REACT_APP_CONTENT_SERVICE_URL || 'https://content.tamyla.com'}/access/${result.id}`;
+        window.open(fallbackUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Error accessing file:', error);
+      // Fallback: try to construct URL from file ID or use result.url if available
+      const fallbackUrl = result.url || `${process.env.REACT_APP_CONTENT_SERVICE_URL || 'https://content.tamyla.com'}/access/${result.id}`;
+      window.open(fallbackUrl, '_blank');
+    }
   }, []); // 🎯 No dependencies - stable function
+
+  // Add download functionality using Content Hub API
+  const handleDownload = useCallback(async (result) => {
+    try {
+      const fileBlob = await contentApi.downloadFile(result.id);
+      
+      // Create download link
+      const url = window.URL.createObjectURL(fileBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = result.filename || `file-${result.id}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      // Fallback: try opening in new tab
+      handleResultClick(result);
+    }
+  }, [handleResultClick]); // 🎯 Depends on handleResultClick
 
   // 🔧 FIX: Memoize filters array to prevent SearchInterface re-renders
   const searchFilters = useMemo(() => [
@@ -196,13 +274,63 @@ const ContentAccess = () => {
         )}
       </div>
 
-      {/* Search Results - Using Package Component */}
-      <SearchResultsList
-        results={searchResults}
-        onResultClick={handleResultClick}
-        loading={isSearching}
-        emptyMessage="No content found. Try adjusting your search terms."
-      />
+      {/* Search Results - Enhanced with Content Hub integration */}
+      <div className="search-results-section">
+        <h3>Search Results</h3>
+        {searchResults.length > 0 ? (
+          <div className="search-results-list">
+            {searchResults.map((result, index) => (
+              <div key={result.id || index} className="search-result-item">
+                <div className="result-content">
+                  <h4 
+                    className="result-title" 
+                    onClick={() => handleResultClick(result)}
+                    style={{ cursor: 'pointer', color: '#007bff' }}
+                  >
+                    {result._formatted?.title ? (
+                      <span dangerouslySetInnerHTML={{ __html: result._formatted.title }} />
+                    ) : (
+                      result.title || result.name || 'Untitled'
+                    )}
+                  </h4>
+                  <p className="result-summary">
+                    {result._formatted?.summary ? (
+                      <span dangerouslySetInnerHTML={{ __html: result._formatted.summary }} />
+                    ) : (
+                      result.summary || result.description || 'No description available'
+                    )}
+                  </p>
+                  <div className="result-meta">
+                    <span className="result-filename">{result.filename}</span>
+                    <span className="result-date">
+                      {result.uploadedAt ? new Date(result.uploadedAt).toLocaleDateString() : 
+                       result.date ? new Date(result.date).toLocaleDateString() : 'Unknown date'}
+                    </span>
+                  </div>
+                </div>
+                <div className="result-actions">
+                  <button 
+                    className="action-btn view-btn"
+                    onClick={() => handleResultClick(result)}
+                    title="View file"
+                  >
+                    👁️ View
+                  </button>
+                  <button 
+                    className="action-btn download-btn"
+                    onClick={() => handleDownload(result)}
+                    title="Download file"
+                  >
+                    📥 Download
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : !isSearching ? (
+          <p className="no-results">No content found. Try adjusting your search terms.</p>
+        ) : null}
+      </div>
 
       {/* Recent Searches - Using Package Component */}
       <RecentSearchesList

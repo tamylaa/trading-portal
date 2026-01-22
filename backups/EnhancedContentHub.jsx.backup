@@ -1,0 +1,599 @@
+/**
+ * Enhanced Content Hub with Deduplication & Missing Capabilities
+ * 
+ * This addresses:
+ * 1. Service duplication elimination
+ * 2. Missing capabilities from ContentAccess  
+ * 3. Comprehensive event architecture
+ */
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { TabbedLayout, SidebarLayout, SingleViewLayout } from './layouts';
+import './styles/ContentHub.css';
+
+/**
+ * ENHANCED EVENT ARCHITECTURE
+ * Comprehensive event system for external integration and internal coordination
+ */
+export class ContentHubEventManager {
+  constructor() {
+    this.subscribers = new Map();
+    this.eventHistory = [];
+    this.eventId = 0;
+  }
+
+  subscribe(eventType, handler) {
+    if (!this.subscribers.has(eventType)) {
+      this.subscribers.set(eventType, new Set());
+    }
+    this.subscribers.get(eventType).add(handler);
+    
+    // Return unsubscribe function
+    return () => {
+      this.subscribers.get(eventType)?.delete(handler);
+    };
+  }
+
+  publish(eventType, data) {
+    const event = {
+      type: eventType,
+      data,
+      timestamp: new Date(),
+      id: `event_${++this.eventId}`
+    };
+    
+    // Store in history
+    this.eventHistory.push(event);
+    
+    // Limit history size
+    if (this.eventHistory.length > 1000) {
+      this.eventHistory = this.eventHistory.slice(-500);
+    }
+    
+    // Notify subscribers
+    const handlers = this.subscribers.get(eventType);
+    if (handlers) {
+      handlers.forEach(handler => {
+        try {
+          handler(event);
+        } catch (error) {
+          console.error(`Error in event handler for ${eventType}:`, error);
+        }
+      });
+    }
+    
+    // Publish to global event bus if available
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent(`contenthub:${eventType}`, {
+        detail: event
+      }));
+    }
+  }
+
+  getEventHistory(eventType?: string): any[] {
+    return eventType 
+      ? this.eventHistory.filter(e => e.type === eventType)
+      : this.eventHistory;
+  }
+
+  clearHistory(): void {
+    this.eventHistory = [];
+  }
+
+  // External event integration
+  integrateWithDOM(): void {
+    if (typeof window !== 'undefined') {
+      // Listen for external events and forward them
+      window.addEventListener('message', (event) => {
+        if (event.data?.type?.startsWith('contenthub:external:')) {
+          const eventType = event.data.type.replace('contenthub:external:', '');
+          this.publish(`external:${eventType}`, event.data.payload);
+        }
+      });
+    }
+  }
+}
+
+/**
+ * ENHANCED SERVICE ADAPTER with missing ContentAccess capabilities
+ */
+export class EnhancedContentHubService {
+  private baseUrl: string;
+  private token?: string;
+  private config: {
+    timeout: number;
+    retries: number;
+    enableFallback: boolean;
+    enableCaching: boolean;
+    debugMode: boolean;
+  };
+  
+  private cache = new Map<string, { data: any; expiry: number }>();
+  private abortController?: AbortController;
+  private eventManager: ContentHubEventManager;
+
+  constructor(eventManager: ContentHubEventManager, config: any = {}) {
+    this.eventManager = eventManager;
+    this.baseUrl = config.apiBaseUrl || process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
+    this.token = config.token;
+    this.config = {
+      timeout: config.timeout || 10000,
+      retries: config.retries || 3,
+      enableFallback: config.enableFallback ?? true,
+      enableCaching: config.enableCaching ?? true,
+      debugMode: config.debugMode ?? (process.env.NODE_ENV === 'development')
+    };
+  }
+
+  async search(query: string, filters: Record<string, any> = {}, options: {
+    page?: number;
+    hasMore?: boolean;
+    signal?: AbortSignal;
+  } = {}): Promise<any> {
+    
+    // Cancel previous search
+    if (this.abortController) {
+      this.abortController.abort();
+    }
+    this.abortController = new AbortController();
+    
+    const cacheKey = `search:${query}:${JSON.stringify(filters)}:${options.page || 0}`;
+    
+    // Check cache first
+    if (this.config.enableCaching && options.page === 0) {
+      const cached = this.getCached(cacheKey);
+      if (cached) {
+        this.eventManager.publish('search:cache_hit', { query, filters, cached: true });
+        return cached;
+      }
+    }
+
+    this.eventManager.publish('search:started', { 
+      query, 
+      filters, 
+      page: options.page || 0,
+      timestamp: new Date()
+    });
+
+    try {
+      const request = {
+        query: query.trim(),
+        filters,
+        limit: 20,
+        offset: (options.page || 0) * 20,
+        facets: ['mimeType', 'uploadedAt']
+      };
+
+      const response = await this.robustRequest('/api/search', {
+        method: 'POST',
+        body: JSON.stringify(request),
+        signal: options.signal || this.abortController.signal
+      });
+
+      // Enhanced response with pagination
+      const enhancedResponse = {
+        ...response,
+        hasMore: response.results.length === 20, // Assume more if full page
+        page: options.page || 0
+      };
+
+      // Cache successful response
+      if (this.config.enableCaching && response.results.length > 0) {
+        this.setCached(cacheKey, enhancedResponse, 5 * 60 * 1000);
+      }
+
+      this.eventManager.publish('search:completed', {
+        query,
+        filters,
+        resultsCount: response.results.length,
+        hasMore: enhancedResponse.hasMore,
+        processingTime: response.processingTimeMs,
+        timestamp: new Date()
+      });
+
+      return enhancedResponse;
+
+    } catch (error) {
+      const errorData = {
+        query,
+        filters,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date()
+      };
+
+      this.eventManager.publish('search:failed', errorData);
+
+      // Fallback handling
+      if (this.config.enableFallback) {
+        const fallbackResults = this.getFallbackResults(query, filters);
+        this.eventManager.publish('search:fallback_used', { ...errorData, fallbackResults });
+        return fallbackResults;
+      }
+
+      throw error;
+    }
+  }
+
+  async upload(files: File[], options: { 
+    onProgress?: (progress: Record<string, number>) => void 
+  } = {}): Promise<any> {
+    
+    this.eventManager.publish('upload:started', {
+      fileCount: files.length,
+      totalSize: files.reduce((sum, f) => sum + f.size, 0),
+      fileNames: files.map(f => f.name),
+      timestamp: new Date()
+    });
+
+    try {
+      const formData = new FormData();
+      files.forEach((file, index) => {
+        formData.append(`file${index}`, file);
+      });
+
+      // Simulate progress updates
+      if (options.onProgress) {
+        const progress: Record<string, number> = {};
+        files.forEach(file => {
+          progress[file.name] = 0;
+        });
+        
+        // Simulate upload progress
+        const progressInterval = setInterval(() => {
+          files.forEach(file => {
+            progress[file.name] = Math.min(100, progress[file.name] + Math.random() * 30);
+          });
+          options.onProgress!(progress);
+          
+          if (Object.values(progress).every(p => p >= 100)) {
+            clearInterval(progressInterval);
+          }
+        }, 200);
+      }
+
+      const response = await this.robustRequest('/api/upload', {
+        method: 'POST',
+        body: formData,
+        headers: {} // Let browser set Content-Type for FormData
+      });
+
+      this.eventManager.publish('upload:completed', {
+        fileCount: files.length,
+        uploadedFiles: response.files || [],
+        timestamp: new Date()
+      });
+
+      return response;
+
+    } catch (error) {
+      this.eventManager.publish('upload:failed', {
+        fileCount: files.length,
+        error: error instanceof Error ? error.message : 'Upload failed',
+        timestamp: new Date()
+      });
+      throw error;
+    }
+  }
+
+  // Enhanced request method with retry logic
+  private async robustRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
+      ...options.headers,
+    };
+
+    let lastError: Error;
+    
+    for (let attempt = 0; attempt <= this.config.retries; attempt++) {
+      try {
+        if (this.config.debugMode && attempt > 0) {
+          console.log(`Retry attempt ${attempt} for ${endpoint}`);
+        }
+        
+        const response = await fetch(url, {
+          ...options,
+          headers,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        return await response.json();
+        
+      } catch (error) {
+        lastError = error as Error;
+        
+        // Don't retry on authentication errors
+        if (error instanceof Error && error.message.includes('401')) {
+          break;
+        }
+        
+        // Exponential backoff for retries
+        if (attempt < this.config.retries) {
+          const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    throw lastError!;
+  }
+
+  private getCached(key: string): any {
+    const cached = this.cache.get(key);
+    if (cached && cached.expiry > Date.now()) {
+      return cached.data;
+    }
+    this.cache.delete(key);
+    return null;
+  }
+
+  private setCached(key: string, data: any, ttl: number): void {
+    this.cache.set(key, {
+      data,
+      expiry: Date.now() + ttl
+    });
+  }
+
+  private getFallbackResults(query: string, filters: Record<string, any>): any {
+    return {
+      results: [
+        {
+          id: 'fallback-1',
+          title: `Fallback result for "${query}"`,
+          summary: 'This is a fallback result when the service is unavailable',
+          filename: 'fallback-document.pdf',
+          mimeType: 'application/pdf',
+          uploadedAt: new Date().toISOString()
+        }
+      ],
+      total: 1,
+      query,
+      hasMore: false,
+      processingTimeMs: 1,
+      fallback: true
+    };
+  }
+
+  // Service health with events
+  async checkHealth(): Promise<any> {
+    try {
+      const startTime = Date.now();
+      const response = await this.robustRequest('/api/health');
+      const latency = Date.now() - startTime;
+      
+      const health = {
+        gateway: response.status === 'ok' ? 'online' : 'offline',
+        meilisearch: response.meilisearch === 'ok' ? 'online' : 'offline',
+        latency,
+        timestamp: new Date().toISOString()
+      };
+
+      this.eventManager.publish('service:health_check', health);
+      return health;
+      
+    } catch (error) {
+      const health = {
+        gateway: 'offline',
+        meilisearch: 'unknown',
+        error: error instanceof Error ? error.message : 'Health check failed',
+        timestamp: new Date().toISOString()
+      };
+
+      this.eventManager.publish('service:health_check', health);
+      return health;
+    }
+  }
+}
+
+/**
+ * ENHANCED CONTENT HUB with comprehensive capabilities
+ */
+export const ContentHub = ({
+  capabilities = ['search', 'upload', 'gallery', 'sharing'],
+  layout = 'tabbed',
+  theme = 'auto',
+  defaultView = 'search',
+  
+  // Service configuration
+  serviceConfig = {},
+  
+  // Event configuration
+  enableEventHistory = true,
+  enableExternalEvents = false,
+  
+  // Enhanced callbacks
+  onEvent,
+  
+  // Traditional props
+  authToken,
+  currentUser,
+  onFileViewed,
+  onFileUploaded,
+  onSearchPerformed,
+  
+  ...props
+}) => {
+  // Initialize event manager
+  const eventManagerRef = useRef<ContentHubEventManager>();
+  const serviceRef = useRef<EnhancedContentHubService>();
+  
+  if (!eventManagerRef.current) {
+    eventManagerRef.current = new ContentHubEventManager();
+    if (enableExternalEvents) {
+      eventManagerRef.current.integrateWithDOM();
+    }
+  }
+  
+  if (!serviceRef.current) {
+    serviceRef.current = new EnhancedContentHubService(eventManagerRef.current, {
+      ...serviceConfig,
+      token: authToken
+    });
+  }
+
+  // Event subscriptions
+  useEffect(() => {
+    if (!eventManagerRef.current || !onEvent) return;
+    
+    const unsubscribers = [
+      eventManagerRef.current.subscribe('search:completed', (event) => {
+        onEvent?.('search:completed', event.data);
+        onSearchPerformed?.(event.data.query, { length: event.data.resultsCount });
+      }),
+      
+      eventManagerRef.current.subscribe('upload:completed', (event) => {
+        onEvent?.('upload:completed', event.data);
+        onFileUploaded?.(event.data);
+      }),
+      
+      eventManagerRef.current.subscribe('file:viewed', (event) => {
+        onEvent?.('file:viewed', event.data);
+        onFileViewed?.(event.data);
+      })
+    ];
+    
+    return () => {
+      unsubscribers.forEach(unsub => unsub());
+    };
+  }, [onEvent, onSearchPerformed, onFileUploaded, onFileViewed]);
+
+  // Internal state management
+  const [activeView, setActiveView] = useState(defaultView);
+  const [searchResults, setSearchResults] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState({});
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [sharedItems, setSharedItems] = useState([]);
+
+  // Enhanced capability injection with event integration
+  const activeCapabilities = useCapabilityInjection(capabilities, {
+    service: serviceRef.current,
+    eventManager: eventManagerRef.current,
+    state: { searchResults, uploadProgress, galleryItems, sharedItems },
+    setState: { setSearchResults, setUploadProgress, setGalleryItems, setSharedItems }
+  });
+
+  // Theme resolution
+  const resolvedTheme = useThemeResolver({ theme });
+
+  return (
+    <div 
+      className="content-hub-container enhanced"
+      style={{
+        '--ch-bg': resolvedTheme.background,
+        '--ch-surface': resolvedTheme.surface,
+        '--ch-primary': resolvedTheme.primary,
+        '--ch-text': resolvedTheme.text,
+        '--ch-border': resolvedTheme.border
+      }}
+      {...props}
+    >
+      <ContentHubUI
+        layout={layout}
+        activeView={activeView}
+        onViewChange={setActiveView}
+        capabilities={activeCapabilities}
+        eventManager={eventManagerRef.current}
+      />
+    </div>
+  );
+};
+
+// Enhanced capability injection with event integration
+const useCapabilityInjection = (capabilities, { service, eventManager, state, setState }) => {
+  return capabilities.reduce((acc, capability) => {
+    switch(capability) {
+      case 'search':
+        acc.search = {
+          service: service.search.bind(service),
+          state: state.searchResults,
+          setState: setState.setSearchResults,
+          onSearch: (query, filters, options) => {
+            eventManager.publish('search:initiated', { query, filters, options });
+            return service.search(query, filters, options);
+          }
+        };
+        break;
+      case 'upload':
+        acc.upload = {
+          service: service.upload.bind(service),
+          state: state.uploadProgress,
+          setState: setState.setUploadProgress,
+          onUpload: (files, options) => {
+            eventManager.publish('upload:initiated', { files: files.map(f => f.name), options });
+            return service.upload(files, options);
+          }
+        };
+        break;
+      // ... other capabilities
+    }
+    return acc;
+  }, {});
+};
+
+// Theme resolver
+const useThemeResolver = ({ theme }) => {
+  const baseThemes = {
+    light: {
+      background: '#ffffff',
+      surface: '#f5f5f5', 
+      primary: '#0066cc',
+      text: '#333333',
+      border: '#e0e0e0'
+    },
+    dark: {
+      background: '#1a1a1a',
+      surface: '#2d2d2d',
+      primary: '#4da6ff', 
+      text: '#ffffff',
+      border: '#404040'
+    }
+  };
+  
+  const selectedTheme = theme === 'auto' 
+    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : theme;
+    
+  return baseThemes[selectedTheme] || baseThemes.light;
+};
+
+// Enhanced UI with event integration
+const ContentHubUI = ({ layout, activeView, onViewChange, capabilities, eventManager }) => {
+  const enhancedCapabilities = {
+    ...capabilities,
+    eventManager // Pass event manager to components
+  };
+
+  switch(layout) {
+    case 'tabbed':
+      return (
+        <TabbedLayout
+          activeView={activeView}
+          onViewChange={onViewChange}
+          capabilities={enhancedCapabilities}
+        />
+      );
+    case 'sidebar':
+      return (
+        <SidebarLayout
+          activeView={activeView}
+          onViewChange={onViewChange}
+          capabilities={enhancedCapabilities}
+        />
+      );
+    default:
+      return (
+        <TabbedLayout
+          activeView={activeView}
+          onViewChange={onViewChange}
+          capabilities={enhancedCapabilities}
+        />
+      );
+  }
+};
+
+export { ContentHubEventManager, EnhancedContentHubService };
+export default ContentHub;
