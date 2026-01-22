@@ -8,9 +8,9 @@ This file contains a prioritized, actionable todo list and immediate steps taken
 - [x] Update `.gitignore` to ignore caches and temp folders (done)
 - [x] Untrack committed `build/` artifacts from git index (done)
 - [ ] Add `.gitignore` rules to exclude any other generated files found in `reports/` when appropriate
-- [ ] Compress `public/assets/logos/logo.png` (~1.4 MB) and `public/assets/logos/og-image.png` (~1.0 MB) and replace with WebP/AVIF variants
-- [ ] Add an `optimize:images` script to automate image optimization
-- [ ] Add a CI check to fail builds when new large assets (>150KB) are committed
+- [x] Compress `public/assets/logos/logo.png` (~1.4 MB) and `public/assets/logos/og-image.png` (~1.0 MB) and replace with WebP/AVIF variants (created `.webp` & `.avif`, backups saved as `.bak`)
+- [x] Add an `optimize:images` script to automate image optimization (`scripts/optimize-images.mjs`)
+- [x] Add a local `check:assets` script to detect large assets; add CI job to run this check (script: `scripts/check-large-assets.mjs`)
 
 ## Short term — Next 1–3 days 🔧
 - [ ] Create `data/schemas/` and move all structured data snippets there
