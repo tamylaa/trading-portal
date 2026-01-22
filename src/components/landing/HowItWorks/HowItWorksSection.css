@@ -1,6 +1,6 @@
 .how-it-works-section {
   width: 100%;
-  background: #f8fafd;
+  background: var(--color-surface);
   border-radius: 1.2rem;
   box-shadow: 0 1px 8px rgba(36,40,60,0.06);
   padding: 2.7rem 1.5rem 2.2rem 1.5rem;
@@ -11,7 +11,7 @@
 .how-it-works-title {
   font-size: 1.35rem;
   font-weight: 700;
-  color: #1a3b5d;
+  color: var(--color-heading);
   margin-bottom: 2.1rem;
 }
 
@@ -45,7 +45,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #eaf1f8 60%, #f4f8fb 100%);
+  background: linear-gradient(135deg, var(--color-accent-1) 60%, var(--color-accent-2) 100%);
   display: flex;
   align-items: center;
   justify-content: center;

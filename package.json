@@ -10,7 +10,9 @@
     "eject": "react-scripts eject",
     "build-check": "powershell -ExecutionPolicy Bypass -File build-check.ps1",
     "optimize:images": "node scripts/optimize-images.mjs",
-    "check:assets": "node scripts/check-large-assets.mjs"
+    "check:assets": "node scripts/check-large-assets.mjs",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
@@ -42,6 +44,8 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/react": "^7.6.21",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/craco__craco": "^6.4.3",

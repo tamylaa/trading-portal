@@ -1,5 +1,5 @@
 .social-proof-section {
-  background: #f6faff;
+  background: var(--color-surface-alt);
   border-radius: 1.2rem;
   box-shadow: 0 1px 8px rgba(36,40,60,0.06);
 }
@@ -11,7 +11,7 @@
 .social-proof-title {
   font-size: 1.35rem;
   font-weight: 700;
-  color: #1a3b5d;
+  color: var(--color-heading);
   margin-bottom: 1.6rem;
 }
 
@@ -45,7 +45,7 @@
 
 .testimonial-quote {
   font-size: 1.07rem;
-  color: #2d4666;
+  color: var(--color-heading);
   margin-bottom: 1.1rem;
   font-style: italic;
 }
@@ -58,7 +58,7 @@
 }
 .testimonial-user-name {
   font-weight: 600;
-  color: #2563eb;
+  color: var(--color-primary);
   font-size: 1.01rem;
 }
 .testimonial-user-role {
@@ -71,7 +71,7 @@
   height: 48px;
   border-radius: 50%;
   overflow: hidden;
-  background: #eaf1f8;
+  background: var(--color-accent-1);
   display: flex;
   align-items: center;
   justify-content: center;

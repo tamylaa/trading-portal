@@ -1,5 +1,5 @@
 .trust-badges-section {
-  background: #f8fafd;
+  background: var(--color-surface);
   border-radius: 1.2rem;
   box-shadow: 0 1px 8px rgba(36,40,60,0.06);
 }
@@ -11,7 +11,7 @@
 .trust-badges-title {
   font-size: 1.35rem;
   font-weight: 700;
-  color: #1a3b5d;
+  color: var(--color-heading);
   margin-bottom: 1.2rem;
 }
 
@@ -38,7 +38,7 @@
 
 .trust-badge span {
   font-size: 1.01rem;
-  color: #2563eb;
+  color: var(--color-primary);
   font-weight: 500;
 }
 
