@@ -24,6 +24,23 @@ module.exports = {
         }
       }]
     });
+
+    // Transpile TypeScript/TSX and JS files in the src directory
+    config.module.rules.push({
+      test: /\.(ts|tsx|js|jsx)$/,
+      include: path.resolve(__dirname, '../src'),
+      use: [{
+        loader: require.resolve('babel-loader'),
+        options: {
+          presets: [
+            ['@babel/preset-env', { targets: 'defaults' }],
+            ['@babel/preset-react', { runtime: 'automatic' }],
+            '@babel/preset-typescript'
+          ]
+        }
+      }]
+    });
+
     return config;
   },
 };
