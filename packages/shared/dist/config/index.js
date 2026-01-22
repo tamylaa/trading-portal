@@ -64,6 +64,9 @@ export const DEFAULT_CONFIG = {
  * Generic configuration management with hub-specific support
  */
 export class ConfigurationManager {
+
+// Backwards-compat alias for legacy imports
+export const ConfigManager = ConfigurationManager;
   constructor(hubName = 'shared', customDefaults = {}) {
     this.hubName = hubName;
     this.storageKey = `${hubName}Config`;
