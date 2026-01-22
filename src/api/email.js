@@ -97,6 +97,25 @@ export const emailApi = {
         message: error.response?.data?.message || 'Failed to subscribe to newsletter'
       };
     }
+  },
+
+  /**
+   * Send contact form message
+   */
+  sendContactEmail: async (contactData) => {
+    try {
+      const response = await emailClient.post('/send/contact', contactData);
+      return {
+        success: true,
+        message: 'Contact message sent successfully',
+        id: response.data.id
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to send contact message'
+      };
+    }
   }
 };
 
