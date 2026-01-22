@@ -5,7 +5,7 @@ import './HeroSection.css';
 const HeroSection: React.FC = () => {
   // Only use inline style for dynamic background image - all layout handled by CSS
   const heroSectionStyle: React.CSSProperties = {
-    background: `linear-gradient(90deg, #f4f8fb 60%, #eaf1f8 100%), url('${process.env.PUBLIC_URL}/assets/images/hero-bg.jpg') center/cover no-repeat`,
+    background: `linear-gradient(90deg, #f4f8fb 60%, #eaf1f8 100%), image-set(url('${process.env.PUBLIC_URL}/assets/images/hero-bg.avif') type('image/avif') 1x, url('${process.env.PUBLIC_URL}/assets/images/hero-bg.webp') type('image/webp') 1x, url('${process.env.PUBLIC_URL}/assets/images/hero-bg.jpg') type('image/jpeg') 1x) center/cover no-repeat`,
   };
 
   return (
@@ -37,7 +37,11 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
         <div className="hero-image">
-          <img src="/assets/images/hero-bg.jpg" alt="Trading Illustration" />
+          <picture>
+            <source type="image/avif" srcSet="/assets/images/hero-bg.avif" />
+            <source type="image/webp" srcSet="/assets/images/hero-bg.webp" />
+            <img src="/assets/images/hero-bg.jpg" alt="Trading Illustration" />
+          </picture>
         </div>
       </div>
     </section>

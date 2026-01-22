@@ -21,10 +21,11 @@ const Header: React.FC = () => {
                         <span></span>
                     </button>
                     <Link to="/" className="logo">
-                        <img 
-                            src={`${process.env.PUBLIC_URL}/assets/logos/logo.png`} 
-                            alt="Tamyla Trading" 
-                        />
+                        <picture>
+                            <source type="image/avif" srcSet={`${process.env.PUBLIC_URL}/assets/logos/logo.avif`} />
+                            <source type="image/webp" srcSet={`${process.env.PUBLIC_URL}/assets/logos/logo.webp`} />
+                            <img src={`${process.env.PUBLIC_URL}/assets/logos/logo.png`} alt="Tamyla Trading" />
+                        </picture>
                     </Link>
                 </div>
                 <div className="header-center">
