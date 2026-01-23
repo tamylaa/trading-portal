@@ -1,0 +1,9 @@
+/*
+  # UNIFIED CSP POLICY - Matches HTML meta tag exactly
+  Content-Security-Policy: default-src 'self' https: data:; connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https://*.tamyla.com https://tamyla.com https://*.brevo.com https://*.brevo.tech https://*.tamylatrading.workers.dev; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.tamyla.com https://tamyla.com https://*.brevo.com https://conversations-widget.brevo.com https://static.cloudflareinsights.com http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://conversations-widget.brevo.com https://*.tamyla.com; img-src 'self' data: https: blob:; font-src 'self' data: https:; frame-src https://*.brevo.com; child-src https://*.brevo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  
+  # Security Headers
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

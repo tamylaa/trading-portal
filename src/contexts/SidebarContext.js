@@ -1,4 +1,11 @@
-const mod = require('./SidebarContext');
-module.exports = mod;
-module.exports.SidebarProvider = mod.SidebarProvider || mod.default?.SidebarProvider;
-module.exports.useSidebar = mod.useSidebar || mod.default?.useSidebar;
+let mod;
+try {
+  mod = require('./SidebarContext.tsx');
+} catch (err) {
+  mod = require('./SidebarContext');
+}
+const candidate = mod && (mod.default || mod);
+
+module.exports.SidebarProvider = candidate && (candidate.SidebarProvider || candidate.default?.SidebarProvider);
+module.exports.useSidebar = candidate && (candidate.useSidebar || candidate.default?.useSidebar);
+module.exports.default = candidate;

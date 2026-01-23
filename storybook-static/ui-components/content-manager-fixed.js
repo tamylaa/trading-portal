@@ -1,0 +1,519 @@
+// Fixed Content Manager Web Component - Simplified approach
+class TamylaContentManager extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    
+    // Initialize properties with defaults
+    this._apiBase = 'https://content.tamyla.com';  // Use proxy by default
+    this._maxFileSize = 25 * 1024 * 1024;
+    
+    // Internal state
+    this.content = [];
+    this.isLoading = false;
+    this.searchQuery = '';
+    this.currentFilter = 'all';
+    this.currentView = 'session'; // Default to session view for performance
+  }
+  
+  // Property getters and setters for React integration
+  get apiBase() {
+    const value = this._apiBase || this.getAttribute('api-base') || 'https://content.tamyla.com';  // Use proxy by default
+    console.log('🔍 Getting apiBase:', value);
+    return value;
+  }
+  
+  set apiBase(value) {
+    console.log('🔧 Setting apiBase to:', value);
+    this._apiBase = value;
+    // Load content when apiBase is set for the first time
+    if (value && !this._initialLoadComplete) {
+      this._initialLoadComplete = true;
+      console.log('🚀 Loading content with apiBase:', value);
+      this.loadContent();
+    }
+  }
+  
+  get maxFileSize() {
+    return this._maxFileSize || parseInt(this.getAttribute('max-file-size')) || 25 * 1024 * 1024;
+  }
+  
+  set maxFileSize(value) {
+    this._maxFileSize = value;
+  }
+  
+  connectedCallback() {
+    this.render();
+    // Don't load content immediately - wait for React to set apiBase
+  }
+  
+  render() {
+    // Split the template into smaller parts to avoid syntax issues
+    const styles = this.getStyles();
+    const template = this.getTemplate();
+    
+    this.shadowRoot.innerHTML = styles + template;
+    this.setupEventListeners();
+  }
+  
+  getStyles() {
+    return `
+      <style>
+        :host {
+          display: block;
+          width: 100%;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .content-manager {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        
+        .cm-upload-area {
+          border: 2px dashed #cbd5e1;
+          border-radius: 12px;
+          padding: 3rem 2rem;
+          text-align: center;
+          background: #f8fafc;
+          cursor: pointer;
+          margin-bottom: 2rem;
+        }
+        
+        .cm-upload-area:hover {
+          border-color: #3b82f6;
+          background: #eff6ff;
+        }
+        
+        .cm-upload-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+        }
+        
+        .cm-content-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1rem;
+        }
+        
+        .cm-empty-state {
+          text-align: center;
+          padding: 3rem 2rem;
+          color: #6b7280;
+        }
+        
+        .cm-loading {
+          text-align: center;
+          padding: 2rem;
+        }
+        
+        .cm-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          padding: 0.75rem 1rem;
+          background: #f8fafc;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+        }
+        
+        .cm-view-toggle {
+          display: flex;
+          gap: 0.5rem;
+        }
+        
+        .cm-toggle-btn {
+          padding: 0.5rem 1rem;
+          border: 1px solid #e2e8f0;
+          background: white;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #64748b;
+          transition: all 0.2s;
+        }
+        
+        .cm-toggle-btn:hover {
+          background: #f1f5f9;
+          border-color: #cbd5e1;
+        }
+        
+        .cm-toggle-btn.active {
+          background: #3b82f6;
+          color: white;
+          border-color: #3b82f6;
+        }
+        
+        .cm-status {
+          font-size: 0.875rem;
+          color: #64748b;
+          font-style: italic;
+        }
+        
+        .hidden {
+          display: none;
+        }
+      </style>
+    `;
+  }
+  
+  getTemplate() {
+    return `
+      <div class="content-manager">
+        <div class="cm-upload-area" id="uploadArea">
+          <div class="cm-upload-icon">📁</div>
+          <div>
+            <p><strong>Drop files here</strong> or <span style="color: #3b82f6; text-decoration: underline;">Browse Files</span></p>
+            <p>Support: Images, Videos, PDFs, Documents (Max 25MB)</p>
+          </div>
+          <input type="file" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx" id="fileInput" style="display: none;">
+        </div>
+        
+        <div class="cm-header">
+          <div class="cm-view-toggle">
+            <button id="sessionViewBtn" class="cm-toggle-btn active">📂 Current Session</button>
+            <button id="allFilesBtn" class="cm-toggle-btn">📁 All Files</button>
+          </div>
+          <div class="cm-status" id="statusText">Showing files from current session for optimal performance</div>
+        </div>
+        
+        <div class="cm-gallery">
+          <div class="cm-content-grid" id="contentGrid">
+            <div class="cm-empty-state">
+              <div style="font-size: 4rem; margin-bottom: 1rem;">📁</div>
+              <h4>No content yet</h4>
+              <p>Upload your first file to get started</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="cm-loading hidden" id="loading">
+          <p>Loading content...</p>
+        </div>
+      </div>
+    `;
+  }
+  
+  setupEventListeners() {
+    const uploadArea = this.shadowRoot.getElementById('uploadArea');
+    const fileInput = this.shadowRoot.getElementById('fileInput');
+    
+    uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+    
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#3b82f6';
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#cbd5e1';
+      this.handleFiles(e.dataTransfer.files);
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+      this.handleFiles(e.target.files);
+    });
+    
+    // Toggle button event listeners
+    const sessionViewBtn = this.shadowRoot.getElementById('sessionViewBtn');
+    const allFilesBtn = this.shadowRoot.getElementById('allFilesBtn');
+    
+    sessionViewBtn.addEventListener('click', () => {
+      this.switchView('session');
+    });
+    
+    allFilesBtn.addEventListener('click', () => {
+      this.switchView('all');
+    });
+  }
+  
+  async handleFiles(files) {
+    for (const file of Array.from(files)) {
+      if (file.size > this.maxFileSize) {
+        console.error('File too large:', file.name);
+        continue;
+      }
+      await this.uploadFile(file);
+    }
+  }
+  
+  async uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    console.log('🔗 Upload API URL:', this.apiBase + '/upload');
+    console.log('🔑 Auth Token:', this.authToken ? `${this.authToken.substring(0, 20)}...` : 'NO TOKEN');
+    console.log('📂 File details:', { name: file.name, size: file.size, type: file.type });
+    
+    try {
+      this.showLoading(true);
+      
+      const response = await fetch(this.apiBase + '/upload', {
+        method: 'POST',
+        body: formData,
+        headers: this.authToken ? { 'Authorization': 'Bearer ' + this.authToken } : {}
+      });
+      
+      console.log('📤 Upload response status:', response.status);
+      const result = await response.json();
+      console.log('📤 Full upload response:', JSON.stringify(result, null, 2));
+      
+      if (result.success) {
+        console.log('Upload successful:', file.name);
+        
+        // Check metadata response for database save confirmation
+        if (result.metadata) {
+          console.log('🗄️ Database metadata response:', result.metadata);
+          if (result.metadata.success) {
+            console.log('✅ Database save confirmed in response');
+          } else {
+            console.log('❌ Database save failed:', result.metadata.error);
+          }
+        } else {
+          console.log('❓ No metadata field in response - database save unclear');
+        }
+        
+        this.loadContent();
+        this.dispatchEvent(new CustomEvent('content-uploaded', {
+          detail: result.content,
+          bubbles: true
+        }));
+      } else {
+        console.error('Upload failed:', result.error);
+      }
+    } catch (error) {
+      console.error('Upload error:', error.message);
+    } finally {
+      this.showLoading(false);
+    }
+  }
+  
+  async loadContent() {
+    console.log('🔗 Load API URL (Session):', this.apiBase + '/files/session');
+    console.log('🔑 Auth Token for load:', this.authToken ? `${this.authToken.substring(0, 20)}...` : 'NO TOKEN');
+    this.showLoading(true);
+    
+    try {
+      const headers = this.authToken ? { 'Authorization': 'Bearer ' + this.authToken } : {};
+      // Use session-based endpoint for instant feedback on recent uploads
+      const response = await fetch(this.apiBase + '/files/session', { headers });
+      
+      console.log('📄 Session load response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('📄 Session load response:', result);
+        
+        if (result.success || result.files) {
+          // Support both 'files' and 'content' keys for compatibility
+          this.content = result.files || result.content || [];
+          console.log(`📊 Loaded ${this.content.length} session files from API`);
+          
+          // Debug: Check the structure of individual items
+          if (this.content.length > 0) {
+            console.log('🔍 Sample session file item structure:', JSON.stringify(this.content[0], null, 2));
+            console.log('🔍 File size field:', this.content[0].file_size, typeof this.content[0].file_size);
+            console.log('🔍 Created at field:', this.content[0].created_at);
+            console.log('✨ Session upload optimization active - showing only current session files');
+          } else {
+            console.log('📂 No files in current session - upload files to see them appear instantly');
+          }
+          
+          this.renderGallery();
+        } else {
+          console.log('❌ Session load failed - no success or files in response');
+        }
+      } else {
+        const errorText = await response.text();
+        console.log('❌ Session load failed:', response.status, errorText);
+      }
+    } catch (error) {
+      console.error('Load session content error:', error.message);
+    } finally {
+      this.showLoading(false);
+    }
+  }
+  
+  renderGallery() {
+    const grid = this.shadowRoot.getElementById('contentGrid');
+    
+    if (this.content.length === 0) {
+      const emptyMessage = this.currentView === 'session' 
+        ? {
+            title: 'No files in current session',
+            message: 'Upload files to see them appear instantly here. This view shows only your current session uploads for optimal performance.'
+          }
+        : {
+            title: 'No files found',
+            message: 'Upload your first file to get started, or switch to session view to see recently uploaded files.'
+          };
+          
+      grid.innerHTML = `
+        <div class="cm-empty-state">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">📁</div>
+          <h4>${emptyMessage.title}</h4>
+          <p>${emptyMessage.message}</p>
+        </div>
+      `;
+      return;
+    }
+    
+    grid.innerHTML = this.content.map(item => {
+      const name = item.original_filename || item.name || 'Unnamed file';
+      const fileUrl = item.file_url || item.url || '';
+      const isImage = (item.category === 'image') || (item.type && item.type.startsWith && item.type.startsWith('image'));
+      
+      // Debug individual item data
+      console.log('🔍 Processing item:', { 
+        file_size: item.file_size, 
+        size: item.size,
+        created_at: item.created_at,
+        upload_date: item.upload_date,
+        timestamp: item.timestamp
+      });
+      
+      // Try multiple possible size fields
+      let size = 'Unknown size';
+      if (typeof item.file_size === 'number' && !isNaN(item.file_size)) {
+        size = this.formatFileSize(item.file_size);
+      } else if (typeof item.size === 'number' && !isNaN(item.size)) {
+        size = this.formatFileSize(item.size);
+      }
+      
+      // Try multiple possible date fields
+      let dateStr = 'Unknown date';
+      const possibleDateFields = [item.created_at, item.upload_date, item.timestamp, item.date];
+      for (const dateField of possibleDateFields) {
+        if (dateField) {
+          const d = new Date(dateField);
+          if (!isNaN(d.getTime())) {
+            dateStr = d.toLocaleDateString();
+            break;
+          }
+        }
+      }
+      return `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+          <div style="height: 120px; background: #f9fafb; display: flex; align-items: center; justify-content: center;">
+            ${isImage && fileUrl
+              ? '<img src="' + fileUrl + '" alt="' + name + '" style="width: 100%; height: 100%; object-fit: cover;">'
+              : '<div style="font-size: 2rem;">📄</div>'
+            }
+          </div>
+          <div style="padding: 0.75rem;">
+            <div style="font-weight: 500; font-size: 0.875rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              ${name}
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280;">
+              ${size} • ${dateStr}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  async switchView(viewType) {
+    const sessionBtn = this.shadowRoot.getElementById('sessionViewBtn');
+    const allFilesBtn = this.shadowRoot.getElementById('allFilesBtn');
+    const statusText = this.shadowRoot.getElementById('statusText');
+    
+    // Update current view state
+    this.currentView = viewType;
+    
+    // Update button states
+    if (viewType === 'session') {
+      sessionBtn.classList.add('active');
+      allFilesBtn.classList.remove('active');
+      statusText.textContent = 'Showing files from current session for optimal performance';
+      await this.loadContent(); // Load session files
+    } else if (viewType === 'all') {
+      allFilesBtn.classList.add('active');
+      sessionBtn.classList.remove('active');
+      statusText.textContent = 'Showing all user files (may be slower with many files)';
+      await this.loadAllFiles(); // Load all files
+    }
+  }
+  
+  async loadAllFiles() {
+    console.log('🔗 Load All Files API URL:', this.apiBase + '/files');
+    console.log('🔑 Auth Token for load all:', this.authToken ? `${this.authToken.substring(0, 20)}...` : 'NO TOKEN');
+    this.showLoading(true);
+    
+    try {
+      const headers = this.authToken ? { 'Authorization': 'Bearer ' + this.authToken } : {};
+      // Use original /files endpoint to load all files
+      const response = await fetch(this.apiBase + '/files', { headers });
+      
+      console.log('📄 All files load response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('📄 All files load response:', result);
+        
+        if (result.success || result.files) {
+          // Support both 'files' and 'content' keys for compatibility
+          this.content = result.files || result.content || [];
+          console.log(`📊 Loaded ${this.content.length} total files from API`);
+          
+          // Debug: Check the structure of individual items
+          if (this.content.length > 0) {
+            console.log('🔍 Sample all files item structure:', JSON.stringify(this.content[0], null, 2));
+            console.log('⚠️ Performance warning: Loading all files - consider using session view for better performance');
+          } else {
+            console.log('📂 No files found in user account');
+          }
+          
+          this.renderGallery();
+        } else {
+          console.log('❌ All files load failed - no success or files in response');
+        }
+      } else {
+        const errorText = await response.text();
+        console.log('❌ All files load failed:', response.status, errorText);
+      }
+    } catch (error) {
+      console.error('Load all files content error:', error.message);
+    } finally {
+      this.showLoading(false);
+    }
+  }
+  
+  formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+  
+  showLoading(show) {
+    const loading = this.shadowRoot.getElementById('loading');
+    if (show) {
+      loading.classList.remove('hidden');
+    } else {
+      loading.classList.add('hidden');
+    }
+  }
+  
+  // Property setters for React integration
+  set authToken(token) { 
+    console.log('🔑 Setting authToken:', token ? 'Token received' : 'No token'); 
+    this._authToken = token; 
+  }
+  get authToken() { 
+    console.log('🔑 Getting authToken:', this._authToken ? 'Token available' : 'No token');
+    return this._authToken; 
+  }
+  
+  set currentUser(user) { this._currentUser = user; }
+  get currentUser() { return this._currentUser; }
+}
+
+customElements.define('tamyla-content-manager', TamylaContentManager);

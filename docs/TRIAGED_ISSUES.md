@@ -43,6 +43,15 @@ This file lists TODO / FIXME occurrences found in the codebase, triaged into sug
 
 ---
 
+6. Test interop and shim normalization
+   - Files:
+     - `src/components/dashboard/EmailBlasterTest.tsx`
+     - `src/components/dashboard/EmailBlasterTest.js` (shim)
+     - `packages/content-hub/components/*` (exports)
+   - Suggested issue: `chore(tests): stabilize ESM/CJS interop and normalize component shims`
+   - Labels: test, tech-debt
+   - Priority: high
+
 If you'd like I can convert these triaged items into real GitHub issues (requires a PAT with repo scope) or create internal JIRA/tickets — tell me your preference and I'll proceed.
 
 ---
