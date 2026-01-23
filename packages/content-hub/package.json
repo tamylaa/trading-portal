@@ -1,0 +1,68 @@
+{
+  "name": "@tamyla/content-hub",
+  "version": "1.0.0",
+  "description": "Modular content management package for file uploads, sharing, and content operations",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./index.js"
+    },
+    "./components": {
+      "import": "./components/index.js"
+    },
+    "./hooks": {
+      "import": "./hooks/index.js"
+    },
+    "./api": {
+      "import": "./api/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "components",
+    "api",
+    "config",
+    "styles",
+    "services",
+    "types",
+    "index.js"
+  ],
+  "scripts": {
+    "validate": "node ../shared/scripts/unified-hub-validator.js --hub=content-hub",
+    "validate:verbose": "node ../shared/scripts/unified-hub-validator.js --hub=content-hub --verbose",
+    "validate:strict": "node ../shared/scripts/unified-hub-validator.js --hub=content-hub --production --fail-on-violations",
+    "prebuild": "npm run validate:strict",
+    "build": "tsc",
+    "build:dev": "npm run validate && tsc",
+    "dev": "tsc --watch",
+    "test": "npm run validate && echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "content-management",
+    "file-upload",
+    "sharing",
+    "react",
+    "tamyla"
+  ],
+  "author": "Tamyla",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "@tamyla/shared": "file:../shared"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

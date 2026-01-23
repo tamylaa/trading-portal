@@ -1,0 +1,18 @@
+# GitHub Pages compatibility fixes
+AddType application/javascript .js
+AddType application/javascript .mjs
+AddType text/css .css
+
+# MIME type for ES modules
+AddType application/javascript .esm.js
+
+# Prevent MIME type sniffing
+Header always set X-Content-Type-Options nosniff
+
+# Cache control for static assets
+<FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg)$">
+    Header set Cache-Control "public, max-age=31536000"
+</FilesMatch>
+
+# CSP Headers for GitHub Pages
+Header always set Content-Security-Policy "default-src 'self' https: data:; connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* https://*.tamyla.com https://tamyla.com https://*.brevo.com https://*.brevo.tech https://*.tamylatrading.workers.dev; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.tamyla.com https://tamyla.com https://*.brevo.com https://conversations-widget.brevo.com https://static.cloudflareinsights.com http://localhost:* http://127.0.0.1:*; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://conversations-widget.brevo.com https://*.tamyla.com; img-src 'self' data: https: blob:; font-src 'self' data: https:; frame-src https://*.brevo.com; child-src https://*.brevo.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"

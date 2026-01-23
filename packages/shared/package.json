@@ -1,0 +1,60 @@
+{
+  "name": "@tamyla/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and services for the Trading Portal hub ecosystem",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./config": "./dist/config/index.js",
+    "./auth": "./dist/auth/index.js",
+    "./events": "./dist/events/index.js",
+    "./api": "./dist/api/index.js",
+    "./types": "./dist/types/index.js",
+    "./utils": "./dist/utils/index.js"
+  },
+  "scripts": {
+    "build": "babel src --out-dir dist --copy-files",
+    "dev": "babel src --out-dir dist --copy-files --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "lodash": "^4.17.21",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.0.0",
+    "@types/lodash": "^4.14.202",
+    "@types/uuid": "^9.0.7",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "keywords": [
+    "shared",
+    "utilities",
+    "hub",
+    "ecosystem",
+    "trading-portal"
+  ],
+  "author": "Tamyla",
+  "license": "MIT"
+}

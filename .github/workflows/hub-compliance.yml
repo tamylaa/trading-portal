@@ -1,0 +1,151 @@
+name: Hub Infrastructure Compliance
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'packages/*-hub/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'packages/*-hub/**'
+
+jobs:
+  hub-compliance:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm ci
+        
+    - name: Run Hub Compliance Checks
+      run: |
+        echo "🔍 Running Hub Infrastructure Compliance Validation"
+        node packages/shared/scripts/validate-hub-compliance.js --all-hubs --strict --fail-on-violations --output=hub-compliance-report.json
+        
+    - name: Upload Compliance Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: hub-compliance-report
+        path: hub-compliance-report.json
+        retention-days: 30
+        
+    - name: Comment PR with Compliance Results
+      if: github.event_name == 'pull_request' && failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          let reportContent = '## 🚨 Hub Infrastructure Compliance Failures\n\n';
+          
+          try {
+            const report = JSON.parse(fs.readFileSync('hub-compliance-report.json', 'utf8'));
+            
+            const failedHubs = report.hubResults.filter(hub => !hub.compliant);
+            
+            if (failedHubs.length > 0) {
+              reportContent += `**${failedHubs.length}** hub(s) failed compliance checks:\n\n`;
+              
+              failedHubs.forEach(hub => {
+                reportContent += `### ❌ ${hub.hubName}\n`;
+                reportContent += `- 🔴 Critical: ${hub.violations.critical.length}\n`;
+                reportContent += `- 🟠 High: ${hub.violations.high.length}\n`;
+                reportContent += `- 🟡 Medium: ${hub.violations.medium.length}\n`;
+                reportContent += `- 🔵 Low: ${hub.violations.low.length}\n\n`;
+              });
+              
+              reportContent += '## 🔧 Required Actions\n\n';
+              reportContent += '1. **Fix Critical & High Priority violations** using `@tamyla/shared` infrastructure\n';
+              reportContent += '2. **Run locally**: `npm run compliance:verbose` to see detailed violations\n';
+              reportContent += '3. **See migration guide**: `packages/<hub>/docs/MIGRATION_GUIDE.md`\n';
+              reportContent += '4. **Re-run validation**: `npm run compliance:strict`\n\n';
+              
+              reportContent += '## 💡 Quick Fixes\n\n';
+              reportContent += '- Replace `fetch()` → `@tamyla/shared/api` (ApiClient)\n';
+              reportContent += '- Replace `localStorage` → `@tamyla/shared/auth` (AuthService)\n';
+              reportContent += '- Replace `console.*` → `@tamyla/shared/utils` (Logger)\n';
+              reportContent += '- Replace custom events → `@tamyla/shared/events` (EventBus)\n\n';
+              
+              reportContent += `📊 **Total violations**: ${report.summary.totalViolations}\n`;
+              reportContent += `🎯 **Compliance level**: strict (0 violations allowed)\n`;
+            }
+          } catch (error) {
+            reportContent += `Error reading compliance report: ${error.message}`;
+          }
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: reportContent
+          });
+
+  # Separate job for each hub to show individual status
+  validate-individual-hubs:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        hub: [content-hub, campaign-hub, contact-hub, service-hub]
+      fail-fast: false
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check if hub exists and has changes
+      id: hub-check
+      run: |
+        if [ -d "packages/${{ matrix.hub }}" ]; then
+          # Check if this hub has changes in the PR
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.sha }})
+          HUB_CHANGES=$(echo "$CHANGED_FILES" | grep "^packages/${{ matrix.hub }}/" || true)
+          
+          if [ -n "$HUB_CHANGES" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "hub_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "hub_exists=true" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+          echo "hub_exists=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Validate ${{ matrix.hub }}
+      if: steps.hub-check.outputs.hub_exists == 'true' && steps.hub-check.outputs.has_changes == 'true'
+      run: |
+        echo "🔍 Validating ${{ matrix.hub }} compliance..."
+        node packages/shared/scripts/validate-hub-compliance.js --hub=${{ matrix.hub }} --strict --fail-on-violations --verbose
+        
+    - name: Skip validation (no changes)
+      if: steps.hub-check.outputs.hub_exists == 'true' && steps.hub-check.outputs.has_changes == 'false'
+      run: |
+        echo "✅ ${{ matrix.hub }} has no changes - skipping validation"
+        
+    - name: Skip validation (hub does not exist)
+      if: steps.hub-check.outputs.hub_exists == 'false'
+      run: |
+        echo "ℹ️ ${{ matrix.hub }} does not exist - skipping validation"
